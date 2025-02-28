@@ -4,7 +4,13 @@
 2. To use typography without overloading the applicacion [Nuxt Fonts](https://fonts.nuxt.com/get-started/installation)
 3. Provides an efficient and easy way to access a wide variety of utilities without overloading your application with unnecessary code. [VueUse](https://vueuse.org/guide)
 4. For nuxt security [Nuxt Security](https://nuxt.com/modules/security)
-5. [Prisma ORM](https://www.prisma.io/docs/guides/nuxt) with [Extension-Accelerate](https://www.npmjs.com/package/@prisma/extension-accelerate)
+
+# Icons
+1. [Heroicons](https://icon-sets.iconify.design/heroicons/)
+2. [Healthicons](https://icon-sets.iconify.design/healthicons/)
+```bash
+bun i -D @iconify-json/healthicons
+```
 
 # DBML
 

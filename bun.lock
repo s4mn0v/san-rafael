@@ -9,6 +9,10 @@
         "vue": "latest",
         "vue-router": "latest",
       },
+      "devDependencies": {
+        "@iconify-json/healthicons": "^1.2.6",
+        "@iconify-json/heroicons": "^1.2.2",
+      },
     },
   },
   "packages": {
@@ -139,6 +143,8 @@
     "@headlessui/tailwindcss": ["@headlessui/tailwindcss@0.2.2", "", { "peerDependencies": { "tailwindcss": "^3.0 || ^4.0" } }, "sha512-xNe42KjdyA4kfUKLLPGzME9zkH7Q3rOZ5huFihWNWOQFxnItxPB3/67yBI8/qBfY8nwBRx5GHn4VprsoluVMGw=="],
 
     "@headlessui/vue": ["@headlessui/vue@1.7.23", "", { "dependencies": { "@tanstack/vue-virtual": "^3.0.0-beta.60" }, "peerDependencies": { "vue": "^3.2.0" } }, "sha512-JzdCNqurrtuu0YW6QaDtR2PIYCKPUWq28csDyMvN4zmGccmE7lz40Is6hc3LA4HFeCI7sekZ/PQMTNmn9I/4Wg=="],
+
+    "@iconify-json/healthicons": ["@iconify-json/healthicons@1.2.6", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-y1GHsyEivmilnhUCnT1U+M1ZwOU+2NV243uK0pL8vOq3DkYcdDgRvsuAX3aHGGfPAjH5U+Mb+jCeSFEUZr94pA=="],
 
     "@iconify-json/heroicons": ["@iconify-json/heroicons@1.2.2", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-qoW4pXr5kTTL6juEjgTs83OJIwpePu7q1tdtKVEdj+i0zyyVHgg/dd9grsXJQnpTpBt6/VwNjrXBvFjRsKPENg=="],
 
