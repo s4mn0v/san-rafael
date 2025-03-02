@@ -1,5 +1,5 @@
 /* Import Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
   --color-m1: #0d0d0d;
@@ -20,4 +20,14 @@
 .dark {
   background-color: var(--color-m2);
   color: var(--color-m7);
+}
+
+/* Transición suave para cambio de tema */
+:root, .dark {
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Asegurar que la transición también funcione en elementos específicos */
+body {
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }

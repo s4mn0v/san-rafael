@@ -7,8 +7,10 @@ export default defineNuxtConfig({
   colorMode: {
     preference: "dark",
   },
-  components: {
-    global: true,
-    dirs: ["~/components"],
-  },
+  components: [
+    {
+      path: "~/components",
+      pathPrefix: false,
+    },
+  ]  
 });
