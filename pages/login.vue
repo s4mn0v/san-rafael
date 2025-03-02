@@ -7,7 +7,7 @@
         <h2 class="text-center text-3xl font-extrabold tracking-widest text-[var(--color-m2)] uppercase">Bienvenido</h2>
 
         <!-- Login Form -->
-        <UForm :state="state" @submit="onSubmit" class="space-y-4">
+        <UForm :state="state" class="space-y-4">
           <!-- Email Input -->
           <UFormGroup label="Email" name="email">
             <UInput v-model="state.email" type="email" placeholder="Ingrese su email" />
@@ -53,6 +53,8 @@
 </template>
 
 <script setup lang="ts">
+import { reactive, ref } from 'vue';
+
 const state = reactive({
   email: '',
   password: ''
@@ -60,12 +62,11 @@ const state = reactive({
 
 const showPassword = ref(false) // Boolean flag to toggle password visibility
 
-const onSubmit = () => {
-  console.log("Attempting to log in with:", state)
-  // Handle login logic here
-}
-
 definePageMeta({
   layout: 'login' // Defines the page layout
 })
 </script>
+
+<style scoped>
+/* Add any component-specific styles here */
+</style>
