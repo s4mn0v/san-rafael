@@ -1,9 +1,9 @@
 <template>
   <div class="flex h-screen flex-col bg-[var(--color-m2)] md:flex-row dark:bg-[var(--color-m7)]">
-    <!-- Sidebar con opción de ocultar -->
+    <!-- Sidebar with collapsible option -->
     <div
       :class="['hidden md:flex flex-col items-center h-full text-[var(--color-m7)] transition-all duration-300', collapsed ? 'w-16' : 'w-48']">
-      <!-- Logo (Solo si el menú NO está colapsado) -->
+      <!-- Logo (Only visible when the menu is NOT collapsed) -->
       <a v-if="!collapsed"
         class="mt-6 mb-6 hidden w-full flex-col items-center justify-center px-3 text-center md:mt-8 md:flex" href="#">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
@@ -16,8 +16,9 @@
           Rafael</span>
       </a>
 
-      <!-- Menú lateral con opción de mostrar solo íconos -->
+      <!-- Sidebar menu with option to show only icons -->
       <div class="relative flex w-full flex-1 flex-col overflow-y-auto px-2">
+        <!-- Menu Items -->
         <a class="group mt-2 flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m2)]"
           href="/">
           <UIcon name="i-heroicons-home-16-solid"
@@ -71,7 +72,7 @@
             Cuenta </span>
         </a>
 
-        <!-- Botón para expandir/colapsar -->
+        <!-- Button to Expand/Collapse Sidebar -->
         <button @click="collapsed = !collapsed"
           class="absolute top-1/2 right-0 -translate-y-1/2 transform rounded-l-md px-2 pt-3 pb-2 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m7)]"
           title="Expandir/Colapsar Menu">
@@ -79,7 +80,7 @@
         </button>
       </div>
 
-      <!-- Botones de Logout y Theming -->
+      <!-- Logout and Theming Buttons -->
       <div :class="['flex w-full px-3 text-[var(--color-m7)] dark:text-[var(--color-m2)] cursor-default transition-all duration-300 mt-auto',
         collapsed ? 'flex-col gap-2 py-4' : 'flex-row justify-between h-16']">
         <Logout />
@@ -87,13 +88,13 @@
       </div>
     </div>
 
-    <!-- Contenido principal -->
+    <!-- Main Content -->
     <div
       class="m-4 mb-16 flex-1 overflow-auto rounded-xl bg-[var(--color-m7)] p-4 md:m-4 md:pb-4 dark:bg-[var(--color-m2)]">
       <slot />
     </div>
 
-    <!-- Menú inferior (Solo en móviles) -->
+    <!-- Bottom Navigation Menu (Only for Mobile) -->
     <div
       class="fixed bottom-0 left-0 flex w-full justify-around bg-[var(--color-m2)] py-3 md:hidden dark:bg-[var(--color-m7)]">
       <a class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-800 dark:text-[var(--color-m2)] dark:hover:text-white"
@@ -129,9 +130,9 @@
 <script setup>
 import { useCookie } from '#app'
 
-const collapsed = useCookie('sidebar-collapsed', { default: () => false })
+const collapsed = useCookie('sidebar-collapsed', { default: () => false })  // Persistent state for sidebar collapse
 
 const toggleSidebar = () => {
-  collapsed.value = !collapsed.value
+  collapsed.value = !collapsed.value // Toggles sidebar state
 }
 </script>
