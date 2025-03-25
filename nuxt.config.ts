@@ -1,6 +1,5 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2024-11-01",
+  compatibilityDate: "2025-03-23",
 
   devtools: { enabled: true },
 
@@ -25,5 +24,15 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
-  
+
+  // Variables de entorno públicas para Supabase
+  runtimeConfig: {
+    public: {
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseAnonKey: process.env.SUPABASE_ANON_KEY
+    },
+  },
+  plugins: [
+    '~/plugins/supabase.client.ts'
+  ]
 });

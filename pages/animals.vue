@@ -11,6 +11,7 @@
     <DashboardCard title="Incremento de Peso (Mensual)" icon="i-healthicons-animal-cow">
       <div class="px-6">00</div>
     </DashboardCard>
+    
   </div>
   
   <UDivider class="my-6"/>
