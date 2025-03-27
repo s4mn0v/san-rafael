@@ -18,18 +18,12 @@
           <!-- Password Input with Toggle Visibility Button -->
           <UFormGroup label="Contraseña" name="password">
             <div class="relative">
-              <UInput
-                v-model="state.password"
-                :type="showPassword ? 'text' : 'password'"
-                placeholder="Ingrese su contraseña"
-                class="pr-10"
-              />
+              <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'"
+                placeholder="Ingrese su contraseña" class="pr-10" />
               <!-- Button to Show/Hide Password -->
-              <button
-                type="button"
+              <button type="button"
                 class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
-                @click="showPassword = !showPassword"
-              >
+                @click="showPassword = !showPassword">
                 <UIcon :name="showPassword ? 'i-heroicons-eye' : 'i-heroicons-eye-slash'" class="h-5 w-5" />
               </button>
             </div>
@@ -62,43 +56,45 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { useSupabaseClient, useRouter, useToast } from '#imports';
 
-// Accede al cliente Supabase usando doble casting
-const { supabase } = useNuxtApp() as unknown as { supabase: SupabaseClient };
+const supabase = useSupabaseClient();
+const router = useRouter();
+const toast = useToast();
 
-// Estado reactivo para los campos del formulario
 const state = reactive({
   email: '',
   password: ''
 });
 
-// Bandera para mostrar/ocultar la contraseña
 const showPassword = ref(false);
 
-// Router para redireccionar después del login
-const router = useRouter();
-
-// Función para manejar el login
 const login = async () => {
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: state.email,
-      password: state.password,
+    if (!state.email.trim() || !state.password.trim()) {
+      toast.add({ title: 'Error', description: 'Todos los campos son obligatorios.', color: 'red' });
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: state.email.trim(),
+      password: state.password.trim(),
     });
+
     if (error) throw error;
-    // Si el login es exitoso, redirigir al administrador
-    router.push('/admin');
+
+    toast.add({ title: 'Éxito', description: 'Inicio de sesión exitoso.', color: 'green' });
+    router.push('/');
   } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error inesperado.';
     console.error('Error al iniciar sesión:', errorMessage);
-    // Aquí puedes mostrar un mensaje de error al usuario si lo deseas
+    toast.add({ title: 'Error', description: errorMessage, color: 'red' });
   }
 };
 
 definePageMeta({
-  layout: 'login' // Define el layout específico para esta página
+  layout: 'login',
+  ssr: false
 });
 </script>
 

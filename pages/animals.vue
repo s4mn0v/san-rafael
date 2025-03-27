@@ -1,7 +1,7 @@
 <template>
   <h1 class="text-2xl font-semibold uppercase tracking-widest">Dashboard</h1>
-  
-  <UDivider class="my-6"/>
+
+  <UDivider class="my-6" />
 
   <div class="grid grid-cols-2 gap-4">
     <DashboardCard title="Total de Animales" icon="i-healthicons-animal-cow">
@@ -11,10 +11,10 @@
     <DashboardCard title="Incremento de Peso (Mensual)" icon="i-healthicons-animal-cow">
       <div class="px-6">00</div>
     </DashboardCard>
-    
+
   </div>
-  
-  <UDivider class="my-6"/>
+
+  <UDivider class="my-6" />
 
   <DashboardCard title="Control de Inventario" icon="i-healthicons-animal-cow">
     <div class="grid grid-cols-3 gap-4 content-container">
@@ -32,3 +32,9 @@
     </div>
   </DashboardCard>
 </template>
+
+<script setup lang="ts">
+definePageMeta({
+  layout: 'logged'
+})
+</script>

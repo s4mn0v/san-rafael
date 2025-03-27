@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/ui"],
+  modules: ["@nuxt/ui", "@nuxtjs/supabase"],
 
   css: ["~/assets/css/main.css"],
 
@@ -25,14 +25,16 @@ export default defineNuxtConfig({
     },
   ],
 
-  // Variables de entorno públicas para Supabase
-  runtimeConfig: {
-    public: {
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY
-    },
+  // Config supabase conection
+  supabase: {
+    url: process.env.NUXT_SUPABASE_URL,
+    key: process.env.NUXT_SUPABASE_KEY,
+    // Desactivar si se necista ver una pagina sin hacer login
+    redirect: true,
+    redirectOptions: {
+      login: "/login",
+      callback: "/callback",
+      exclude: ["/about"]
+    }
   },
-  plugins: [
-    '~/plugins/supabase.client.ts'
-  ]
 });

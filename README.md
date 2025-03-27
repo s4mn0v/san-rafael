@@ -4,6 +4,11 @@
 2. To use typography without overloading the applicacion [Nuxt Fonts](https://fonts.nuxt.com/get-started/installation)
 3. Provides an efficient and easy way to access a wide variety of utilities without overloading your application with unnecessary code. [VueUse](https://vueuse.org/guide)
 4. For nuxt security [Nuxt Security](https://nuxt.com/modules/security)
+5. For charts [apexchats](https://www.apexcharts.com/docs/vue-charts/)
+
+> [!NOTE]
+> bun install --save apexcharts <br>
+> bun install --save vue3-apexcharts
 
 # Icons
 1. [Heroicons](https://icon-sets.iconify.design/heroicons/)

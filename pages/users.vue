@@ -1,15 +1,16 @@
 <template>
-    <div>
-      <h1>Usuarios</h1>
-      <!-- Resto del contenido -->
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-  // Lógica del componente
-  </script>
-  
-  <style scoped>
-  /* Estilos del componente */
-  </style>
-  
+  <div>
+    <h1>Usuarios</h1>
+    <!-- Resto del contenido -->
+  </div>
+</template>
+
+<style scoped>
+/* Estilos del componente */
+</style>
+
+<script setup lang="ts">
+definePageMeta({
+  layout: 'logged'
+})
+</script>
