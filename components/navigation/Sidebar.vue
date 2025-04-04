@@ -2,10 +2,10 @@
   <div class="flex h-screen flex-col bg-[var(--color-m2)] md:flex-row dark:bg-[var(--color-m7)]">
     <!-- Sidebar with collapsible option -->
     <div
-      :class="['hidden md:flex flex-col items-center h-full text-[var(--color-m7)] transition-all duration-300', collapsed ? 'w-16' : 'w-48']">
+      :class="['hidden md:flex flex-col items-center h-full text-[var(--color-m7)] transition-all duration-300 py-4', collapsed ? 'w-16' : 'w-48']">
       <!-- Logo (Only visible when the menu is NOT collapsed) -->
-      <a v-if="!collapsed"
-        class="mt-6 mb-6 hidden w-full flex-col items-center justify-center px-3 text-center md:mt-8 md:flex" href="#">
+      <NuxtLink v-if="!collapsed"
+        class="mt-6 mb-6 hidden w-full flex-col items-center justify-center px-3 text-center md:mt-8 md:flex" to="/">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
           class="h-10 w-10 text-[var(--color-m7)] sm:h-12 sm:w-12 md:h-16 md:w-16 lg:h-20 lg:w-20 dark:text-[var(--color-m2)]">
           <path fill="currentColor"
@@ -14,75 +14,35 @@
         <span
           class="mt-2 text-xs font-bold tracking-widest text-[var(--color-m7)] uppercase sm:text-sm md:block dark:text-[var(--color-m2)]">San.
           Rafael</span>
-      </a>
+      </NuxtLink>
 
       <!-- Sidebar menu with option to show only icons -->
-      <div class="relative flex w-full flex-1 flex-col overflow-y-auto px-2">
-        <!-- Menu Items -->
-        <a class="group mt-2 flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m2)]"
-          href="/">
-          <UIcon name="i-heroicons-home-16-solid"
-            class="h-6 w-6 dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]" />
-          <span v-if="!collapsed"
-            class="ml-4 text-xs font-bold tracking-widest uppercase dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]">
-            Inicio </span>
-        </a>
-        <a class="group mt-2 flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m2)]"
-          href="/animals">
-          <UIcon name="i-healthicons-animal-cow"
-            class="h-6 w-6 dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]" />
-          <span v-if="!collapsed"
-            class="ml-4 text-xs font-bold tracking-widest uppercase dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]">
-            Animales </span>
-        </a>
+      <div class="relative flex w-full flex-1 flex-col overflow-y-auto px-2 space-y-2">
+        <!-- Menu Items generated from data -->
+        <NuxtLink v-for="item in navigationItems" :key="item.to" :to="item.to"
+          class="group flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m7)]"
+          active-class="!bg-[var(--color-m7)] dark:!bg-[var(--color-m2)]">
+          <UIcon :name="item.icon"
+            class="h-6 w-6 text-[var(--color-m7)] group-hover:text-[var(--color-m2)] group-[.router-link-exact-active]:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:group-hover:text-[var(--color-m7)] dark:group-[.router-link-exact-active]:text-[var(--color-m7)] transition-colors" />
 
-        <a class="group mt-2 flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m2)]"
-          href="/stock">
-          <UIcon name="i-healthicons-i-exam-multiple-choice"
-            class="h-6 w-6 dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]" />
           <span v-if="!collapsed"
-            class="ml-4 text-xs font-bold tracking-widest uppercase dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]">
-            Inventario </span>
-        </a>
-
-        <a class="group mt-2 flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m2)]"
-          href="/reproduction">
-          <UIcon name="i-healthicons-syringe"
-            class="h-6 w-6 dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]" />
-          <span v-if="!collapsed"
-            class="ml-4 text-xs font-bold tracking-widest uppercase dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]">
-            Reproducción </span>
-        </a>
-
-        <a class="group mt-2 flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m2)]"
-          href="/genealogy">
-          <UIcon name="i-healthicons-biomarker-outline-24px"
-            class="h-6 w-6 dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]" />
-          <span v-if="!collapsed"
-            class="ml-4 text-xs font-bold tracking-widest uppercase dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]">
-            Genealogía </span>
-        </a>
-
-        <a class="group mt-2 flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m2)]"
-          href="/account">
-          <UIcon name="i-heroicons-user-16-solid"
-            class="h-6 w-6 dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]" />
-          <span v-if="!collapsed"
-            class="ml-4 text-xs font-bold tracking-widest uppercase dark:text-[var(--color-m2)] group-hover:dark:text-[var(--color-m7)]">
-            Cuenta </span>
-        </a>
+            class="ml-4 text-xs font-bold tracking-widest uppercase text-inherit transition-colors group-hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:group-hover:text-[var(--color-m7)] dark:group-[.router-link-exact-active]:text-[var(--color-m7)] group-[.router-link-exact-active]:text-[var(--color-m2)]">
+            {{ item.label }}
+          </span>
+        </NuxtLink>
 
         <!-- Button to Expand/Collapse Sidebar -->
-        <button @click="collapsed = !collapsed"
-          class="absolute top-1/2 right-0 -translate-y-1/2 transform rounded-l-md px-2 pt-3 pb-2 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m7)]"
-          title="Expandir/Colapsar Menu">
-          <UIcon :name="collapsed ? 'i-heroicons-chevron-right' : 'i-heroicons-chevron-left'" class="h-6 w-6" />
-        </button>
+        <div class="absolute bottom-0 right-0 flex justify-end">
+          <button @click="collapsed = !collapsed"
+            class="transform rounded-l-md px-2 pt-3 pb-2 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m7)]">
+            <UIcon :name="collapsed ? 'i-heroicons-chevron-right' : 'i-heroicons-chevron-left'" class="h-6 w-6" />
+          </button>
+        </div>
       </div>
 
       <!-- Logout and Theming Buttons -->
       <div :class="['flex w-full px-3 text-[var(--color-m7)] dark:text-[var(--color-m2)] cursor-default transition-all duration-300 mt-auto',
-        collapsed ? 'flex-col gap-2 py-4' : 'flex-row justify-between h-16']">
+        collapsed ? 'flex-col items-center gap-2 py-4' : 'flex-row justify-between h-16 items-center']">
         <Logout />
         <Theming />
       </div>
@@ -96,43 +56,29 @@
 
     <!-- Bottom Navigation Menu (Only for Mobile) -->
     <div
-      class="fixed bottom-0 left-0 flex w-full justify-around bg-[var(--color-m2)] py-3 md:hidden dark:bg-[var(--color-m7)]">
-      <a class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-800 dark:text-[var(--color-m2)] dark:hover:text-white"
-        href="/">
-        <UIcon name="i-heroicons-home-16-solid" class="h-6 w-6 dark:text-[var(--color-m2)]" title="Inicio" />
-      </a>
-      <a class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-800 dark:text-[var(--color-m2)] dark:hover:text-white"
-        href="/animals">
-        <UIcon name="i-healthicons-animal-cow" class="h-6 w-6 dark:text-[var(--color-m2)]" title="Animales" />
-      </a>
-      <a class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-800 dark:text-[var(--color-m2)] dark:hover:text-white"
-        href="/stock">
-        <UIcon name="i-healthicons-i-exam-multiple-choice" class="h-6 w-6 dark:text-[var(--color-m2)]"
-          title="Inventario" />
-      </a>
-      <a class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-800 dark:text-[var(--color-m2)] dark:hover:text-white"
-        href="/reproduction">
-        <UIcon name="i-healthicons-syringe-outline-24px" class="h-6 w-6 dark:text-[var(--color-m2)]" title="Vacunas" />
-      </a>
-      <a class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-800 dark:text-[var(--color-m2)] dark:hover:text-white"
-        href="/genealogy">
-        <UIcon name="i-healthicons-biomarker-outline-24px" class="h-6 w-6 dark:text-[var(--color-m2)]"
-          title="Genealogía" />
-      </a>
-      <a class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-800 dark:text-[var(--color-m2)] dark:hover:text-white"
-        href="/account">
-        <UIcon name="i-heroicons-user-16-solid" class="h-6 w-6 dark:text-[var(--color-m2)]" title="Cuenta" />
-      </a>
+      class="fixed bottom-0 left-0 z-50 flex w-full justify-around border-t border-gray-200 bg-[var(--color-m2)] py-3 md:hidden dark:border-gray-700 dark:bg-[var(--color-m7)]">
+      <NuxtLink v-for="item in navigationItems" :key="`mobile-${item.to}`" :to="item.to"
+        class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-900 dark:text-[var(--color-m2)] dark:hover:text-white"
+        active-class="!text-blue-600 dark:!text-blue-400">
+        <UIcon :name="item.icon" class="h-6 w-6 text-inherit" :title="item.label" />
+      </NuxtLink>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useCookie } from '#app'
+import { ref } from 'vue';
+import { useCookie } from '#app';
 
-const collapsed = useCookie('sidebar-collapsed', { default: () => false })  // Persistent state for sidebar collapse
+const collapsed = useCookie('sidebar-collapsed', { default: () => false, sameSite: 'lax' });
 
-const toggleSidebar = () => {
-  collapsed.value = !collapsed.value // Toggles sidebar state
-}
+const navigationItems = ref([
+  { label: 'Inicio', icon: 'i-heroicons-home-solid', to: '/' },
+  { label: 'Animales', icon: 'i-healthicons-animal-cow', to: '/animals' },
+  { label: 'Inventario', icon: 'i-healthicons-i-exam-multiple-choice', to: '/stock' },
+  { label: 'Reproducción', icon: 'i-healthicons-syringe', to: '/reproduction' },
+  { label: 'Genealogía', icon: 'i-healthicons-biomarker-outline', to: '/genealogy' },
+  { label: 'Cuenta', icon: 'i-heroicons-user-solid', to: '/account' },
+]);
+
 </script>
