@@ -12,14 +12,14 @@
         <UForm :state="state" class="space-y-4" @submit="login">
           <!-- Email Input -->
           <UFormGroup label="Email" name="email">
-            <UInput v-model="state.email" type="email" placeholder="Ingrese su email" />
+            <UInput v-model="state.email" type="email" placeholder="Ingrese su email" class="font-sans" />
           </UFormGroup>
 
           <!-- Password Input with Toggle Visibility Button -->
           <UFormGroup label="Contraseña" name="password">
             <div class="relative">
               <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'"
-                placeholder="Ingrese su contraseña" class="pr-10" />
+                placeholder="Ingrese su contraseña" class="pr-10 font-sans" />
               <!-- Button to Show/Hide Password -->
               <button type="button"
                 class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
@@ -98,6 +98,4 @@ definePageMeta({
 });
 </script>
 
-<style scoped>
-/* Estilos específicos del componente aquí */
-</style>
+<style scoped></style>

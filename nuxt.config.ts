@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     url: process.env.NUXT_SUPABASE_URL,
     key: process.env.NUXT_SUPABASE_KEY,
     // Desactivar si se necista ver una pagina sin hacer login
-    redirect: false,
+    redirect: true,
     redirectOptions: {
       login: "/login",
       callback: "/callback",
