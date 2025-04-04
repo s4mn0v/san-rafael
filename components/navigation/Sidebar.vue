@@ -6,6 +6,7 @@
       <!-- Logo (Only visible when the menu is NOT collapsed) -->
       <NuxtLink v-if="!collapsed"
         class="mt-6 mb-6 hidden w-full flex-col items-center justify-center px-3 text-center md:mt-8 md:flex" to="/">
+        <!-- SVG Logo -->
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
           class="h-10 w-10 text-[var(--color-m7)] sm:h-12 sm:w-12 md:h-16 md:w-16 lg:h-20 lg:w-20 dark:text-[var(--color-m2)]">
           <path fill="currentColor"
@@ -18,8 +19,8 @@
 
       <!-- Sidebar menu with option to show only icons -->
       <div class="relative flex w-full flex-1 flex-col overflow-y-auto px-2 space-y-2">
-        <!-- Menu Items generated from data -->
-        <NuxtLink v-for="item in navigationItems" :key="item.to" :to="item.to"
+        <!-- Menu Items generated dynamically based on role -->
+        <NuxtLink v-for="item in filteredNavigationItems" :key="item.to" :to="item.to"
           class="group flex h-12 w-full items-center rounded px-3 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m7)]"
           active-class="!bg-[var(--color-m7)] dark:!bg-[var(--color-m2)]">
           <UIcon :name="item.icon"
@@ -54,10 +55,11 @@
       <slot />
     </div>
 
-    <!-- Bottom Navigation Menu (Only for Mobile) -->
+    <!-- Bottom Navigation Menu (Only for Mobile) - Apply filtering here too -->
     <div
       class="fixed bottom-0 left-0 z-50 flex w-full justify-around border-t border-gray-200 bg-[var(--color-m2)] py-3 md:hidden dark:border-gray-700 dark:bg-[var(--color-m7)]">
-      <NuxtLink v-for="item in navigationItems" :key="`mobile-${item.to}`" :to="item.to"
+      <!-- Use the same filtered list for mobile -->
+      <NuxtLink v-for="item in filteredNavigationItems" :key="`mobile-${item.to}`" :to="item.to"
         class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-900 dark:text-[var(--color-m2)] dark:hover:text-white"
         active-class="!text-blue-600 dark:!text-blue-400">
         <UIcon :name="item.icon" class="h-6 w-6 text-inherit" :title="item.label" />
@@ -66,19 +68,66 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { useCookie } from '#app';
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useCookie, useState } from '#app' // Importar useState
+
+// Tipado para los items de navegación (opcional pero recomendado)
+interface NavigationItem {
+  label: string;
+  icon: string;
+  to: string;
+  requiredRole?: string | string[]; // Nuevo: Rol(es) requerido(s) para ver este item
+}
 
 const collapsed = useCookie('sidebar-collapsed', { default: () => false, sameSite: 'lax' });
 
-const navigationItems = ref([
+// Acceder al estado global del rol del usuario
+const userRole = useState < string | null > ('userRole'); // Usa la misma clave que en el middleware
+
+// Lista base de todos los posibles items de navegación
+const allNavigationItems: NavigationItem[] = [
   { label: 'Inicio', icon: 'i-heroicons-home-solid', to: '/' },
   { label: 'Animales', icon: 'i-healthicons-animal-cow', to: '/animals' },
   { label: 'Inventario', icon: 'i-healthicons-i-exam-multiple-choice', to: '/stock' },
   { label: 'Reproducción', icon: 'i-healthicons-syringe', to: '/reproduction' },
   { label: 'Genealogía', icon: 'i-healthicons-biomarker-outline', to: '/genealogy' },
-  { label: 'Cuenta', icon: 'i-heroicons-user-solid', to: '/account' },
-]);
+  { label: 'Cuenta', icon: 'i-heroicons-user-solid', to: '/account' }, // ¡Aquí definimos el rol requerido!
+  { label: 'Usuarios', icon: 'i-heroicons-users-solid', to: '/users', requiredRole: 'admin' },
+  // Puedes añadir más items y especificar `requiredRole` si es necesario
+  // { label: 'Admin Panel', icon: 'i-heroicons-cog-solid', to: '/admin', requiredRole: 'admin' },
+  // { label: 'Mi Perfil', icon: 'i-heroicons-user-circle', to: '/profile' }, // Sin requiredRole = visible para todos los logueados (si userRole no es null)
+];
+
+// Propiedad computada para filtrar los items según el rol actual
+const filteredNavigationItems = computed(() => {
+  const currentRole = userRole.value; // Obtiene el rol actual del estado
+
+  // Si no hay rol (usuario no logueado), podrías mostrar un conjunto diferente o ninguno
+  if (!currentRole) {
+    // Por ejemplo, mostrar solo 'Inicio' si no está logueado
+    // return allNavigationItems.filter(item => item.to === '/');
+    return []; // O no mostrar nada en el menú si no está logueado
+  }
+
+  return allNavigationItems.filter(item => {
+    // Si el item no tiene 'requiredRole', es visible para cualquier usuario logueado.
+    if (!item.requiredRole) {
+      return true;
+    }
+
+    // Si tiene 'requiredRole', verifica si el rol del usuario coincide.
+    // Esto maneja tanto un string simple como un array de roles permitidos.
+    if (Array.isArray(item.requiredRole)) {
+      return item.requiredRole.includes(currentRole);
+    } else {
+      return item.requiredRole === currentRole;
+    }
+  });
+});
+
+// Asegúrate de tener los componentes Logout y Theming importados si no son globales
+// import Logout from '~/components/Logout.vue';
+// import Theming from '~/components/Theming.vue';
 
 </script>

@@ -1,28 +1,35 @@
 <template>
-  <div class="flex min-h-screen">
+  <div
+    class="flex min-h-screen bg-[var(--color-m2)] dark:bg-[var(--color-m7)] text-[var(--color-m7)] dark:text-[var(--color-m2)] w-full">
     <!-- Form Container -->
-    <div class="flex w-full items-center justify-center p-8">
+    <div class="flex w-full items-center justify-center p-8 text-[var(--color-m7)] dark:text-[var(--color-m2)]">
       <div class="w-full max-w-sm space-y-6">
+        <!-- Switch de Tema -->
+        <div class="flex justify-end">
+          <Theming />
+        </div>
+
         <!-- Logo/Welcome Message -->
-        <h2 class="text-center text-3xl font-extrabold tracking-widest text-[var(--color-m2)] uppercase">
+        <h2
+          class="text-center text-3xl font-extrabold tracking-widest text-[var(--color-m7)] dark:text-[var(--color-m2)] uppercase">
           Bienvenido
         </h2>
 
         <!-- Login Form -->
         <UForm :state="state" class="space-y-4" @submit="login">
           <!-- Email Input -->
-          <UFormGroup label="Email" name="email">
-            <UInput v-model="state.email" type="email" placeholder="Ingrese su email" class="font-sans" />
+          <UFormGroup label="Email" name="email" :ui="{ label: 'text-[var(--color-m7)] dark:text-[var(--color-m2)]' }">
+            <UInput v-model="state.email" type="email" placeholder="Ingrese su email" color="neutral" variant="soft"
+              class="border rounded-lg" />
           </UFormGroup>
 
-          <!-- Password Input with Toggle Visibility Button -->
-          <UFormGroup label="Contraseña" name="password">
+          <UFormGroup label=" Contraseña" name="password"
+            :ui="{ label: 'text-[var(--color-m7)] dark:text-[var(--color-m2)]' }">
             <div class="relative">
               <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'"
-                placeholder="Ingrese su contraseña" class="pr-10 font-sans" />
-              <!-- Button to Show/Hide Password -->
+                placeholder="Ingrese su contraseña" color="neutral" variant="soft" class="border rounded-lg" />
               <button type="button"
-                class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700"
+                class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 @click="showPassword = !showPassword">
                 <UIcon :name="showPassword ? 'i-heroicons-eye' : 'i-heroicons-eye-slash'" class="h-5 w-5" />
               </button>
@@ -35,13 +42,13 @@
           </div>
 
           <!-- Submit Button -->
-          <UButton block type="submit" class="bg-[var(--color-m2)] tracking-widest text-[var(--color-m7)] uppercase">
+          <UButton block type="submit" color="primary" class="tracking-widest uppercase">
             Ingresar
           </UButton>
         </UForm>
 
         <!-- Footer -->
-        <p class="mt-auto text-center text-sm text-[var(--color-m5)] uppercase">
+        <p class="mt-auto text-center text-sm text-gray-500 dark:text-gray-400 uppercase">
           © 2024 All Rights Reserved
         </p>
       </div>
@@ -97,5 +104,3 @@ definePageMeta({
   ssr: false
 });
 </script>
-
-<style scoped></style>

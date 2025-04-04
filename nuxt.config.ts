@@ -5,7 +5,10 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      viewport: "width=device-width, initial-scale=1",
+      title: "La Leyenda De San Rafael",
+      meta: [
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+      ],
       link: [{ rel: "icon", href: "/favicon.ico", sizes: "any" }],
     },
   },
@@ -34,7 +37,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: "/login",
       callback: "/callback",
-      exclude: ["/about"]
-    }
+      exclude: ["/about"],
+    },
   },
 });
