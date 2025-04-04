@@ -27,7 +27,8 @@
             :ui="{ label: 'text-[var(--color-m7)] dark:text-[var(--color-m2)]' }">
             <div class="relative">
               <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'"
-                placeholder="Ingrese su contraseña" color="neutral" variant="soft" class="border rounded-lg text-[var(--color-m2)] font-sans" />
+                placeholder="Ingrese su contraseña" color="neutral" variant="soft"
+                class="border rounded-lg text-[var(--color-m2)] font-sans" />
               <button type="button"
                 class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 @click="showPassword = !showPassword">
@@ -42,7 +43,8 @@
           </div>
 
           <!-- Submit Button -->
-          <UButton block type="submit" color="primary" class="tracking-widest uppercase">
+          <UButton block type="submit" color="primary" class="tracking-widest uppercase" :loading="isLoading"
+            :disabled="isLoading">
             Ingresar
           </UButton>
         </UForm>
@@ -68,6 +70,7 @@ import { useSupabaseClient, useRouter, useToast } from '#imports';
 const supabase = useSupabaseClient();
 const router = useRouter();
 const toast = useToast();
+const isLoading = ref(false);
 
 const state = reactive({
   email: '',
@@ -83,6 +86,8 @@ const login = async () => {
       return;
     }
 
+    isLoading.value = true; // Inicia la carga
+
     const { error } = await supabase.auth.signInWithPassword({
       email: state.email.trim(),
       password: state.password.trim(),
@@ -96,6 +101,8 @@ const login = async () => {
     const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error inesperado.';
     console.error('Error al iniciar sesión:', errorMessage);
     toast.add({ title: 'Error', description: errorMessage, color: 'red' });
+  } finally {
+    isLoading.value = false; // Finaliza la carga, pase lo que pase
   }
 };
 
