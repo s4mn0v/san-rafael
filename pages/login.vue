@@ -20,14 +20,14 @@
           <!-- Email Input -->
           <UFormGroup label="Email" name="email" :ui="{ label: 'text-[var(--color-m7)] dark:text-[var(--color-m2)]' }">
             <UInput v-model="state.email" type="email" placeholder="Ingrese su email" color="neutral" variant="soft"
-              class="border rounded-lg text-[var(--color-m2)]" />
+              class="border rounded-lg text-[var(--color-m2)] font-sans" />
           </UFormGroup>
 
           <UFormGroup label=" Contraseña" name="password"
             :ui="{ label: 'text-[var(--color-m7)] dark:text-[var(--color-m2)]' }">
             <div class="relative">
               <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'"
-                placeholder="Ingrese su contraseña" color="neutral" variant="soft" class="border rounded-lg text-[var(--color-m2)]" />
+                placeholder="Ingrese su contraseña" color="neutral" variant="soft" class="border rounded-lg text-[var(--color-m2)] font-sans" />
               <button type="button"
                 class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                 @click="showPassword = !showPassword">
