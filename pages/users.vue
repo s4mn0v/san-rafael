@@ -1,6 +1,8 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'logged'
+  layout: 'logged',
+  middleware: ['role-guard'],
+  roles: ['admin']
 })
 
 // Define las columnas que quieres mostrar en la tabla.
@@ -21,7 +23,7 @@ const columns = [{
 // Usamos useFetch para llamar a nuestro endpoint API
 // Especificamos el tipo de dato esperado para mejor autocompletado y seguridad de tipos
 // Reemplaza `Profile[]` con el tipo correcto si lo tienes, o usa `any[]` si no.
-const { data: profiles, pending, error, refresh } = await useFetch<Profile[]>('/api/users', {
+const { data: profiles, pending, error, refresh } = await useFetch<Profile[]>('/api/users/users', {
   // lazy: true, // Descomenta si quieres carga diferida (mostrará 'loading' inicialmente)
   // server: false // Descomenta si SÓLO quieres que se ejecute en el cliente (menos común para listas iniciales)
 })
