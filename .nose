@@ -1,0 +1,97 @@
+-- Elimina la función si ya existe para evitar errores al volver a ejecutar
+DROP FUNCTION IF EXISTS public.is_admin();
+
+-- Función que verifica si el usuario autenticado tiene el rol 'admin'
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER -- ¡MUY IMPORTANTE! Ejecuta con permisos elevados para leer 'profiles'.
+STABLE           -- Indica que no modifica la base de datos.
+SET search_path = public -- Asegura que encuentre la tabla 'profiles'.
+AS $$
+DECLARE
+    user_role TEXT;
+BEGIN
+    -- Verifica si el usuario está autenticado
+    IF auth.uid() IS NULL THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Obtiene el rol del usuario actual desde la tabla 'profiles'
+    SELECT role INTO user_role
+    FROM profiles
+    WHERE id = auth.uid(); -- auth.uid() es el ID del usuario autenticado
+
+    -- Devuelve TRUE si el rol es 'admin', FALSE en caso contrario o si no se encuentra perfil
+    RETURN user_role = 'admin';
+
+EXCEPTION
+    -- Si el usuario no tiene fila en 'profiles', no es admin
+    WHEN NO_DATA_FOUND THEN
+        RETURN FALSE;
+    -- Manejo básico de otros errores
+    WHEN OTHERS THEN
+        -- Puedes registrar el error si es necesario
+        -- RAISE WARNING 'Error checking admin status for user %: %', auth.uid(), SQLERRM;
+        RETURN FALSE;
+END;
+$$;
+
+-- Otorga permiso de ejecución a los usuarios autenticados para que puedan llamar a la función en las políticas
+GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+
+-- Opcional: Revocar permiso público si existiera (más seguro)
+-- REVOKE EXECUTE ON FUNCTION public.is_admin() FROM public;
+
+-- Borra políticas antiguas si existen (opcional, pero ayuda a limpiar)
+-- Asegúrate de que los nombres coincidan si reemplazas políticas específicas
+-- DROP POLICY IF EXISTS "Allow individual read access" ON public.profiles;
+-- DROP POLICY IF EXISTS "Allow individual update access" ON public.profiles;
+-- DROP POLICY IF EXISTS "Admin access" ON public.profiles; -- Nombre genérico, ajusta si usaste otros
+-- DROP POLICY IF EXISTS "Enable read access for all users" ON public.profiles; -- Si existiera una política pública general
+-- ... elimina otras políticas que quieras reemplazar ...
+
+-- 1. POLÍTICA SELECT (Leer)
+CREATE POLICY "Allow admin OR owner read access"
+ON public.profiles
+FOR SELECT
+TO authenticated -- Aplica a usuarios autenticados
+USING (
+  (auth.uid() = id) OR (public.is_admin()) -- Puede leer su propio perfil O si es admin
+);
+
+-- 2. POLÍTICA INSERT (Crear)
+-- Nota: La creación de perfiles a menudo se maneja con triggers en auth.users.
+-- Esta política permite a un usuario crear SU PROPIO perfil si aún no existe,
+-- O a un admin crear cualquier perfil (si tu lógica de app lo requiere).
+CREATE POLICY "Allow self OR admin profile creation"
+ON public.profiles
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  (auth.uid() = id) OR (public.is_admin())
+);
+
+-- 3. POLÍTICA UPDATE (Actualizar)
+CREATE POLICY "Allow admin OR owner update access"
+ON public.profiles
+FOR UPDATE
+TO authenticated
+USING ( -- Define QUÉ filas se pueden actualizar
+  (auth.uid() = id) OR (public.is_admin()) -- Puede actualizar su propio perfil O si es admin (puede actualizar cualquiera)
+)
+WITH CHECK ( -- Define QUÉ datos son válidos DESPUÉS de la actualización
+  (auth.uid() = id) OR (public.is_admin()) -- Asegura que la fila resultante siga siendo válida (p.ej. no cambiar el ID a otro usuario si no eres admin)
+);
+
+-- 4. POLÍTICA DELETE (Eliminar)
+-- Generalmente, solo los admins deberían poder eliminar perfiles directamente.
+-- La eliminación de usuarios normalmente se gestiona borrando desde auth.users.
+CREATE POLICY "Allow ONLY admins to delete profiles"
+ON public.profiles
+FOR DELETE
+TO authenticated
+USING (
+  public.is_admin() -- Solo si la función is_admin() devuelve true
+);
+
