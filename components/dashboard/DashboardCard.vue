@@ -7,7 +7,7 @@ defineProps<{
 
 <template>
   <div class="p-4 rounded-2xl shadow-md w-full dark:bg-[var(--color-m7)] bg-[var(--color-m2)]">
-    <div class="flex justify-between items-center mb-4 text-[var(--color-m7)] dark:text-[var(--color-m2)]">
+    <div class="flex justify-between items-center mb-2 text-[var(--color-m7)] dark:text-[var(--color-m2)]">
       <span class="text-sm font-semibold uppercase text-[var(--color-m7)] dark:text-[var(--color-m2)] tracking-widest">{{ title }}</span>
       <UIcon v-if="icon" :name="icon" class="w-8 h-8" />
     </div>

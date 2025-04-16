@@ -57,11 +57,11 @@
 
     <!-- Bottom Navigation Menu (Only for Mobile) - Apply filtering here too -->
     <div
-      class="fixed bottom-0 left-0 z-50 flex w-full justify-around border-t border-gray-200 bg-[var(--color-m2)] py-3 md:hidden dark:border-gray-700 dark:bg-[var(--color-m7)]">
+      class="fixed bottom-0 left-0 z-50 flex w-full justify-around bg-[var(--color-m2)] py-2 md:hidden dark:border-gray-700 dark:bg-[var(--color-m7)]">
       <!-- Use the same filtered list for mobile -->
       <NuxtLink v-for="item in filteredNavigationItems" :key="`mobile-${item.to}`" :to="item.to"
-        class="flex flex-col items-center text-[var(--color-m7)] transition-colors hover:text-gray-900 dark:text-[var(--color-m2)] dark:hover:text-white"
-        active-class="!text-blue-600 dark:!text-blue-400">
+        class="flex h-12 w-12 items-center justify-center text-[var(--color-m7)] transition-all duration-200 hover:text-gray-900 dark:text-[var(--color-m2)] dark:hover:text-white"
+        active-class="!bg-[var(--color-m2)] !text-[var(--color-m7)] !rounded-full">
         <UIcon :name="item.icon" class="h-6 w-6 text-inherit" :title="item.label" />
       </NuxtLink>
     </div>
@@ -83,7 +83,7 @@ interface NavigationItem {
 const collapsed = useCookie('sidebar-collapsed', { default: () => false, sameSite: 'lax' });
 
 // Acceder al estado global del rol del usuario
-const userRole = useState < string | null > ('userRole'); // Usa la misma clave que en el middleware
+const userRole = useState<string | null>('userRole'); // Usa la misma clave que en el middleware
 
 // Lista base de todos los posibles items de navegación
 const allNavigationItems: NavigationItem[] = [
