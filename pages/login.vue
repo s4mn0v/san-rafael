@@ -1,31 +1,29 @@
 <template>
-  <div class="flex min-h-screen w-full bg-[var(--color-m7)] dark:bg-[var(--color-m2)] overflow-hidden">
+  <div class="flex min-h-screen w-full overflow-hidden bg-[var(--color-m7)] dark:bg-[var(--color-m2)]">
     <!-- Form Container con animación de entrada -->
-    <div class="flex w-full md:w-1/2 items-center justify-center p-6 md:p-10 animate-fade-in-right">
+    <div class="animate-fade-in-right flex w-full items-center justify-center p-6 md:w-1/2 md:p-10">
       <div class="absolute top-4 right-4 z-50">
         <Theming />
       </div>
       <div class="w-full max-w-md space-y-6">
-        <!-- Logo con animación -->
-        <div class="animate-bounce-in">
-          <!-- Imagen para el tema oscuro (se muestra si isDark es true) -->
-          <img v-if="isDark" src="/assets/img/logo-white.webp" alt="Logo San Rafael - Tema Oscuro"
-            class="h-40 w-auto mx-auto transform hover:scale-105 transition-transform duration-300" />
+        <ClientOnly>
+          <!-- Logo con animación -->
+          <div class="animate-bounce-in">
+            <!-- Imagen para el tema oscuro (se muestra si isDark es true) -->
+            <img v-if="isDark" src="/assets/img/logo-white.webp" alt="Logo San Rafael - Tema Oscuro"
+              class="mx-auto h-70 w-auto transform transition-transform duration-300 hover:scale-105" />
 
-          <!-- Imagen para el tema claro (se muestra si isDark es false) -->
-          <img v-else src="/assets/img/logo-black.webp" alt="Logo San Rafael - Tema Claro"
-            class="h-40 w-auto mx-auto transform hover:scale-105 transition-transform duration-300" />
-
-        </div>
+            <!-- Imagen para el tema claro (se muestra si isDark es false) -->
+            <img v-else src="/assets/img/logo-black.webp" alt="Logo San Rafael - Tema Claro"
+              class="mx-auto h-70 w-auto transform transition-transform duration-300 hover:scale-105" />
+          </div>
+        </ClientOnly>
 
         <!-- Contenido del formulario -->
         <div class="mt-8 space-y-6">
           <div class="animate-fade-in-up delay-100">
-            <h2 class="text-3xl font-semibold text-gray-800 dark:text-white mb-2 text-center">
-              Bienvenido de vuelta
-            </h2>
-            <p class="text-gray-500 dark:text-gray-400 text-center">
-              Por favor ingresa tus credenciales para continuar
+            <h2 class="mb-2 text-center text-3xl font-semibold text-gray-800 dark:text-white">Bienvenido de vuelta</h2>
+            <p class="text-center text-gray-500 dark:text-gray-400">Por favor ingresa tus credenciales para continuar
             </p>
           </div>
 
@@ -33,21 +31,19 @@
             <UForm :state="state" class="space-y-5" @submit="login">
               <div class="animate-fade-in-up delay-200">
                 <UInput v-model="state.email" type="email" placeholder="ejemplo@email.com" icon="i-heroicons-envelope"
-                  class="w-full rounded-lg"
-                  autocomplete="username" />
+                  class="w-full rounded-lg" autocomplete="username" />
               </div>
 
               <div class="animate-fade-in-up delay-300">
                 <UFormGroup label="Contraseña" name="password">
                   <div class="relative">
                     <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'"
-                      placeholder="Ingresa tu contraseña" icon="i-heroicons-lock-closed"
-                      class="w-full pr-10 rounded-lg"
+                      placeholder="Ingresa tu contraseña" icon="i-heroicons-lock-closed" class="w-full rounded-lg pr-10"
                       autocomplete="current-password" />
                     <button type="button"
-                      class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                      class="absolute inset-y-0 right-2 flex cursor-pointer items-center text-gray-500 transition-colors dark:text-gray-300"
                       @click="showPassword = !showPassword" aria-label="Toggle password visibility">
-                      <UIcon :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" class="w-5 h-5" />
+                      <UIcon :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" class="h-5 w-5" />
                     </button>
                   </div>
                 </UFormGroup>
@@ -55,7 +51,7 @@
 
               <div class="animate-fade-in-up delay-500">
                 <UButton block type="submit" :loading="isLoading"
-                  class="mt-6 w-full py-3 font-medium rounded-lg bg-[var(--color-m2)] text-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m2)] hover:bg-[var(--color-m5)] dark:hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] dark:hover:text-[var(--color-m7)] active:bg-[var(--color-m7)] dark:active:bg-[var(--color-m2)] active:text-[var(--color-m2)] dark:active:text-[var(--color-m7)] transition transform hover:scale-[1.01] shadow-md hover:shadow-lg uppercase tracking-widest">
+                  class="mt-6 w-full transform cursor-pointer rounded-lg bg-[var(--color-m2)] py-3 font-medium tracking-widest text-[var(--color-m7)] uppercase shadow-md transition hover:scale-[1.01] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] hover:shadow-lg active:bg-[var(--color-m2)] active:text-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)] dark:active:bg-[var(--color-m2)] dark:active:text-[var(--color-m7)]">
                   <span v-if="!isLoading">Ingresar</span>
                 </UButton>
               </div>
@@ -66,16 +62,16 @@
     </div>
 
     <!-- Sección de imagen con efecto parallax -->
-    <div class="hidden md:flex md:w-1/2 h-screen relative overflow-hidden">
+    <div class="relative hidden h-screen overflow-hidden md:flex md:w-1/2">
       <div class="parallax-bg h-full w-full">
         <img src="/assets/img/orion.jpg" alt="Imagen decorativa"
-          class="h-full w-full object-cover object-center transform scale-110" />
+          class="h-full w-full scale-110 transform object-cover object-center" />
       </div>
       <div
-        class="absolute inset-0 bg-gradient-to-t from-black/60 to-black/30 backdrop-blur-sm flex items-center justify-center p-10 transition-all duration-500 hover:backdrop-blur-none">
-        <div class="text-white text-center max-w-md animate-fade-in">
-          <UIcon name="i-heroicons-rocket-launch" class="w-12 h-12 mx-auto mb-4 animate-pulse" />
-          <h3 class="text-3xl font-bold mb-4">Explora nuevas posibilidades</h3>
+        class="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/60 to-black/30 p-10 backdrop-blur-sm transition-all duration-500 hover:backdrop-blur-none">
+        <div class="animate-fade-in max-w-md text-center text-white">
+          <UIcon name="i-heroicons-rocket-launch" class="mx-auto mb-4 h-12 w-12 animate-pulse" />
+          <h3 class="mb-4 text-3xl font-bold">Explora nuevas posibilidades</h3>
           <p class="text-lg opacity-90">Descubre todo lo que nuestra plataforma tiene para ofrecerte</p>
         </div>
       </div>
@@ -105,7 +101,7 @@ const login = async () => {
       title: 'Campos requeridos',
       description: 'Por favor completa todos los campos',
       icon: 'i-heroicons-exclamation-circle',
-      color: 'amber'
+      color: 'warning'
     });
     return;
   }
@@ -127,7 +123,7 @@ const login = async () => {
       title: '¡Bienvenido!',
       description: 'Has iniciado sesión correctamente',
       icon: 'i-heroicons-check-circle',
-      color: 'emerald'
+      color: 'success'
     });
 
     router.push('/');
@@ -141,7 +137,7 @@ const login = async () => {
       title: 'Error',
       description: message,
       icon: 'i-heroicons-exclamation-circle',
-      color: 'red'
+      color: 'error'
     });
   } finally {
     isLoading.value = false;

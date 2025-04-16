@@ -21,6 +21,15 @@
   font-style: normal;
 }
 
+input {
+  font-family: sans-serif;
+  letter-spacing: 0.05cap;
+}
+
+.dark input {
+  background-color: var(--color-m7);
+}
+
 .dark {
   background-color: var(--color-m2);
   color: var(--color-m7);

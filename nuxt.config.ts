@@ -32,8 +32,12 @@ export default defineNuxtConfig({
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => tag.startsWith("UFormGroup"),
-    }
+    },
   },
+
+  // routeRules: {
+  //   "/login": { ssr: false },
+  // },
 
   modules: ["@nuxt/ui", "@nuxtjs/supabase"],
 
