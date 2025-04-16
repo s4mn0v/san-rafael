@@ -18,7 +18,7 @@
       </UTable>
       <ClientOnly>
         <UButton label="Refresh Users" icon="i-heroicons-arrow-path" :loading="pending" @click="() => refresh()"
-          class="mt-4 cursor-pointer" color />
+          class="mt-4 cursor-pointer" color/>
       </ClientOnly>
     </div>
   </div>
