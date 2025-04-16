@@ -9,8 +9,30 @@ export default defineNuxtConfig({
       meta: [
         { name: "viewport", content: "width=device-width, initial-scale=1" },
       ],
-      link: [{ rel: "icon", href: "/favicon.ico", sizes: "any" }],
+      link: [
+        { rel: "icon", href: "/favicon.ico", sizes: "any" },
+        // Google Font
+        {
+          rel: "preconnect",
+          href: "https://fonts.googleapis.com",
+        },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossorigin: "", // Boolean attribute 'crossorigin'
+        },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap",
+        },
+      ],
     },
+  },
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag.startsWith("UFormGroup"),
+    }
   },
 
   modules: ["@nuxt/ui", "@nuxtjs/supabase"],
@@ -32,7 +54,6 @@ export default defineNuxtConfig({
   supabase: {
     url: process.env.NUXT_SUPABASE_URL,
     key: process.env.NUXT_SUPABASE_KEY,
-    // Desactivar si se necista ver una pagina sin hacer login
     redirect: true,
     redirectOptions: {
       login: "/login",

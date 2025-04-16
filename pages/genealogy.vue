@@ -4,7 +4,6 @@
 </template>
 
 <script setup lang="ts">
-import genalogy from '../components/charts/Genealogy.vue'
 
 definePageMeta({
   layout: 'logged'

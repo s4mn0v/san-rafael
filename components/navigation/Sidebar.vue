@@ -35,14 +35,14 @@
         <!-- Button to Expand/Collapse Sidebar -->
         <div class="absolute bottom-0 right-0 flex justify-end">
           <button @click="collapsed = !collapsed"
-            class="transform rounded-l-md px-2 pt-3 pb-2 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m7)]">
+            class="transform rounded-l-md px-2 pt-3 pb-2 text-[var(--color-m7)] transition-colors hover:bg-[var(--color-m7)] hover:text-[var(--color-m2)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m7)] cursor-pointer">
             <UIcon :name="collapsed ? 'i-heroicons-chevron-right' : 'i-heroicons-chevron-left'" class="h-6 w-6" />
           </button>
         </div>
       </div>
 
       <!-- Logout and Theming Buttons -->
-      <div :class="['flex w-full px-3 text-[var(--color-m7)] dark:text-[var(--color-m2)] cursor-default transition-all duration-300 mt-auto',
+      <div :class="['flex w-full px-3 text-[var(--color-m7)] dark:text-[var(--color-m2)] transition-all duration-300 mt-auto',
         collapsed ? 'flex-col items-center gap-2 py-4' : 'flex-row justify-between h-16 items-center']">
         <Logout />
         <Theming />
@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useCookie, useState } from '#app' // Importar useState
 
 // Tipado para los items de navegación (opcional pero recomendado)
@@ -125,9 +125,4 @@ const filteredNavigationItems = computed(() => {
     }
   });
 });
-
-// Asegúrate de tener los componentes Logout y Theming importados si no son globales
-// import Logout from '~/components/Logout.vue';
-// import Theming from '~/components/Theming.vue';
-
 </script>

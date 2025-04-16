@@ -1,15 +1,21 @@
 <template>
-  <div class="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900 overflow-hidden">
+  <div class="flex min-h-screen w-full bg-[var(--color-m7)] dark:bg-[var(--color-m2)] overflow-hidden">
     <!-- Form Container con animación de entrada -->
     <div class="flex w-full md:w-1/2 items-center justify-center p-6 md:p-10 animate-fade-in-right">
+      <div class="absolute top-4 right-4 z-50">
+        <Theming />
+      </div>
       <div class="w-full max-w-md space-y-6">
         <!-- Logo con animación -->
         <div class="animate-bounce-in">
-          <img 
-            src="/assets/css/logo.webp"  
-            alt="Logo San Rafael" 
-            class="h-24 w-auto mx-auto mb-4 transform hover:scale-105 transition-transform duration-300" 
-          />
+          <!-- Imagen para el tema oscuro (se muestra si isDark es true) -->
+          <img v-if="isDark" src="/assets/img/logo-white.webp" alt="Logo San Rafael - Tema Oscuro"
+            class="h-40 w-auto mx-auto transform hover:scale-105 transition-transform duration-300" />
+
+          <!-- Imagen para el tema claro (se muestra si isDark es false) -->
+          <img v-else src="/assets/img/logo-black.webp" alt="Logo San Rafael - Tema Claro"
+            class="h-40 w-auto mx-auto transform hover:scale-105 transition-transform duration-300" />
+
         </div>
 
         <!-- Contenido del formulario -->
@@ -23,74 +29,38 @@
             </p>
           </div>
 
-          <!-- Formulario con animaciones escalonadas -->
-          <UForm :state="state" class="space-y-5" @submit="login">
-            <div class="animate-fade-in-up delay-200">
-              <UFormGroup label="Email" name="email">
-                <UInput 
-                  v-model="state.email" 
-                  type="email" 
-                  placeholder="ejemplo@email.com" 
-                  icon="i-heroicons-envelope"
-                  class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:shadow-md"
-                  autocomplete="username"
-                />
-              </UFormGroup>
-            </div>
-
-            <div class="animate-fade-in-up delay-300">
-              <UFormGroup label="Contraseña" name="password">
-                <div class="relative">
-                  <UInput 
-                    v-model="state.password" 
-                    :type="showPassword ? 'text' : 'password'" 
-                    placeholder="Ingresa tu contraseña"
-                    icon="i-heroicons-lock-closed"
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:shadow-md"
-                    autocomplete="current-password"
-                  />
-                  <button 
-                    type="button" 
-                    class="absolute right-3 top-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                    @click="showPassword = !showPassword"
-                    aria-label="Toggle password visibility"
-                  >
-                    <UIcon 
-                      :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" 
-                      class="w-5 h-5" 
-                    />
-                  </button>
-                </div>
-              </UFormGroup>
-            </div>
-
-            <div class="animate-fade-in-up delay-400">
-              <div class="flex justify-between items-center">
-                <label class="flex items-center space-x-2">
-                  <UCheckbox v-model="rememberMe" class="hover:ring-2 hover:ring-blue-300 transition-all" />
-                  <span class="text-sm text-gray-600 dark:text-gray-400">Recordar sesión</span>
-                </label>
-                
-                <NuxtLink 
-                  to="/forgot-password" 
-                  class="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-                >
-                  
-                </NuxtLink>
+          <ClientOnly>
+            <UForm :state="state" class="space-y-5" @submit="login">
+              <div class="animate-fade-in-up delay-200">
+                <UInput v-model="state.email" type="email" placeholder="ejemplo@email.com" icon="i-heroicons-envelope"
+                  class="w-full rounded-lg"
+                  autocomplete="username" />
               </div>
-            </div>
 
-            <div class="animate-fade-in-up delay-500">
-              <UButton 
-                block 
-                type="submit" 
-                :loading="isLoading"
-                class="mt-6 w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium rounded-lg transition-all transform hover:scale-[1.01] shadow-md hover:shadow-lg"
-              >
-                <span v-if="!isLoading">Ingresar</span>
-              </UButton>
-            </div>
-          </UForm>
+              <div class="animate-fade-in-up delay-300">
+                <UFormGroup label="Contraseña" name="password">
+                  <div class="relative">
+                    <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'"
+                      placeholder="Ingresa tu contraseña" icon="i-heroicons-lock-closed"
+                      class="w-full pr-10 rounded-lg"
+                      autocomplete="current-password" />
+                    <button type="button"
+                      class="absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                      @click="showPassword = !showPassword" aria-label="Toggle password visibility">
+                      <UIcon :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" class="w-5 h-5" />
+                    </button>
+                  </div>
+                </UFormGroup>
+              </div>
+
+              <div class="animate-fade-in-up delay-500">
+                <UButton block type="submit" :loading="isLoading"
+                  class="mt-6 w-full py-3 font-medium rounded-lg bg-[var(--color-m2)] text-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m2)] hover:bg-[var(--color-m5)] dark:hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] dark:hover:text-[var(--color-m7)] active:bg-[var(--color-m7)] dark:active:bg-[var(--color-m2)] active:text-[var(--color-m2)] dark:active:text-[var(--color-m7)] transition transform hover:scale-[1.01] shadow-md hover:shadow-lg uppercase tracking-widest">
+                  <span v-if="!isLoading">Ingresar</span>
+                </UButton>
+              </div>
+            </UForm>
+          </ClientOnly>
         </div>
       </div>
     </div>
@@ -98,13 +68,11 @@
     <!-- Sección de imagen con efecto parallax -->
     <div class="hidden md:flex md:w-1/2 h-screen relative overflow-hidden">
       <div class="parallax-bg h-full w-full">
-        <img 
-          src="/assets/img/orion.jpg" 
-          alt="Imagen decorativa" 
-          class="h-full w-full object-cover object-center transform scale-110"
-        />
+        <img src="/assets/img/orion.jpg" alt="Imagen decorativa"
+          class="h-full w-full object-cover object-center transform scale-110" />
       </div>
-      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-black/30 backdrop-blur-sm flex items-center justify-center p-10 transition-all duration-500 hover:backdrop-blur-none">
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/60 to-black/30 backdrop-blur-sm flex items-center justify-center p-10 transition-all duration-500 hover:backdrop-blur-none">
         <div class="text-white text-center max-w-md animate-fade-in">
           <UIcon name="i-heroicons-rocket-launch" class="w-12 h-12 mx-auto mb-4 animate-pulse" />
           <h3 class="text-3xl font-bold mb-4">Explora nuevas posibilidades</h3>
@@ -123,7 +91,8 @@ const supabase = useSupabaseClient();
 const router = useRouter();
 const isLoading = ref(false);
 const showPassword = ref(false);
-const rememberMe = ref(false);
+const colorMode = useColorMode()
+const isDark = computed(() => colorMode.value === 'dark')
 
 const state = reactive({
   email: '',
@@ -132,9 +101,9 @@ const state = reactive({
 
 const login = async () => {
   if (!state.email || !state.password) {
-    useToast().add({ 
-      title: 'Campos requeridos', 
-      description: 'Por favor completa todos los campos', 
+    useToast().add({
+      title: 'Campos requeridos',
+      description: 'Por favor completa todos los campos',
       icon: 'i-heroicons-exclamation-circle',
       color: 'amber'
     });
@@ -143,34 +112,34 @@ const login = async () => {
 
   try {
     isLoading.value = true;
-    const { error } = await supabase.auth.signInWithPassword({ 
-      email: state.email, 
-      password: state.password 
+    const { error } = await supabase.auth.signInWithPassword({
+      email: state.email,
+      password: state.password
     });
-    
+
     if (error) throw error;
-    
+
     // Animación de salida antes de redireccionar
     document.querySelector('.animate-fade-in-right').classList.add('animate-fade-out-left');
     await new Promise(resolve => setTimeout(resolve, 500));
-    
-    useToast().add({ 
-      title: '¡Bienvenido!', 
-      description: 'Has iniciado sesión correctamente', 
+
+    useToast().add({
+      title: '¡Bienvenido!',
+      description: 'Has iniciado sesión correctamente',
       icon: 'i-heroicons-check-circle',
       color: 'emerald'
     });
-    
+
     router.push('/');
   } catch (err) {
     let message = 'Error al iniciar sesión';
     if (err.message.includes('Invalid login credentials')) {
       message = 'Email o contraseña incorrectos';
     }
-    
-    useToast().add({ 
-      title: 'Error', 
-      description: message, 
+
+    useToast().add({
+      title: 'Error',
+      description: message,
       icon: 'i-heroicons-exclamation-circle',
       color: 'red'
     });
@@ -198,6 +167,7 @@ onMounted(() => {
     opacity: 0;
     transform: translateX(20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -209,6 +179,7 @@ onMounted(() => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -227,10 +198,12 @@ onMounted(() => {
     opacity: 0;
     transform: scale(0.8);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.05);
   }
+
   100% {
     transform: scale(1);
   }
@@ -278,19 +251,8 @@ onMounted(() => {
   transition: transform 0.1s ease-out;
 }
 
-/* Efecto de gradiente en el botón */
-.hover\:from-blue-700:hover {
-  --tw-gradient-from: #1d4ed8;
-  --tw-gradient-to: rgba(29, 78, 216, 0);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-.hover\:to-blue-600:hover {
-  --tw-gradient-to: #2563eb;
-}
-  /* Ajustes para modo oscuro */
+/* Ajustes para modo oscuro */
 .dark .parallax-bg img {
   filter: brightness(0.8);
 }
-
 </style>

@@ -1,129 +1,89 @@
 <template>
   <div>
-    <h1>Perfiles de Usuario</h1>
+    <div class="p-4">
+      <h1 class="text-2xl font-semibold mb-4">Users Management</h1>
 
-    <!-- Envuelve el div condicional con el componente Transition -->
-    <Transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="transform -translate-y-2 opacity-0"
-      enter-to-class="transform translate-y-0 opacity-100"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="transform translate-y-0 opacity-100"
-      leave-to-class="transform -translate-y-2 opacity-0"
-    >
-      <!-- El v-if se mantiene en el elemento que quieres animar -->
-      <div v-if="selectedRows.length > 0"
-        class="mb-4 p-2 bg-gray-100 dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-700">
-        <span>{{ selectedRows.length }} usuario(s) seleccionado(s).</span>
-        <!-- Añade botones para acciones en lote -->
-        <UButton size="xs" color="red" variant="outline" class="ml-4">Eliminar Seleccionados</UButton>
-        <UButton size="xs" color="blue" variant="outline" class="ml-2">Cambiar Rol...</UButton>
-      </div>
-    </Transition>
+      <UAlert v-if="error" icon="i-heroicons-exclamation-triangle" color="error" variant="soft"
+        title="Error Fetching Users"
+        :description="error?.data?.message || (error as any).message || 'An unknown error occurred.'" class="mb-4" />
 
-    <!-- El resto de tu template (Tabla, etc.) -->
-    <div v-if="pending">
-      Cargando perfiles...
+      <UTable :columns="columns" :data="users ?? []" :loading="pending"
+        :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No users found.' }">
+        <template #loading-state>
+          <div class="flex items-center justify-center h-32">
+            <i class="loader"></i>
+            <span>Loading users...</span>
+          </div>
+        </template>
+      </UTable>
+      <ClientOnly>
+        <UButton label="Refresh Users" icon="i-heroicons-arrow-path" :loading="pending" @click="() => refresh()"
+          class="mt-4" />
+      </ClientOnly>
     </div>
-    <div v-else-if="error">
-      <p class="text-red-500">No se pudieron cargar los perfiles. Por favor, inténtalo de nuevo.</p>
-      <pre>{{ error.message }}</pre>
-    </div>
-    <UTable
-      v-else
-      ref="userTable"
-      v-model="selectedRows"
-      sticky
-      :columns="columns"
-      :rows="profiles || []"
-      class="flex-1 max-h-[400px]"
-      >
-      <!-- ... slots ... -->
-       <template #actions-data="{ row }">
-        <UDropdown :items="getDropdownItems(row as Profile)" :key="`dropdown-${row.id}`">
-          <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"
-            aria-label="Abrir menú de acciones" />
-        </UDropdown>
-      </template>
-      <template #role-data="{ row }">
-        <span>{{ row.role ?? 'No asignado' }}</span>
-      </template>
-    </UTable>
-
-    <!-- Footer de conteo de selección -->
-    <div v-if="!pending && !error"
-      class="mt-2 px-3 py-3.5 border-t border-gray-200 dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400">
-      {{ selectedRows.length }} de
-      {{ profiles?.length ?? 0 }} fila(s) seleccionada(s).
-    </div>
-
   </div>
 </template>
 
-<!-- El script permanece igual que en la respuesta anterior -->
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import type { DropdownItem, TableColumn } from '#ui/types';
-import { useToast } from '#imports';
+import type { Database } from '~/types/supabase';
+import type { TableColumn } from '@nuxt/ui';
 
-interface Profile {
-  id: string | number;
-  email: string;
-  role: string;
-}
+type Profile = Database['public']['Tables']['profiles']['Row'];
+
+const columns: TableColumn<Profile>[] = [
+  {
+    accessorKey: 'id',
+    header: 'User ID'
+  },
+  {
+    accessorKey: 'email',
+    header: 'Correo'
+  },
+  {
+    accessorKey: 'role',
+    header: 'Role'
+  },
+];
+
+const { data: users, pending, error, refresh } = await useAsyncData<Profile[], CustomError>('users',
+  () => $fetch('/api/users/users'), {
+  lazy: true,
+  server: false,
+});
+
+watch(error, (newError) => {
+  if (newError) {
+    console.error('Error fetching users:',
+      (newError as any).data?.message || (newError as Error).message);
+  }
+});
 
 definePageMeta({
   layout: 'logged',
   middleware: ['role-guard'],
-  roles: ['admin']
+  roles: ['admin'],
 });
-
-const toast = useToast();
-const selectedRows = ref<Profile[]>([]);
-const columns: TableColumn[] = [
-  { key: 'id', label: 'ID', sortable: true },
-  { key: 'email', label: 'Email', sortable: true },
-  { key: 'role', label: 'Rol', sortable: true },
-  { key: 'actions', label: 'Acciones' }
-];
-
-const { data: profiles, pending, error, refresh } = await useFetch<Profile[]>('/api/users/users');
-
-if (error.value) {
-  console.error('Error fetching profiles:', error.value);
-  toast.add({ title: 'Error al cargar perfiles', description: error.value.message, color: 'red' });
-}
-
-function getDropdownItems(row: Profile): DropdownItem[][] {
-   return [
-    [
-      {
-        label: 'Editar',
-        icon: 'i-heroicons-pencil-square-20-solid',
-        click: () => {
-          console.log('Editar perfil:', row.id);
-          toast.add({ title: `Editando usuario ${row.id}` });
-        }
-      }
-    ],
-    [
-      {
-        label: 'Eliminar',
-        icon: 'i-heroicons-trash-20-solid',
-        class: 'text-red-500 dark:text-red-400',
-        click: () => {
-          console.log('Eliminar perfil:', row.id);
-          if (confirm(`¿Estás seguro de que quieres eliminar el perfil ${row.email}?`)) {
-            toast.add({ title: `Eliminando usuario ${row.id}`, color: 'red' });
-            // Lógica para eliminar...
-          }
-        }
-      }
-    ]
-  ];
-}
-
-// const selectedProfileObjects = computed(() => selectedRows.value); // Puedes quitarlo si no lo usas
-const tableRef = useTemplateRef<any>('userTable');
-
 </script>
+
+<style scoped>
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
