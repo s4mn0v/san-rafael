@@ -51,7 +51,7 @@
 
     <!-- Main Content -->
     <div
-      class="m-4 mb-16 flex-1 overflow-auto rounded-xl bg-[var(--color-m7)] p-4 md:m-4 md:pb-4 dark:bg-[var(--color-m2)]">
+      class="m-4 mb-16 flex-1 overflow-auto rounded-xl bg-[var(--color-m7)] p-6 md:m-4 md:pb-4 dark:bg-[var(--color-m2)]">
       <slot />
     </div>
 

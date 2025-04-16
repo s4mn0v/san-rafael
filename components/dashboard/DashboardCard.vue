@@ -6,16 +6,23 @@ defineProps<{
 </script>
 
 <template>
-  <div class="p-4 rounded-2xl shadow-md w-full dark:bg-[var(--color-m7)] bg-[var(--color-m2)]">
-    <div class="flex justify-between items-center mb-2 text-[var(--color-m7)] dark:text-[var(--color-m2)]">
-      <span class="text-sm font-semibold uppercase text-[var(--color-m7)] dark:text-[var(--color-m2)] tracking-widest">{{ title }}</span>
-      <UIcon v-if="icon" :name="icon" class="w-8 h-8" />
-    </div>
-    <div class="p-2 bg-[var(--color-m2)] dark:bg-[var(--color-m2)] rounded-lg text-[var(--color-m7)] text-left text-4xl font-bold">
-      <slot></slot>
-    </div>
-  </div>
-</template>
+  <UCard :ui="{
+    root: 'bg-[var(--color-m2)] dark:bg-[var(--color-m7)]',
+    body: 'p-4',
+    rounded: 'rounded-2xl',
+  }">
+    <template #header>
+      <div class="flex justify-between items-center">
+        <span class="text-[var(--color-m7)] dark:text-[var(--color-m2)] font-bold">
+          {{ title }}
+        </span>
+        <UIcon v-if="icon" :name="icon" class="w-10 h-10 text-[var(--color-m7)] dark:text-[var(--color-m2)]" />
+      </div>
+    </template>
 
-<style scoped>
-</style>
+    <div class="rounded-2xl flex flex-col h-[calc(100%-4rem)] text-[var(--color-m2)] dark:text-[var(--color-m7)] text-left text-2xl font-bold">
+      <slot />
+    </div>
+
+  </UCard>
+</template>
