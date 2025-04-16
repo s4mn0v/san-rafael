@@ -1,7 +1,7 @@
 <template>
       <ClientOnly>
-            <UButton icon="i-heroicons-arrow-left-start-on-rectangle-16-solid" color="black" variant="ghost"
-                  aria-label="Theme" size="xl" class="p-3 cursor-pointer" title="Cerrar Sesi&oacute;n" @click="logout">
+            <UButton icon="i-heroicons-arrow-left-start-on-rectangle-16-solid" variant="ghost"
+                  aria-label="Theme" size="xl" class="p-3 cursor-pointer bg-none" title="Cerrar Sesi&oacute;n" @click="logout">
             </UButton>
             <template #fallback>
                   <div class="w-12 h-12" />

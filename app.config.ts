@@ -3,17 +3,23 @@ export default defineAppConfig({
     colors: {
       primary: "zinc-800",
       neutral: "gray",
-      color_1: "var(--color-m1)",
-      color_2: "var(--color-m2)",
-      color_3: "var(--color-m3)",
-      color_4: "var(--color-m4)",
-      color_5: "var(--color-m5)",
-      color_6: "var(--color-m6)",
-      color_7: "var(--color-m7)",
     },
     input: {
       slots: {
-        base: "focus:border-transparent transition-all hover:shadow-md",
+        base: "focus:border-transparent transition-all hover:shadow-md dark:text-[var(--color-m2)]",
+      },
+    },
+    button: {
+      slots: {
+        base: "bg-[var(--color-m2)] text-white hover:bg-[var(--color-m5)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m2)] dark:hover:text-[var(--color-m7)] cursor-pointer",
+      },
+    },
+    toast: {
+      slots: {
+        root: "bg-[var(--color-m2)] text-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m2)] border-0 ring-0",
+        title: "text-[var(--color-m7)] dark:text-[var(--color-m2)]",
+        close:
+          "bg-[var(--color-m2)] text-[var(--color-m7)] hover:bg-[var(--color-m2)] dark:hover:bg-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m2)]",
       },
     },
   },

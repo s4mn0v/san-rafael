@@ -51,7 +51,7 @@
 
               <div class="animate-fade-in-up delay-500">
                 <UButton block type="submit" :loading="isLoading"
-                  class="mt-6 w-full transform cursor-pointer rounded-lg bg-[var(--color-m2)] py-3 font-medium tracking-widest text-[var(--color-m7)] uppercase shadow-md transition hover:scale-[1.01] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] hover:shadow-lg active:bg-[var(--color-m2)] active:text-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)] dark:active:bg-[var(--color-m2)] dark:active:text-[var(--color-m7)]">
+                  class="mt-6 w-full transform cursor-pointer rounded-lg bg-[var(--color-m2)] py-3 font-medium tracking-widest text-[var(--color-m7)] uppercase shadow-md transition hover:scale-[1.01] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] hover:shadow-lg active:bg-[var(--color-m2)]  active:text-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m2)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)] dark:active:bg-[var(--color-m7)] dark:active:text-[var(--color-m2)]">
                   <span v-if="!isLoading">Ingresar</span>
                 </UButton>
               </div>
@@ -65,7 +65,7 @@
     <div class="relative hidden h-screen overflow-hidden md:flex md:w-1/2">
       <div class="parallax-bg h-full w-full">
         <img src="/assets/img/orion.jpg" alt="Imagen decorativa"
-          class="h-full w-full scale-110 transform object-cover object-center" />
+          class="h-full w-full scale-110 transform object-cover object-center grayscale" />
       </div>
       <div
         class="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/60 to-black/30 p-10 backdrop-blur-sm transition-all duration-500 hover:backdrop-blur-none">
@@ -101,7 +101,7 @@ const login = async () => {
       title: 'Campos requeridos',
       description: 'Por favor completa todos los campos',
       icon: 'i-heroicons-exclamation-circle',
-      color: 'warning'
+      color: 'warning',
     });
     return;
   }

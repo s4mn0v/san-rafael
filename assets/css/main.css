@@ -21,15 +21,7 @@
   font-style: normal;
 }
 
-input {
-  font-family: sans-serif;
-  letter-spacing: 0.05cap;
-}
-
-.dark input {
-  background-color: var(--color-m7);
-}
-
+/* Theming */
 .dark {
   background-color: var(--color-m2);
   color: var(--color-m7);
@@ -44,3 +36,22 @@ input {
 body {
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
+
+/* Input Desing */
+input {
+  font-family: sans-serif;
+  letter-spacing: 0.05cap;
+}
+
+.dark input {
+  background-color: var(--color-m7);
+}
+
+/* Button Design
+button {
+  background-color: var(--color-m2);
+}
+
+.dark button {
+  background-color: var(--color-m7);
+} */

@@ -1,8 +1,6 @@
 <template>
   <h1 class="text-2xl font-semibold uppercase tracking-widest">Dashboard</h1>
 
-  <UDivider class="my-6" />
-
   <div class="grid grid-cols-2 gap-4">
     <DashboardCard title="Total de Animales" icon="i-healthicons-animal-cow">
       <div class="px-6">00</div>
@@ -12,8 +10,6 @@
       <div class="px-6">00</div>
     </DashboardCard>
   </div>
-
-  <UDivider class="my-6" />
 
   <DashboardCard title="Control de Inventario">
     <div class="grid grid-cols-3 gap-6 content-container">
@@ -30,9 +26,13 @@
       </DashboardContainer>
     </div>
   </DashboardCard>
+  
+  <UButton color>Button</UButton>
 </template>
 
 <script setup lang="ts">
+import { UButton } from '#components';
+
 definePageMeta({
   layout: 'logged'
 })

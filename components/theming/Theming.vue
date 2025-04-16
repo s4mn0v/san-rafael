@@ -12,7 +12,7 @@ const isDark = computed({
 
 <template>
   <ClientOnly>
-    <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun'" color="primary" variant="ghost"
+    <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun'" color variant="ghost"
       aria-label="Theme" @click="isDark = !isDark" size="xl" class="p-3 cursor-pointer" title="Cambiar Tema">
     </UButton>
     <template #fallback>
