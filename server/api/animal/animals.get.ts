@@ -1,56 +1,85 @@
-// server/api/animal/get.ts
-import { serverSupabaseClient } from '#supabase/server';
-import { Database } from '~/types/supabase';
+// server/api/animal/animals.get.ts
+import { serverSupabaseClient } from "#supabase/server";
+import { Database } from "~/types/supabase";
+import { createError } from "h3"; // Asegúrate de importar createError
 
 export default defineEventHandler(async (event) => {
-  console.log('--- HITTING /api/animal/get ---'); // Log para saber que se ejecuta
+  console.log("--- HITTING /api/animal/animals.get ---"); // Mantén este log
   const client = await serverSupabaseClient<Database>(event);
 
-  // Intenta obtener la sesión para ver si el usuario está autenticado aquí
-  let sessionUserId = null;
-  try {
-    const { data: { session }, error: sessionError } = await client.auth.getSession();
-    if (sessionError) {
-        console.error('Error getting session in API route:', sessionError);
-    }
-    if (session?.user) {
-        console.log('User session found in API route. User ID:', session.user.id);
-        sessionUserId = session.user.id;
-    } else {
-        console.warn('No active user session found in API route!');
-    }
-  } catch (e) {
-      console.error('Exception getting session:', e)
+  const query = getQuery(event);
+  const page = query.page ? Number(query.page) : 1; // Default a 1 si no se provee
+  const pageSize = query.pageSize ? Number(query.pageSize) : 10; // Default a 10
+
+  // Log de los parámetros recibidos y parseados
+  console.log(`API Received Query: ${JSON.stringify(query)}`);
+  console.log(`API Parsed - Page: ${page}, PageSize: ${pageSize}`);
+
+  // Validar paginación
+  if (isNaN(page) || page < 1) {
+    console.error("API Error: Invalid page number received:", query.page);
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Número de página inválido",
+    });
+  }
+  if (isNaN(pageSize) || pageSize < 1) {
+    console.error("API Error: Invalid page size received:", query.pageSize);
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Tamaño de página inválido",
+    });
   }
 
+  const rangeFrom = (page - 1) * pageSize;
+  const rangeTo = rangeFrom + pageSize - 1;
+  console.log(`API Calculated Range: From ${rangeFrom} To ${rangeTo}`); // Log del rango
+
   try {
-    console.log('Attempting to fetch animals from Supabase...');
-    const { data, error } = await client
-      .from('animals')
-      .select('*')
-      .order('fecha_nacimiento', { ascending: false });
+    // Obtener total (se puede optimizar si no cambia mucho, pero es más seguro así)
+    const { count, error: countError } = await client
+      .from("animals")
+      .select("*", { count: "exact", head: true }); // count: 'exact' es clave
 
-    // Loguea SIEMPRE el resultado, incluso si no hay error explícito
-    console.log('Supabase response:', { data, error });
-
-    if (error) {
-      console.error('Error fetching animals from Supabase:', error);
-      throw createError({
-        statusCode: 500,
-        statusMessage: `Error al obtener animales: ${error.message}`,
-      });
+    if (countError) {
+      console.error("API Supabase count error:", countError);
+      throw countError; // Relanza el error
     }
+    console.log(`API Fetched Count: ${count}`); // Log del conteo
 
-    // Loguea lo que se va a devolver
-    const responsePayload = { animals: data || [] };
-    console.log('Returning payload:', responsePayload);
-    return responsePayload;
+    // Obtener datos paginados
+    const { data, error: dataError } = await client
+      .from("animals")
+      .select("*")
+      .order("fecha_nacimiento", { ascending: false }) // O el orden que prefieras
+      .range(rangeFrom, rangeTo); // Usa las variables calculadas
+
+    if (dataError) {
+      console.error("API Supabase data fetch error:", dataError);
+      throw dataError; // Relanza el error
+    }
+    console.log(`API Fetched ${data?.length ?? 0} records for page ${page}`); // Log de datos obtenidos
+
+    const response = {
+      animals: data || [],
+      total: count ?? 0,
+      page: page,
+      pageSize: pageSize,
+    };
+    // Log the exact data being returned
+    console.log(`API Returning: ${response.animals.length} animals, total ${response.total}, page ${response.page}, pageSize ${response.pageSize}`);
+    return response;
 
   } catch (err: any) {
-    console.error('Server handler error fetching animals:', err);
-     throw createError({
-        statusCode: err.statusCode || 500,
-        statusMessage: err.statusMessage || 'Error interno del servidor al buscar animales.',
-      });
+    // Loguear el error antes de devolverlo al cliente
+    console.error("API Database/Processing Error:", err);
+    // Devuelve un error estructurado
+    throw createError({
+      statusCode: err.statusCode || 500, // Usa el código de status del error si existe
+      statusMessage: `Error del servidor: ${
+        err.message || "Error desconocido en la base de datos"
+      }`,
+      // data: { details: err.details } // Opcional: añadir más detalles si son seguros de exponer
+    });
   }
 });
