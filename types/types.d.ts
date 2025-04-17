@@ -21,6 +21,7 @@ declare global {
     class?: string;
     click?: () => void;
   };
+  
 }
 
 export {};
