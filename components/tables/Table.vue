@@ -81,24 +81,14 @@ const selectedRecords = computed<any[]>(() => {
 
     <!-- Tabla con filtros, paginación, y selección -->
     <div class="space-y-4 pb-4">
-      <UTable
-        ref="table"
-        v-model:pagination="pagination"
-        v-model:row-selection="rowSelection"
-        :data="filteredData"
-        :columns="computedColumns"
-        :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
-        class="flex-1"
-      />
+      <UTable ref="table" v-model:pagination="pagination" v-model:row-selection="rowSelection" :data="filteredData"
+        :columns="computedColumns" :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
+        class="flex-1" />
 
       <!-- Controles de paginación -->
       <div class="flex justify-center border-t border-(--ui-border) pt-4">
-        <UPagination
-          :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-          :items-per-page="table?.tableApi?.getState().pagination.pageSize"
-          :total="table?.tableApi?.getFilteredRowModel().rows.length"
-          @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)"
-        />
+        <UPagination :default-page="1" :items-per-page="pagination.pageSize" :total="filteredData.length"
+          @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)" />
       </div>
     </div>
   </div>
