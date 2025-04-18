@@ -38,9 +38,8 @@ export default defineAppConfig({
     card: {
       slots: {
         root: "rounded-xl text-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m7)]",
-        header:
-          "border-0 px-4 py-3 text-sm font-medium uppercase tracking-widest text-[var(--color-m7)] dark:text-[var(--color-m2)]",
-        body: "pt-0",
+        header: "border-0 px-4 py-3 text-sm font-medium uppercase tracking-widest text-[var(--color-m2)] dark:text-[var(--color-m2)]",
+        body: "pt-0 bg-[var(--color-m2)] dark:bg-[var(--color-m2)]",
       },
     },
   },
