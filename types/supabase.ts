@@ -14,6 +14,7 @@ export type Database = {
         Row: {
           id: string;
           role: string;
+          name: string;
           email: string;
         };
         Insert: {
