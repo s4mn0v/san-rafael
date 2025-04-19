@@ -26,6 +26,7 @@ export type Database = {
           id?: string;
           role?: string;
           email?: string;
+          name?: string;
         };
         Relationships: [
           {
