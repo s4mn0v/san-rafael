@@ -7,7 +7,9 @@
       <UForm :state="formState" @submit="buscarGenealogia">
         <UInput v-model="animalIdUppercase" placeholder="Ingrese ID del animal" size="xl" class="mb-4 uppercase"
           name="animalId" />
-        <UButton type="submit" label="Buscar" icon="i-heroicons-magnifying-glass" color :loading="pending" />
+        <UButton type="submit" label="Buscar" icon="i-heroicons-magnifying-glass"
+          class="bg-[var(--color-m2)] dark:bg-[var(--color-m2)] dark:text-[var(--color-m7)] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)]"
+          :loading="pending" />
       </UForm>
     </div>
 
@@ -33,11 +35,10 @@
       </UCard>
 
       <!-- Sección Genealogía -->
-      <UCard>
+      <UCard v-if="resultados.genealogia">
         <template #header>
           <h2 class="text-xl font-semibold">Registro Genealógico</h2>
         </template>
-
         <div class="space-y-2">
           <p><strong>Tipo de Registro:</strong> {{ resultados.genealogia.tipo_registro.replace('_', ' ') }}</p>
           <p><strong>Documento:</strong>
@@ -49,6 +50,12 @@
           </p>
           <p><strong>Observaciones:</strong> {{ resultados.genealogia.observaciones || 'Sin observaciones' }}</p>
         </div>
+      </UCard>
+      <UCard v-else>
+        <template #header>
+          <h2 class="text-xl font-semibold">Registro Genealógico</h2>
+        </template>
+        <p>No se encontró registro genealógico para este animal.</p>
       </UCard>
 
       <!-- Sección Reproducción -->
@@ -79,14 +86,17 @@
           </div>
         </div>
       </UCard>
+      <UCard v-else>
+        <template #header>
+          <h2 class="text-xl font-semibold">Datos de Reproducción</h2>
+        </template>
+        <p>No se encontró datos de reproducción para este animal.</p>
+      </UCard>
     </div>
 
     <!-- Mensajes de estado -->
     <div v-if="error" class="mt-4 text-red-500">
       Error: {{ error.message }}
-    </div>
-    <div v-if="resultados && !resultados.reproduccion" class="mt-4 text-gray-500">
-      No se encontraron datos de reproducción para este animal
     </div>
   </div>
 </template>
@@ -117,7 +127,7 @@ type Resultados = {
     tipo_registro: string
     documento: string | null
     observaciones: string | null
-  }
+  } | null
   reproduccion: {
     tipo_concepcion: string
     fecha_evento: string
