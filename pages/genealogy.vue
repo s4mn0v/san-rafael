@@ -8,7 +8,7 @@
         <UInput v-model="animalIdUppercase" placeholder="Ingrese ID del animal" size="xl" class="mb-4 uppercase"
           name="animalId" />
         <UButton type="submit" label="Buscar" icon="i-heroicons-magnifying-glass"
-          class="bg-[var(--color-m2)] dark:bg-[var(--color-m2)] dark:text-[var(--color-m7)] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)]"
+          class="bg-[var(--color-m2)]"
           :loading="pending" />
       </UForm>
     </div>
@@ -37,17 +37,17 @@
       <!-- Sección Genealogía -->
       <UCard v-if="resultados.genealogia">
         <template #header>
-          <h2 class="text-xl font-semibold">Registro Genealógico</h2>
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold">Registro Genealógico</h2>
+            <UButton v-if="resultados.genealogia.documento" label="Ver reporte completo"
+              icon="i-heroicons-document-text" @click="navigateTo(`/reports/${resultados.animal.id_animal}`)"
+              class="bg-[var(--color-primary)] text-white" />
+            <span v-else>No disponible</span>
+          </div>
         </template>
         <div class="space-y-2">
           <p><strong>Tipo de Registro:</strong> {{ resultados.genealogia.tipo_registro.replace('_', ' ') }}</p>
-          <p><strong>Documento:</strong>
-            <a v-if="resultados.genealogia.documento" :href="resultados.genealogia.documento" target="_blank"
-              class="text-primary-500 hover:underline">
-              Ver documento
-            </a>
-            <span v-else>No disponible</span>
-          </p>
+          <p><strong>Documento:</strong></p>
           <p><strong>Observaciones:</strong> {{ resultados.genealogia.observaciones || 'Sin observaciones' }}</p>
         </div>
       </UCard>
@@ -99,7 +99,7 @@
           <div class="flex justify-between items-center">
             <h2 class="text-xl font-semibold">Árbol Genealógico</h2>
             <UButton label="Actualizar vista" icon="i-heroicons-arrow-path" size="xs" @click="fetchTree"
-              class="bg-[var(--color-m2)] dark:bg-[var(--color-m2)] dark:text-[var(--color-m7)] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)]" />
+              class="bg-[var(--color-m2)]" />
           </div>
         </template>
 

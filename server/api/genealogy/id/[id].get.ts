@@ -33,14 +33,20 @@ export default defineEventHandler(async (event) => {
 
     // 3. Obtener reproducción (si existe id_reproduccion)
     let reproduccionData = null;
-    const reproduccionId = animal.id_reproduccion 
+    const reproduccionId = animal.id_reproduccion
       ? parseInt(animal.id_reproduccion, 10)
       : null;
 
     if (reproduccionId && !isNaN(reproduccionId)) {
       const { data, error: errReproduccion } = await client
         .from("reproduccion")
-        .select("*, madre:animals!fk_reproduccion_madre(id_animal, raza), padre:animals!fk_reproduccion_padre(id_animal, raza)")
+        .select(
+          `
+            *,
+            madre:animals!fk_reproduccion_madre(id_animal, raza, tipo_animal),
+            padre:animals!fk_reproduccion_padre(id_animal, raza, tipo_animal)
+          `
+        )
         .eq("id_reproduccion", reproduccionId)
         .maybeSingle();
 
@@ -50,21 +56,24 @@ export default defineEventHandler(async (event) => {
     // Construir respuesta
     const response = {
       animal: animal,
-      genealogia: genealogia ? {
-        tipo_registro: genealogia.tipo_registro,
-        documento: genealogia.documento,
-        observaciones: genealogia.observaciones,
-      } : null,
-      reproduccion: reproduccionData ? {
-        tipo_concepcion: reproduccionData.tipo_concepcion,
-        fecha_evento: reproduccionData.fecha_evento,
-        madre: reproduccionData.madre,
-        padre: reproduccionData.padre,
-      } : null,
+      genealogia: genealogia
+        ? {
+            tipo_registro: genealogia.tipo_registro,
+            documento: genealogia.documento,
+            observaciones: genealogia.observaciones,
+          }
+        : null,
+      reproduccion: reproduccionData
+        ? {
+            tipo_concepcion: reproduccionData.tipo_concepcion,
+            fecha_evento: reproduccionData.fecha_evento,
+            madre: reproduccionData.madre,
+            padre: reproduccionData.padre,
+          }
+        : null,
     };
 
     return response;
-
   } catch (err: any) {
     // Manejar errores específicos
     if (err.message.includes("No rows found")) {
