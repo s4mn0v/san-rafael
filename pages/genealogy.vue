@@ -47,7 +47,6 @@
         </template>
         <div class="space-y-2">
           <p><strong>Tipo de Registro:</strong> {{ resultados.genealogia.tipo_registro.replace('_', ' ') }}</p>
-          <p><strong>Documento:</strong></p>
           <p><strong>Observaciones:</strong> {{ resultados.genealogia.observaciones || 'Sin observaciones' }}</p>
         </div>
       </UCard>
