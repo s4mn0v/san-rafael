@@ -65,4 +65,8 @@ export default defineNuxtConfig({
       exclude: ["/about"],
     },
   },
+
+  build: {
+    transpile: ["@vue-flow/core", "@vue-flow/additional-components"],
+  },
 });

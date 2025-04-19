@@ -1,9 +1,6 @@
 export default defineAppConfig({
   ui: {
-    colors: {
-      primary: "zinc-800",
-      neutral: "gray",
-    },
+    colors: { primary: "zinc-800", neutral: "gray" },
     input: {
       slots: {
         base: "focus:border-transparent transition-all hover:shadow-md dark:text-[var(--color-m2)]",
@@ -37,9 +34,10 @@ export default defineAppConfig({
     },
     card: {
       slots: {
-        root: "rounded-xl text-[var(--color-m7)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m7)]",
-        header: "border-0 px-4 py-3 text-sm font-medium uppercase tracking-widest text-[var(--color-m2)] dark:text-[var(--color-m2)]",
-        body: "pt-0 bg-[var(--color-m2)] dark:bg-[var(--color-m2)] rounded-b-xl",
+        root: "rounded-xl text-[var(--color-m7)] bg-[var(--color-m2)] dark:bg-[var(--color-m7)] dark:text-[var(--color-m7)]",
+        header:
+          "border-0 px-4 py-3 text-sm bg-[var(--color-m2)] dark:bg-[var(--color-m7)] font-medium uppercase tracking-widest text-[var(--color-m7)] dark:text-[var(--color-m2)] rounded-t-xl",
+        body: "pt-0 bg-[var(--color-m2)] dark:bg-[var(--color-m7)] rounded-b-xl text-[var(--color-m7)] dark:text-[var(--color-m2)]",
       },
     },
   },

@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+@import '@vue-flow/core/dist/style.css';
+@import '@vue-flow/core/dist/theme-default.css';
+
 /* Import Google Font */
 /* @import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"); */
 
@@ -28,7 +31,8 @@
 }
 
 /* Transición suave para cambio de tema */
-:root, .dark {
+:root,
+.dark {
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
@@ -47,11 +51,39 @@ input {
   background-color: var(--color-m7);
 }
 
-/* Button Design
-button {
+/* Use a purple theme for our custom node */
+.vue-flow {
+  background-color: var(--color-m2);
+  box-shadow: 0 0 0 1px var(--color-m2);
+}
+
+.vue-flow__node {
+  background-color: var(--color-m7);
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 0 0 1px var(--color-m2);
+}
+
+.dark .vue-flow__node {
+  background-color: var(--color-m7);
+  color: var(--color-m2);
+}
+
+.vue-flow__edge {
+  stroke: var(--color-m2);
+}
+
+.vue-flow__background {
   background-color: var(--color-m2);
 }
 
-.dark button {
+.vue-flow-container {
+  border: none;
+}
+
+.dark .vue-flow {
   background-color: var(--color-m7);
-} */
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 0 0 1px var(--color-m2);
+}

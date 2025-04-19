@@ -92,7 +92,26 @@
         </template>
         <p>No se encontró datos de reproducción para este animal.</p>
       </UCard>
+
+      <!-- En template -->
+      <UCard v-if="resultados.reproduccion">
+        <template #header>
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold">Árbol Genealógico</h2>
+            <UButton label="Actualizar vista" icon="i-heroicons-arrow-path" size="xs" @click="fetchTree"
+              class="bg-[var(--color-m2)] dark:bg-[var(--color-m2)] dark:text-[var(--color-m7)] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)]" />
+          </div>
+        </template>
+
+        <ClientOnly>
+          <VueFlowTree v-if="treeData" :tree-data="treeData" />
+          <div v-else class="text-center text-gray-500 py-4">
+            Cargando árbol genealógico...
+          </div>
+        </ClientOnly>
+      </UCard>
     </div>
+
 
     <!-- Mensajes de estado -->
     <div v-if="error" class="mt-4 text-red-500">
@@ -226,6 +245,27 @@ const buscarGenealogia = async () => {
   }
 }
 
+const treeData = ref<any>(null)
+
+// Método para obtener el árbol
+const fetchTree = async () => {
+  try {
+    treeData.value = await $fetch(`/api/genealogy/tree/${formState.value.animalId}`)
+  } catch (error) {
+    toast.add({
+      title: 'Error al cargar el árbol',
+      description: 'No se pudo obtener la información genealógica',
+      color: 'error'
+    })
+  }
+}
+
+// Llamar después de obtener resultados exitosos
+watch(resultados, (newVal) => {
+  if (newVal?.reproduccion) {
+    fetchTree()
+  }
+})
 
 definePageMeta({
   layout: 'logged',
