@@ -14,7 +14,7 @@
                 class="font-semibold" />
 
               <!-- Mostrar correo o input de edición -->
-              <p v-if="!isEditing" class="text-gray-600 dark:text-gray-300">{{ userData.email }}</p>
+              <p v-if="!isEditing" class="text-[var(--color-m5)] dark:text-[var(--color-m2)]">{{ userData.email }}</p>
               <UInput v-else v-model="editableUserData.email" type="email" placeholder="Correo electrónico" />
             </div>
           </div>
