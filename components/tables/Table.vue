@@ -15,7 +15,7 @@ const props = defineProps<{
   rowSelection?: Record<string, boolean>
 }>()
 
-const emit = defineEmits(['update:rowSelection', 'selected'])
+const emit = defineEmits(['update:rowSelection', 'selected', 'refresh'])
 
 const internalRowSelection = ref<Record<string, boolean>>(props.rowSelection || {})
 
@@ -87,10 +87,6 @@ watch(selectedRecords, (newVal) => {
 
 <template>
   <div class="w-full">
-    <!-- Eliminar el pre de debug o mantenerlo según necesidad -->
-    <div class="flex px-4 py-3.5 border-b border-(--ui-border-accented) justify-between">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Buscar..." />
-    </div>
     <!-- Mostrar los registros seleccionados -->
     <pre class="p-4 mb-4 bg-(--ui-bg-muted) text-sm overflow-auto">
       {{ JSON.stringify(selectedRecords, null, 2) }}
@@ -99,6 +95,12 @@ watch(selectedRecords, (newVal) => {
     <!-- Campo de búsqueda -->
     <div class="flex px-4 py-3.5 border-b border-(--ui-border-accented)">
       <UInput v-model="globalFilter" class="max-w-sm" placeholder="Buscar..." />
+      <!-- Botón de refresco manual -->
+      <UButton 
+        icon="i-heroicons-arrow-path" 
+        color="neutral"
+        @click="emit('refresh')"
+      />
     </div>
 
     <!-- Tabla con filtros, paginación, y selección -->

@@ -9,23 +9,47 @@ definePageMeta({
   middleware: 'role-guard'
 })
 
-// Fetch all animals (para paginación cliente)
-const { data: resp, pending, error } = await useFetch<{
+// Estado de selección
+const rowSelection = ref({})
+const selectedAnimals = ref<Animal[]>([])
+const isDeleting = ref(false)
+
+// Fetch de animales
+const { data: resp, pending, error, refresh: refreshAnimals } = await useFetch<{
   animals: Animal[]
   total: number
   page: number
   pageSize: number
-}>(
-  '/api/animal/animals',
-  { params: { page: 1, pageSize: 1000 } }
-)
-
-console.log('🐮 Animales recibidos:', resp.value)
-// O bien, si quieres ver solamente el array:
-console.log('🐮 Array de animales:', resp.value?.animals)
+}>('/api/animal/animals', {
+  params: { page: 1, pageSize: 1000 }
+})
 
 // Lista de animales
 const animals = computed(() => resp.value?.animals || [])
+
+// Función para eliminar animales seleccionados
+const deleteSelectedAnimals = async () => {
+  if (!selectedAnimals.value.length || isDeleting.value) return
+
+  try {
+    isDeleting.value = true
+    const ids = selectedAnimals.value.map(a => a.id_animal)
+
+    await $fetch('/api/animal/animals', {
+      method: 'DELETE',
+      body: { ids }
+    })
+
+    await refreshAnimals()
+    rowSelection.value = {}
+    selectedAnimals.value = []
+  } catch (err: any) {
+    console.error('Error eliminando animales:', err)
+    // Aquí puedes agregar notificaciones de error
+  } finally {
+    isDeleting.value = false
+  }
+}
 
 // Columnas para la tabla
 const columns = ref<TableColumn<Animal>[]>([
@@ -48,8 +72,19 @@ const columns = ref<TableColumn<Animal>[]>([
 </script>
 
 <template>
-  <h1 class="text-2xl font-bold mb-4">Animales</h1>
-  <Table :columns="columns" :data="animals" />
-  <div v-if="pending" class="mt-4 text-gray-500">Cargando animales...</div>
-  <div v-if="error" class="mt-4 text-red-500">Error al cargar: {{ error.message }}</div>
+  <div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Animales</h1>
+      <UButton v-if="selectedAnimals.length" color="error" @click="deleteSelectedAnimals" :disabled="isDeleting">
+        <span v-if="!isDeleting">Eliminar ({{ selectedAnimals.length }})</span>
+        <span v-else>Eliminando...</span>
+      </UButton>
+    </div>
+
+    <Table :columns="columns" :data="animals" v-model:row-selection="rowSelection" @selected="selectedAnimals = $event"
+      @refresh="refreshAnimals" />
+
+    <div v-if="pending" class="mt-4 text-gray-500">Cargando animales...</div>
+    <div v-if="error" class="mt-4 text-red-500">Error al cargar: {{ error.message }}</div>
+  </div>
 </template>

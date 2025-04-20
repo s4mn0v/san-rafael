@@ -8,7 +8,7 @@
       </UButton>
     </div>
 
-    <Table :columns="columns" :data="users" v-model:row-selection="rowSelection" @selected="selectedUsers = $event" />
+    <Table :columns="columns" :data="users" v-model:row-selection="rowSelection" @selected="selectedUsers = $event" @refresh="fetchUsers" />
   </div>
 </template>
 

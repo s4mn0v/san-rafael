@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
       console.error("API Supabase data fetch error:", dataError);
       throw dataError; // Relanza el error
     }
-    console.log(`API Fetched ${data?.length ?? 0} records for page ${page}`); // Log de datos obtenidos
+    // console.log(`API Fetched ${data?.length ?? 0} records for page ${page}`); // Log de datos obtenidos
 
     const response = {
       animals: data || [],
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
       pageSize: pageSize,
     };
     // Log the exact data being returned
-    console.log(`API Returning: ${response.animals.length} animals, total ${response.total}, page ${response.page}, pageSize ${response.pageSize}`);
+    // console.log(`API Returning: ${response.animals.length} animals, total ${response.total}, page ${response.page}, pageSize ${response.pageSize}`);
     return response;
 
   } catch (err: any) {
