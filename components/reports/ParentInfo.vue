@@ -1,6 +1,6 @@
 <!-- components/ParentInfo.vue -->
 <template>
-  <div class="bg-gray-50 p-4 rounded-lg">
+  <div class="bg-gray-50 dark:bg-[var(--color-m3)] p-4 rounded-lg">
     <h3 class="font-medium mb-2">{{ title }}</h3>
     <InfoItem label="ID" :value="parent.id_animal" />
     <InfoItem label="Raza" :value="parent.raza" />
