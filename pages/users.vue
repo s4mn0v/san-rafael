@@ -1,6 +1,15 @@
 <template>
-  <h1>Usuarios</h1>
-  <Table :columns="columns" :data="users" />
+  <div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Usuarios</h1>
+      <UButton v-if="selectedUsers.length" color="error" @click="deleteSelectedUsers" :disabled="isDeleting">
+        <span v-if="!isDeleting">Eliminar ({{ selectedUsers.length }})</span>
+        <span v-else>Eliminando...</span>
+      </UButton>
+    </div>
+
+    <Table :columns="columns" :data="users" v-model:row-selection="rowSelection" @selected="selectedUsers = $event" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -9,7 +18,8 @@ import type { Profile } from '~/types/supabase'
 
 definePageMeta({
   layout: 'logged',
-  middleware: 'role-guard'
+  middleware: 'role-guard',
+  role: 'admin'
 })
 
 const columns = [
@@ -29,11 +39,38 @@ const fetchUsers = async () => {
       page: number
       pageSize: number
     }>('/api/users/users')
-    
+
     users.value = response.data || []
   } catch (error) {
     console.error('Error al obtener usuarios:', error)
     // Puedes agregar manejo de errores UI aquí
+  }
+}
+
+const rowSelection = ref({})
+const selectedUsers = ref<Profile[]>([])
+const isDeleting = ref(false)
+
+const deleteSelectedUsers = async () => {
+  if (!selectedUsers.value.length || isDeleting.value) return
+
+  try {
+    isDeleting.value = true
+    const ids = selectedUsers.value.map(u => u.id)
+
+    await $fetch('/api/users/users', {
+      method: 'DELETE',
+      body: { ids }
+    })
+
+    await fetchUsers()
+    rowSelection.value = {}
+    selectedUsers.value = []
+  } catch (error) {
+    console.error('Error eliminando usuarios:', error)
+    // Mostrar notificación de error
+  } finally {
+    isDeleting.value = false
   }
 }
 

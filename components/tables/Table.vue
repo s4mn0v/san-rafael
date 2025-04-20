@@ -12,7 +12,21 @@ const UCheckbox = resolveComponent('UCheckbox')
 const props = defineProps<{
   columns: TableColumn<any>[]
   data: any[]
+  rowSelection?: Record<string, boolean>
 }>()
+
+const emit = defineEmits(['update:rowSelection', 'selected'])
+
+const internalRowSelection = ref<Record<string, boolean>>(props.rowSelection || {})
+
+watch(() => props.rowSelection, (newVal) => {
+  internalRowSelection.value = newVal || {}
+})
+
+watch(internalRowSelection, (newVal) => {
+  emit('update:rowSelection', newVal)
+}, { deep: true })
+
 
 // Referencia al componente de tabla para acceder al API de tanstack
 const table = useTemplateRef<{ tableApi: Table<any> }>('table')
@@ -65,10 +79,18 @@ const selectedRecords = computed<any[]>(() => {
   const selected: TableRow<any>[] = table.value?.tableApi?.getFilteredSelectedRowModel().rows || []
   return selected.map((r: TableRow<any>): any => r.original)
 })
+
+watch(selectedRecords, (newVal) => {
+  emit('selected', newVal)
+})
 </script>
 
 <template>
   <div class="w-full">
+    <!-- Eliminar el pre de debug o mantenerlo según necesidad -->
+    <div class="flex px-4 py-3.5 border-b border-(--ui-border-accented) justify-between">
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Buscar..." />
+    </div>
     <!-- Mostrar los registros seleccionados -->
     <pre class="p-4 mb-4 bg-(--ui-bg-muted) text-sm overflow-auto">
       {{ JSON.stringify(selectedRecords, null, 2) }}

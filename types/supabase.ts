@@ -374,7 +374,12 @@ export type Enums<T extends keyof Database["public"]["Enums"]> =
   Database["public"]["Enums"][T];
 
 // Puedes exportar tipos específicos para facilitar su uso
-export type Profile = Tables<"profiles">;
+// Añadir en el tipo Profile
+export type Profile = Tables<"profiles"> & {
+  id: string
+  email: string
+  role: string
+}
 export type Animal = Tables<"animals">;
 export type AnimalInsert = Database["public"]["Tables"]["animals"]["Insert"];
 export type AnimalUpdate = Database["public"]["Tables"]["animals"]["Update"];
