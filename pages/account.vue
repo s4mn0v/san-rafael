@@ -1,51 +1,52 @@
 <template>
-  <div class="max-w-2xl mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-6">Cuenta</h1>
-
-    <UCard v-if="userData">
-      <template #header>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <UAvatar :src="avatarUrl" size="lg" />
-            <div>
-              <!-- Mostrar nombre o input de edición -->
-              <h2 v-if="!isEditing" class="text-xl font-semibold">{{ userData.name || 'Sin nombre' }}</h2>
-              <UInput v-else v-model="editableUserData.name" placeholder="Nombre completo" size="xl"
-                class="font-semibold" />
-
-              <!-- Mostrar correo o input de edición -->
-              <p v-if="!isEditing" class="text-[var(--color-m5)] dark:text-[var(--color-m2)]">{{ userData.email }}</p>
-              <UInput v-else v-model="editableUserData.email" type="email" placeholder="Correo electrónico" />
+  <div class="min-h-screen flex items-center justify-center">
+    <!-- <h1 class="text-3xl font-bold mb-6">Cuenta</h1> -->
+    <div class="w-full max-w-sm sm:max-w-2xl mx-4 sm:mx-auto">
+      <UCard v-if="userData">
+        <template #header>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <UAvatar :src="avatarUrl" size="lg" />
+              <div>
+                <!-- Mostrar nombre o input de edición -->
+                <h2 v-if="!isEditing" class="text-xl font-semibold">{{ userData.name || 'Sin nombre' }}</h2>
+                <UInput v-else v-model="editableUserData.name" placeholder="Nombre completo" size="xl"
+                  class="font-semibold" />
+  
+                <!-- Mostrar correo o input de edición -->
+                <p v-if="!isEditing" class="text-[var(--color-m5)] dark:text-[var(--color-m2)]">{{ userData.email }}</p>
+                <UInput v-else v-model="editableUserData.email" type="email" placeholder="Correo electrónico" />
+              </div>
             </div>
+            <!-- Botón de Editar / Cancelar -->
+            <UButton :icon="isEditing ? 'i-heroicons-x-mark' : 'i-heroicons-pencil-square'" size="sm" square
+              @click="toggleEdit" :aria-label="isEditing ? 'Cancelar edición' : 'Editar perfil'"
+              class="bg-[var(--color-m2)] dark:bg-[var(--color-m2)] dark:text-[var(--color-m7)] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)]" />
           </div>
-          <!-- Botón de Editar / Cancelar -->
-          <UButton :icon="isEditing ? 'i-heroicons-x-mark' : 'i-heroicons-pencil-square'" size="sm" square
-            @click="toggleEdit" :aria-label="isEditing ? 'Cancelar edición' : 'Editar perfil'"
-            class="bg-[var(--color-m2)] dark:bg-[var(--color-m2)] dark:text-[var(--color-m7)] hover:bg-[var(--color-m5)] hover:text-[var(--color-m7)] dark:hover:bg-[var(--color-m5)] dark:hover:text-[var(--color-m7)]" />
+        </template>
+  
+        <!-- Información no editable -->
+        <div class="space-y-2 mb-4">
+          <p><strong class="font-medium">Rol:</strong> {{ userData.role || 'Sin rol asignado' }}</p>
+          <p><strong class="font-medium">UID:</strong> <code class="text-sm">{{ userData.id }}</code></p>
         </div>
-      </template>
-
-      <!-- Información no editable -->
-      <div class="space-y-2 mb-4">
-        <p><strong class="font-medium">Rol:</strong> {{ userData.role || 'Sin rol asignado' }}</p>
-        <p><strong class="font-medium">UID:</strong> <code class="text-sm">{{ userData.id }}</code></p>
-      </div>
-
-      <!-- Formulario de edición (se muestra solo al editar) -->
-      <UForm v-if="isEditing" :state="editableUserData" @submit="saveChanges">
-        <!-- Ya hemos puesto los inputs en el header para un mejor diseño -->
-        <div class="flex justify-end gap-3 mt-4">
-          <UButton label="Cancelar" color="error" variant="ghost" @click="cancelEdit" :disabled="loading" />
-          <UButton type="submit" label="Guardar Cambios" :loading="loading" :disabled="!hasChanges" />
-        </div>
-        <p v-if="emailChangeRequiresConfirmation" class="text-sm text-yellow-600 dark:text-yellow-400 mt-3">
-          Se ha enviado un correo de confirmación a la nueva dirección. El cambio será efectivo después de la
-          confirmación.
-        </p>
-      </UForm>
-
-    </UCard>
-    <USkeleton v-else class="h-48 w-full" />
+  
+        <!-- Formulario de edición (se muestra solo al editar) -->
+        <UForm v-if="isEditing" :state="editableUserData" @submit="saveChanges">
+          <!-- Ya hemos puesto los inputs en el header para un mejor diseño -->
+          <div class="flex justify-end gap-3 mt-4">
+            <UButton label="Cancelar" color="error" variant="ghost" @click="cancelEdit" :disabled="loading" />
+            <UButton type="submit" label="Guardar Cambios" :loading="loading" :disabled="!hasChanges" />
+          </div>
+          <p v-if="emailChangeRequiresConfirmation" class="text-sm text-yellow-600 dark:text-yellow-400 mt-3">
+            Se ha enviado un correo de confirmación a la nueva dirección. El cambio será efectivo después de la
+            confirmación.
+          </p>
+        </UForm>
+  
+      </UCard>
+      <USkeleton v-else class="h-48 w-full" />
+    </div>
   </div>
 </template>
 
