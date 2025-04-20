@@ -116,7 +116,7 @@ onMounted(async () => {
   const animalId = route.params.id;
   if (!animalId) {
     toast.add({ title: 'Error', description: 'ID de animal no válido.', color: 'error' });
-    return navigateTo('/animals'); // Or appropriate error page/fallback
+    return navigateTo('/genealogy'); // Or appropriate error page/fallback
   }
 
   try {
