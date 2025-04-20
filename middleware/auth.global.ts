@@ -35,9 +35,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   } else {
     // Usuario no autenticado
     console.log("User not logged in.");
+    const userRole = useUserRole();
     userRole.value = null; // Limpia el rol si no hay usuario
   }
 
   console.log("Final userRole state:", userRole.value);
-
+  // Al final del middleware, asegúrate de cargar el rol en el estado
+  // ... resto del código del middleware ...
 });

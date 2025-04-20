@@ -2,9 +2,11 @@
   <UBreadcrumb :items="items" />
   <div>
     <h1 class="text-2xl font-bold my-4">Proveedores</h1>
-    <Table :columns="columns" :data="proveedores" />
-    <div v-if="pending" class="mt-4 text-gray-500">Cargando proveedores...</div>
-    <div v-if="error" class="mt-4 text-red-500">Error: {{ error.message }}</div>
+    <Table :columns="columns" :data="proveedores" @refresh="handleRefresh" />
+    
+    <!-- Actualizar clases de color -->
+    <div v-if="pending" class="mt-4 text-[var(--color-m2)] dark:text-[var(--color-m7)]">Cargando proveedores...</div>
+    <div v-if="error" class="mt-4 text-[var(--color-error-light)] dark:text-[var(--color-error-dark)]">Error: {{ error.message }}</div>
   </div>
 </template>
 
@@ -31,7 +33,7 @@ const items = ref<BreadcrumbItem[]>([
   }
 ])
 
-const { data: resp, pending, error } = await useFetch<{
+const { data: resp, pending, error, refresh: fetchData } = await useFetch<{
   proveedores: Proveedor[]
   total: number
   page: number
@@ -39,6 +41,10 @@ const { data: resp, pending, error } = await useFetch<{
 }>('/api/provider/providers', {
   params: { page: 1, pageSize: 1000 }
 })
+
+const handleRefresh = async () => {
+  await fetchData()
+}
 
 const proveedores = computed(() => resp.value?.proveedores || [])
 

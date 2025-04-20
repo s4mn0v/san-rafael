@@ -9,11 +9,15 @@
     </div>
 
     <Table :columns="columns" :data="users" v-model:row-selection="rowSelection" @selected="selectedUsers = $event" @refresh="fetchUsers" />
+    
+    <!-- Añadir estados de carga y error -->
+    <div v-if="pending" class="mt-4 text-[var(--color-m2)] dark:text-[var(--color-m7)]">Cargando usuarios...</div>
+    <div v-if="error" class="mt-4 text-[var(--color-error-light)] dark:text-[var(--color-error-dark)]">Error: {{ error.message }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import type { Profile } from '~/types/supabase'
 
 definePageMeta({
@@ -28,24 +32,21 @@ const columns = [
   { accessorKey: 'role', header: 'Rol' },
 ]
 
-const users = ref<Profile[]>([])
-
-// Función modificada usando $fetch
-const fetchUsers = async () => {
+const { data: resp, pending, error, refresh: fetchUsers } = await useAsyncData('users', async () => {
   try {
-    const response = await $fetch<{
+    return await $fetch<{
       data: Profile[]
       total: number
       page: number
       pageSize: number
     }>('/api/users/users')
-
-    users.value = response.data || []
-  } catch (error) {
-    console.error('Error al obtener usuarios:', error)
-    // Puedes agregar manejo de errores UI aquí
+  } catch (err) {
+    console.error('Error al obtener usuarios:', err)
+    throw err
   }
-}
+})
+
+const users = computed(() => resp.value?.data || [])
 
 const rowSelection = ref({})
 const selectedUsers = ref<Profile[]>([])
@@ -73,10 +74,4 @@ const deleteSelectedUsers = async () => {
     isDeleting.value = false
   }
 }
-
-// Opción 1: Usar onMounted con $fetch (client-side only)
-onMounted(fetchUsers)
-
-// Opción 2: Mejor práctica - Usar useAsyncData (SSR + client-side)
-// const { data, error } = await useAsyncData('users', fetchUsers)
 </script>

@@ -1,12 +1,13 @@
 <template>
   <div>
     <UBreadcrumb :items="items" />
-
     <h1 class="text-2xl font-bold my-4">Inventario</h1>
     <NuxtLink to="providers">Proveedores</NuxtLink>
-    <Table :columns="columns" :data="inventarioItems" />
-    <div v-if="pending" class="mt-4 text-gray-500">Cargando inventario...</div>
-    <div v-if="error" class="mt-4 text-red-500">Error: {{ error.message }}</div>
+    <Table :columns="columns" :data="inventarioItems" @refresh="handleRefresh" />
+    
+    <!-- Actualizar clases de color -->
+    <div v-if="pending" class="mt-4 text-[var(--color-m2)] dark:text-[var(--color-m7)]">Cargando inventario...</div>
+    <div v-if="error" class="mt-4 text-[var(--color-error-light)] dark:text-[var(--color-error-dark)]">Error: {{ error.message }}</div>
   </div>
 </template>
 
@@ -33,7 +34,7 @@ definePageMeta({
 });
 
 // Fetch datos
-const { data: resp, pending, error } = await useFetch<{
+const { data: resp, pending, error, refresh: fetchStock } = await useFetch<{
   inventario: Inventario[]
   total: number
   page: number
@@ -41,6 +42,10 @@ const { data: resp, pending, error } = await useFetch<{
 }>('/api/stock/stock', {
   params: { page: 1, pageSize: 1000 }
 })
+
+const handleRefresh = async () => {
+  await fetchStock()
+}
 
 const inventarioItems = computed(() => resp.value?.inventario || [])
 

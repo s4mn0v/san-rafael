@@ -24,7 +24,13 @@ export default defineEventHandler(async (event) => {
   if (profile?.role !== "admin") {
     throw createError({
       statusCode: 403,
-      message: "Acceso denegado: se requiere rol de administrador",
+      message: "Solo administradores pueden eliminar animales",
+      data: {
+        toast: {
+          type: "error",
+          message: "❌ Acceso denegado: Requiere rol de administrador",
+        },
+      },
     });
   }
 
@@ -48,13 +54,24 @@ export default defineEventHandler(async (event) => {
   if (deleteError) {
     throw createError({
       statusCode: 500,
-      message: `Error al eliminar animales: ${deleteError.message}`,
+      message: deleteError.message,
+      data: { 
+        toast: { 
+          type: "error",
+          message: `Error eliminando animales: ${deleteError.details || deleteError.message}`
+        }
+      }
     });
   }
 
   return {
     success: true,
     count: ids.length,
-    message: `${ids.length} animales eliminados correctamente`,
+    toast: {
+      type: "success",
+      message: `${ids.length} ${
+        ids.length > 1 ? "animales" : "animal"
+      } eliminado(s) correctamente`,
+    },
   };
 });

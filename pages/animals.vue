@@ -3,6 +3,8 @@ import { ref, computed } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import type { Animal } from '~/types/supabase'
 
+const toast = useToast()
+
 // Metadata
 definePageMeta({
   layout: 'logged',
@@ -35,17 +37,31 @@ const deleteSelectedAnimals = async () => {
     isDeleting.value = true
     const ids = selectedAnimals.value.map(a => a.id_animal)
 
-    await $fetch('/api/animal/animals', {
+    const { toast: successToast } = await $fetch('/api/animal/animals', {
       method: 'DELETE',
       body: { ids }
     })
+
+    // Mostrar notificación de éxito
+    if (successToast) {
+      toast.add({
+        color: 'success',
+        icon: 'i-heroicons-check-circle',
+        title: successToast.message,
+      })
+    }
 
     await refreshAnimals()
     rowSelection.value = {}
     selectedAnimals.value = []
   } catch (err: any) {
-    console.error('Error eliminando animales:', err)
-    // Aquí puedes agregar notificaciones de error
+    const errorData = err.data || {}
+    // Mostrar notificación de error
+    toast.add({
+      color: 'error',
+      icon: 'i-heroicons-exclamation-circle',
+      title: errorData.toast?.message || 'Error inesperado al eliminar animales',
+    })
   } finally {
     isDeleting.value = false
   }
@@ -81,10 +97,10 @@ const columns = ref<TableColumn<Animal>[]>([
       </UButton>
     </div>
 
+    <div v-if="pending" class="mt-4 text-[var(--color-m2)] dark:text-[var(--color-m7)]">Cargando animales...</div>
     <Table :columns="columns" :data="animals" v-model:row-selection="rowSelection" @selected="selectedAnimals = $event"
       @refresh="refreshAnimals" />
 
-    <div v-if="pending" class="mt-4 text-gray-500">Cargando animales...</div>
     <div v-if="error" class="mt-4 text-red-500">Error al cargar: {{ error.message }}</div>
   </div>
 </template>

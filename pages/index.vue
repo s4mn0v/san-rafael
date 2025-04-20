@@ -1,8 +1,11 @@
 <template>
   <!-- Tittle Dashboard -->
+  <UBreadcrumb :items="items" />
+  <br>
+  <NuxtLink to="sales">Ventas</NuxtLink>
+  <br>
   <h1 class="text-2xl font-semibold uppercase tracking-widest">Dashboard</h1>
   <br>
-
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <DashboardCard title="Total de Animales" icon="i-healthicons-animal-cow">
       <div class="p-4 w-full bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl">00</div>
@@ -35,6 +38,16 @@
 </template>
 
 <script setup lang="ts">
+import type { BreadcrumbItem } from '@nuxt/ui'
+
+const items = ref<BreadcrumbItem[]>([
+  {
+    label: 'Incio',
+    icon: 'i-heroicons-home-solid',
+    to: '/'
+  },
+])
+
 definePageMeta({
   layout: 'logged'
 })

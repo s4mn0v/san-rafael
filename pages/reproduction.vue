@@ -1,9 +1,11 @@
 <template>
   <div>
     <h1 class="text-2xl font-bold mb-4">Registros de Reproducción</h1>
-    <Table :columns="columns" :data="reproducciones" />
-    <div v-if="pending" class="mt-4 text-gray-500">Cargando registros...</div>
-    <div v-if="error" class="mt-4 text-red-500">Error: {{ error.message }}</div>
+    <Table :columns="columns" :data="reproducciones" @refresh="handleRefresh"/>
+    
+    <!-- Actualizar clases de color -->
+    <div v-if="pending" class="mt-4 text-[var(--color-m2)] dark:text-[var(--color-m7)]">Cargando registros...</div>
+    <div v-if="error" class="mt-4 text-[var(--color-error-light)] dark:text-[var(--color-error-dark)]">Error: {{ error.message }}</div>
   </div>
 </template>
 
@@ -23,7 +25,7 @@ definePageMeta({
 });
 
 // Fetch datos
-const { data: resp, pending, error } = await useFetch<{
+const { data: resp, pending, error, refresh: fetchReproductions } = await useFetch<{
   reproducciones: Reproduccion[]
   total: number
   page: number
@@ -31,6 +33,10 @@ const { data: resp, pending, error } = await useFetch<{
 }>('/api/reproduction/reproductions', {
   params: { page: 1, pageSize: 1000 }
 })
+
+const handleRefresh = async () => {
+  await fetchReproductions()
+}
 
 const reproducciones = computed(() => resp.value?.reproducciones || [])
 
