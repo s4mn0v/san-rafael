@@ -90,6 +90,7 @@ const allNavigationItems: NavigationItem[] = [
   { label: 'Inicio', icon: 'i-heroicons-home-solid', to: '/' },
   { label: 'Animales', icon: 'i-healthicons-animal-cow', to: '/animals' },
   { label: 'Inventario', icon: 'i-healthicons-i-exam-multiple-choice', to: '/stock' },
+  { label: 'Provedores', icon: 'healthicons:agriculture-worker', to: '/providers'},
   { label: 'Reproducción', icon: 'i-healthicons-syringe', to: '/reproduction' },
   { label: 'Genealogía', icon: 'i-healthicons-biomarker-outline', to: '/genealogy' },
   { label: 'Cuenta', icon: 'i-heroicons-user-solid', to: '/account' }, // ¡Aquí definimos el rol requerido!
