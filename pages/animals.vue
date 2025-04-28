@@ -4,13 +4,14 @@ import type { TableColumn } from "@nuxt/ui";
 import type { Animal } from "~/types/supabase";
 
 const toast = useToast();
+const userRole = useState<string | null>("userRole"); // 👈 Aquí obtenemos el rol del usuario
 
 definePageMeta({
   layout: "logged",
   middleware: "role-guard",
 });
 
-// Estados para creación y edición
+// Estados
 const newAnimal = ref<Partial<Animal>>({
   id_animal: "",
   fecha_nacimiento: "",
@@ -25,7 +26,6 @@ const isAdding = ref(false);
 const isEditing = ref(false);
 const isUpdating = ref(false);
 
-// Selección
 const rowSelection = ref<Record<string, boolean>>({});
 const selectedAnimals = ref<Animal[]>([]);
 const isDeleting = ref(false);
@@ -46,9 +46,7 @@ const {
 });
 const animals = computed(() => resp.value?.animals || []);
 
-// Sincroniza selección con objeto reactivo
 watch(selectedAnimals, (val) => {
-  // al iniciar edición, limpiamos
   if (isEditing.value && val.length !== 1) {
     isEditing.value = false;
   }
@@ -222,8 +220,12 @@ const columns = ref<TableColumn<Animal>[]>([
 
 <template>
   <div class="container mx-auto p-4">
-    <!-- Formulario -->
-    <div class="mb-6 bg-gray-50 dark:bg-gray-800 p-4 rounded shadow">
+
+    <!-- Solo los admins ven el formulario -->
+    <div
+      v-if="userRole === 'admin'"
+      class="mb-6 bg-gray-50 dark:bg-gray-800 p-4 rounded shadow"
+    >
       <h2 class="text-xl font-semibold mb-2">
         {{ isEditing ? "Editar animal" : "Agregar nuevo animal" }}
       </h2>
@@ -275,43 +277,47 @@ const columns = ref<TableColumn<Animal>[]>([
           @click="isEditing ? updateAnimal() : addAnimal()"
           :disabled="isAdding || isUpdating"
         >
-          <span v-if="!(isAdding || isUpdating)">{{
-            isEditing ? "Guardar cambios" : "Agregar animal"
-          }}</span>
-          <span v-else>{{
-            isEditing ? "Actualizando..." : "Agregando..."
-          }}</span>
+          <span v-if="!(isAdding || isUpdating)">
+            {{ isEditing ? "Guardar cambios" : "Agregar animal" }}
+          </span>
+          <span v-else>
+            {{ isEditing ? "Actualizando..." : "Agregando..." }}
+          </span>
         </UButton>
-        <UButton v-if="isEditing" variant="solid" @click="cancelEdit"
-          >Cancelar</UButton
-        >
+        <UButton
+          v-if="isEditing"
+          variant="solid"
+          @click="cancelEdit"
+        >Cancelar</UButton>
       </div>
     </div>
 
-    <!-- Header con botones -->
+    <!-- Header -->
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-2xl font-bold">Animales</h1>
-      <div class="flex gap-2">
+
+      <!-- Botones solo para admin -->
+      <div v-if="userRole === 'admin'" class="flex gap-2">
         <UButton
           v-if="selectedAnimals.length === 1 && !isEditing"
           color="secondary"
           @click="startEdit"
-          >Editar</UButton
-        >
+        >Editar</UButton>
         <UButton
           v-if="selectedAnimals.length"
           color="error"
           @click="deleteSelectedAnimals"
           :disabled="isDeleting"
         >
-          <span v-if="!isDeleting"
-            >Eliminar ({{ selectedAnimals.length }})</span
-          >
+          <span v-if="!isDeleting">
+            Eliminar ({{ selectedAnimals.length }})
+          </span>
           <span v-else>Eliminando...</span>
         </UButton>
       </div>
     </div>
 
+    <!-- Tabla -->
     <div
       v-if="pending"
       class="mt-4 text-[var(--color-m2)] dark:text-[var(--color-m7)]"

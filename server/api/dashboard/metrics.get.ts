@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
   let totalExpenses = 0;
   ventas?.forEach((v) => {
     totalExpenses += v.monto ?? 0;
-  });
+  });  
 
   return {
     totalAnimals,
