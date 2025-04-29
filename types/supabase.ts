@@ -21,6 +21,7 @@ export type Database = {
           id: string; // Generalmente coincide con auth.users.id
           role: string;
           email: string;
+          name: string;
         };
         Update: {
           id?: string;
@@ -380,6 +381,7 @@ export type Profile = Tables<"profiles"> & {
   email: string
   role: string
 }
+export type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
 export type Animal = Tables<"animals">;
 export type AnimalInsert = Database["public"]["Tables"]["animals"]["Insert"];
 export type AnimalUpdate = Database["public"]["Tables"]["animals"]["Update"];

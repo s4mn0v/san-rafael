@@ -2,17 +2,23 @@
   <div class="container mx-auto p-4">
     <div class="flex justify-between items-center mb-4">
       <h1 class="text-2xl font-bold">Usuarios</h1>
-      <UButton v-if="selectedUsers.length" color="error" @click="deleteSelectedUsers" :disabled="isDeleting">
-        <span v-if="!isDeleting">Eliminar ({{ selectedUsers.length }})</span>
-        <span v-else>Eliminando...</span>
-      </UButton>
+      <div class="flex items-center gap-2">
+        <ModalUserCreate @refresh="fetchUsers" />
+        <UButton v-if="selectedUsers.length" color="error" @click="deleteSelectedUsers" :disabled="isDeleting">
+          <span v-if="!isDeleting">Eliminar ({{ selectedUsers.length }})</span>
+          <span v-else>Eliminando...</span>
+        </UButton>
+      </div>
     </div>
 
-    <Table :columns="columns" :data="users" v-model:row-selection="rowSelection" @selected="selectedUsers = $event" @refresh="fetchUsers" />
-    
+    <Table :columns="columns" :data="users" v-model:row-selection="rowSelection" @selected="selectedUsers = $event"
+      @refresh="fetchUsers" />
+
     <!-- Añadir estados de carga y error -->
     <div v-if="pending" class="mt-4 text-[var(--color-m2)] dark:text-[var(--color-m7)]">Cargando usuarios...</div>
-    <div v-if="error" class="mt-4 text-[var(--color-error-light)] dark:text-[var(--color-error-dark)]">Error: {{ error.message }}</div>
+    <div v-if="error" class="mt-4 text-[var(--color-error-light)] dark:text-[var(--color-error-dark)]">Error: {{
+      error.message }}</div>
+
   </div>
 </template>
 
