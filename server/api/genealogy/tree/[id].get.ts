@@ -1,7 +1,7 @@
 // server/api/genealogy/tree/[id].get.ts
 import { serverSupabaseClient } from "#supabase/server";
 import type { Database } from "~/types/supabase";
-import { createError } from "h3";
+import { createError, getHeader } from "h3";
 
 type TreeNode = {
   id: string;
@@ -13,6 +13,21 @@ type TreeNode = {
 };
 
 export default defineEventHandler(async (event) => {
+  // --- INICIO: Comprobación de Acceso Directo ---
+  const secFetchSite = getHeader(event, "sec-fetch-site");
+
+  if (secFetchSite === "none") {
+    console.warn(
+      `Acceso directo bloqueado para la ruta ${event.path}. Sec-Fetch-Site: ${secFetchSite}`
+    );
+    throw createError({
+      statusCode: 403, // Forbidden
+      statusMessage: "Forbidden",
+      message: "Direct access not allowed.",
+    });
+  }
+  // --- FIN: Comprobación de Acceso Directo ---
+
   const client = await serverSupabaseClient<Database>(event);
   const id = getRouterParam(event, "id");
 

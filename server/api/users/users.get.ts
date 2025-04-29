@@ -1,5 +1,5 @@
 // server/api/users/users.get.ts
-import { defineEventHandler, getQuery, createError, getHeader } from 'h3' // Asegúrate de importar getHeader
+import { defineEventHandler, getQuery, createError, getHeader } from 'h3'
 import { serverSupabaseClient, serverSupabaseUser } from '#supabase/server'
 import type { H3Event } from 'h3'
 import type { Database } from '~/types/supabase'

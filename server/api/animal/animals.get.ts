@@ -1,9 +1,23 @@
 // server/api/animal/animals.get.ts
 import { serverSupabaseClient } from "#supabase/server";
 import { Database } from "~/types/supabase";
-import { createError } from "h3"; // Asegúrate de importar createError
+import { createError, getHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
+
+  // --- INICIO: Comprobación de Acceso Directo ---
+  const secFetchSite = getHeader(event, 'sec-fetch-site')
+
+  if (secFetchSite === 'none') {
+    console.warn(`Acceso directo bloqueado para la ruta ${event.path}. Sec-Fetch-Site: ${secFetchSite}`);
+    throw createError({
+      statusCode: 403, // Forbidden
+      statusMessage: 'Forbidden',
+      message: 'Direct access not allowed.'
+    });
+  }
+  // --- FIN: Comprobación de Acceso Directo ---
+
   console.log("--- HITTING /api/animal/animals.get ---"); // Mantén este log
   const client = await serverSupabaseClient<Database>(event);
 

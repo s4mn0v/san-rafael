@@ -1,9 +1,24 @@
 // server/api/genealogy/genealogy.get.ts
 import { serverSupabaseClient } from "#supabase/server";
 import type { Database } from "~/types/supabase";
-import { createError } from "h3";
+import { createError, getHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
+  // --- INICIO: Comprobación de Acceso Directo ---
+  const secFetchSite = getHeader(event, "sec-fetch-site");
+
+  if (secFetchSite === "none") {
+    console.warn(
+      `Acceso directo bloqueado para la ruta ${event.path}. Sec-Fetch-Site: ${secFetchSite}`
+    );
+    throw createError({
+      statusCode: 403, // Forbidden
+      statusMessage: "Forbidden",
+      message: "Direct access not allowed.",
+    });
+  }
+  // --- FIN: Comprobación de Acceso Directo ---
+
   const client = await serverSupabaseClient<Database>(event);
   const query = getQuery(event);
 
@@ -12,8 +27,13 @@ export default defineEventHandler(async (event) => {
   const pageSize = query.pageSize ? Number(query.pageSize) : 10;
 
   // Validaciones
-  if (isNaN(page) || page < 1) throw createError({ statusCode: 400, statusMessage: "Página inválida" });
-  if (isNaN(pageSize) || pageSize < 1) throw createError({ statusCode: 400, statusMessage: "Tamaño de página inválido" });
+  if (isNaN(page) || page < 1)
+    throw createError({ statusCode: 400, statusMessage: "Página inválida" });
+  if (isNaN(pageSize) || pageSize < 1)
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Tamaño de página inválido",
+    });
 
   const rangeFrom = (page - 1) * pageSize;
   const rangeTo = rangeFrom + pageSize - 1;
@@ -36,13 +56,12 @@ export default defineEventHandler(async (event) => {
       genealogia: data || [],
       total: count ?? 0,
       page,
-      pageSize
+      pageSize,
     };
-
   } catch (err: any) {
     throw createError({
       statusCode: err.statusCode || 500,
-      statusMessage: `Error: ${err.message}`
+      statusMessage: `Error: ${err.message}`,
     });
   }
 });

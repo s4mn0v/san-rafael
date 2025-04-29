@@ -1,8 +1,23 @@
 import { defineEventHandler } from "h3";
 import { serverSupabaseClient } from "#supabase/server";
 import type { Database } from "~/types/supabase";
+import { createError, getHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
+
+  // --- INICIO: Comprobación de Acceso Directo ---
+  const secFetchSite = getHeader(event, 'sec-fetch-site')
+
+  if (secFetchSite === 'none') {
+    console.warn(`Acceso directo bloqueado para la ruta ${event.path}. Sec-Fetch-Site: ${secFetchSite}`);
+    throw createError({
+      statusCode: 403, // Forbidden
+      statusMessage: 'Forbidden',
+      message: 'Direct access not allowed.'
+    });
+  }
+  // --- FIN: Comprobación de Acceso Directo ---
+
   const client = await serverSupabaseClient<Database>(event);
 
   // 1) Total de animales
