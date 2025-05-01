@@ -3,12 +3,8 @@ import { ref, computed, watch } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Database } from "~/types/supabase";
 
-// ————— Tipos —————
-// Animal tal como viene de la tabla
 type Animal = Database["public"]["Tables"]["animals"]["Row"];
-// Fila base de reproducción
 type ReproduccionRow = Database["public"]["Tables"]["reproduccion"]["Row"];
-// Extendemos para incluir madre, padre y descendencia
 type Reproduccion = ReproduccionRow & {
   madre: Animal | null;
   padre: Animal | null;
@@ -16,27 +12,24 @@ type Reproduccion = ReproduccionRow & {
 };
 
 definePageMeta({ layout: "logged", middleware: "role-guard" });
-const toast = useToast();
 
-// ————— Estados de selección —————
+const toast = useToast();
+const userRole = useState<string | null>("userRole");
+
 const rowSelection = ref<Record<string, boolean>>({});
 const selected = ref<Reproduccion[]>([]);
 
-// ————— Fetch reproducciones —————
 const { data: resp, pending, error, refresh: fetchReproductions } = await useFetch<{
   reproducciones: Reproduccion[];
 }>("/api/reproduction/reproductions", { params: { page: 1, pageSize: 1000 } });
 const reproducciones = computed(() => resp.value?.reproducciones || []);
 
-// ————— Fetch animales para selects —————
 const { data: aResp } = await useFetch<{ animals: Animal[] }>(
   "/api/animal/animals",
   { params: { page: 1, pageSize: 1000 } }
 );
 const animals = computed(() => aResp.value?.animals || []);
 
-// ————— Formulario —————
-// Añadimos child_id para el “hijo”
 const form = ref<Partial<ReproduccionRow> & { child_id?: string }>({
   madre_id: "",
   padre_id: "",
@@ -51,16 +44,13 @@ const isEditing = ref(false);
 const isUpdating = ref(false);
 const isDeleting = ref(false);
 
-// Si cambian selección, salimos de edición
 watch(selected, (v) => {
   if (isEditing.value && v.length !== 1) cancelEdit();
 });
 
-// ————— CRUD —————
 function startEdit() {
   if (selected.value.length !== 1) return;
   Object.assign(form.value, selected.value[0], {
-    // si ya tenía descendencia, ponemos el primero como seleccionado
     child_id: selected.value[0].descendencia[0]?.id_animal,
   });
   isEditing.value = true;
@@ -80,13 +70,7 @@ function cancelEdit() {
 
 function validate() {
   const f = form.value as any;
-  if (
-    !f.child_id ||
-    !f.madre_id ||
-    !f.tipo_concepcion ||
-    !f.fecha_evento ||
-    !f.raza
-  ) {
+  if (!f.child_id || !f.madre_id || !f.tipo_concepcion || !f.fecha_evento || !f.raza) {
     toast.add({
       color: "error",
       icon: "i-heroicons-exclamation-circle",
@@ -101,7 +85,6 @@ async function addRec() {
   if (isAdding.value || !validate()) return;
   isAdding.value = true;
   try {
-    // POST incluye child_id
     const { toast: t } = await $fetch("/api/reproduction/reproductions", {
       method: "POST",
       body: form.value,
@@ -178,28 +161,11 @@ async function deleteRecs() {
   }
 }
 
-// ————— Columnas —————
 const columns = ref<TableColumn<Reproduccion>[]>([
   { accessorKey: "id_reproduccion", header: "ID" },
-  {
-    header: "Hijo",
-    cell: ({ row }) =>
-      row.original.descendencia[0]?.id_animal ?? "—",
-  },
-  {
-    header: "Madre",
-    cell: ({ row }) =>
-      row.original.madre
-        ? row.original.madre.id_animal
-        : "—",
-  },
-  {
-    header: "Padre",
-    cell: ({ row }) =>
-      row.original.padre
-        ? row.original.padre.id_animal
-        : "—",
-  },
+  { header: "Hijo", cell: ({ row }) => row.original.descendencia[0]?.id_animal ?? "—" },
+  { header: "Madre", cell: ({ row }) => row.original.madre ? row.original.madre.id_animal : "—" },
+  { header: "Padre", cell: ({ row }) => row.original.padre ? row.original.padre.id_animal : "—" },
   { accessorKey: "tipo_concepcion", header: "Método" },
   { accessorKey: "fecha_evento", header: "Fecha Evento" },
   { accessorKey: "raza", header: "Raza Objetivo" },
@@ -208,27 +174,24 @@ const columns = ref<TableColumn<Reproduccion>[]>([
 
 <template>
   <div class="container mx-auto p-4 space-y-6">
-    <!-- Formulario -->
-    <div class="mb-6 p-4 bg-gray-50 rounded shadow">
+    <!-- Formulario solo para admin -->
+    <div v-if="userRole === 'admin'" class="mb-6 p-4 bg-gray-50 rounded shadow">
       <h2 class="font-semibold mb-2">
         {{ isEditing ? "Editar registro" : "Nuevo registro" }}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <!-- 1) Hijo -->
         <select v-model="form.child_id" class="border rounded p-2">
           <option disabled value="">Selecciona Hijo</option>
           <option v-for="a in animals" :key="a.id_animal" :value="a.id_animal">
             {{ a.id_animal }} — {{ a.raza }}
           </option>
         </select>
-        <!-- 2) Madre -->
         <select v-model="form.madre_id" class="border rounded p-2">
           <option disabled value="">Selecciona Madre</option>
           <option v-for="a in animals" :key="a.id_animal" :value="a.id_animal">
             {{ a.id_animal }} — {{ a.raza }}
           </option>
         </select>
-        <!-- 3) Padre (opcional) -->
         <select v-model="form.padre_id" class="border rounded p-2">
           <option value="">(Opcional) Padre</option>
           <option v-for="a in animals" :key="a.id_animal" :value="a.id_animal">
@@ -257,10 +220,10 @@ const columns = ref<TableColumn<Reproduccion>[]>([
       </div>
     </div>
 
-    <!-- Acciones globales -->
+    <!-- Acciones globales solo para admin -->
     <div class="flex justify-between items-center">
       <h1 class="text-2xl font-bold">Registros de Reproducción</h1>
-      <div class="flex gap-2">
+      <div v-if="userRole === 'admin'" class="flex gap-2">
         <UButton
           v-if="selected.length === 1 && !isEditing"
           color="secondary"
@@ -279,7 +242,7 @@ const columns = ref<TableColumn<Reproduccion>[]>([
       </div>
     </div>
 
-    <!-- Tabla -->
+    <!-- Tabla (visible para todos) -->
     <Table
       :columns="columns"
       :data="reproducciones"
