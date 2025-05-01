@@ -1,32 +1,29 @@
-import { serverSupabaseClient } from "#supabase/server";
-import { readBody, createError } from "h3";
-import type { Database } from "~/types/supabase";
+import { defineEventHandler, readBody, createError } from 'h3'
+import { serverSupabaseClient } from '#supabase/server'
+import type { Database } from '~/types/supabase'
 
-export default defineEventHandler(async (event) => {
-  const client = await serverSupabaseClient<Database>(event);
-  const body = await readBody<Database["public"]["Tables"]["reproduccion"]["Update"]>(event);
+export default defineEventHandler(async event => {
+  const body = await readBody<Database['public']['Tables']['reproduccion']['Update'] & { child_id?:string }>(event)
+  const { id_reproduccion, child_id, ...upd } = body
+  if (!id_reproduccion) throw createError({ statusCode:400, statusMessage:'ID obligatorio' })
 
-  const { id_reproduccion, madre_id, padre_id, tipo_concepcion, fecha_evento, raza } = body;
-  if (!id_reproduccion) {
-    throw createError({ statusCode: 400, statusMessage: "ID de registro obligatorio." });
+  const client = await serverSupabaseClient<Database>(event)
+  // 1) Actualizo reproducción
+  const { error: err1 } = await client
+    .from('reproduccion')
+    .update(upd)
+    .eq('id_reproduccion', id_reproduccion)
+  if (err1) throw createError({ statusCode:500, statusMessage: err1.message })
+
+  // 2) Si cambió el hijo, limpio antiguos y asigno nuevo
+  if (child_id) {
+    // a) limpio a todos los que apuntaban antes a esta reproducción
+    await client.from('animals').update({ id_reproduccion: null })
+      .eq('id_reproduccion', id_reproduccion.toString())
+    // b) asigno al nuevo
+    await client.from('animals').update({ id_reproduccion: id_reproduccion.toString() })
+      .eq('id_animal', child_id)
   }
 
-  // Construyo el objeto solo con los campos definidos
-  const updateData: Partial<Database["public"]["Tables"]["reproduccion"]["Update"]> = {};
-  if (madre_id !== undefined)       updateData.madre_id = madre_id;
-  if (padre_id !== undefined)       updateData.padre_id = padre_id;
-  if (tipo_concepcion !== undefined) updateData.tipo_concepcion = tipo_concepcion;
-  if (fecha_evento !== undefined)    updateData.fecha_evento = fecha_evento;
-  if (raza !== undefined)            updateData.raza = raza;
-
-  const { error } = await client
-    .from("reproduccion")
-    .update(updateData)
-    .eq("id_reproduccion", id_reproduccion);
-
-  if (error) {
-    throw createError({ statusCode: 500, statusMessage: error.message });
-  }
-
-  return { toast: { message: "Registro actualizado correctamente." } };
-});
+  return { toast:{ message:'Registro y vínculo hijo actualizados.' } }
+})

@@ -3,154 +3,203 @@ import { ref, computed, watch } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import type { Database } from "~/types/supabase";
 
-// Define layouts and middleware
-definePageMeta({
-  layout: "logged",
-  middleware: "role-guard",
-});
-
-// Toast
-const toast = useToast();
-
-// Types
+// ————— Tipos —————
+// Animal tal como viene de la tabla
 type Animal = Database["public"]["Tables"]["animals"]["Row"];
+// Fila base de reproducción
 type ReproduccionRow = Database["public"]["Tables"]["reproduccion"]["Row"];
+// Extendemos para incluir madre, padre y descendencia
 type Reproduccion = ReproduccionRow & {
   madre: Animal | null;
   padre: Animal | null;
   descendencia: Animal[];
 };
 
-// Selection state
-const rowSelection = ref<Record<string, boolean>>({});
-const selectedRecords = ref<Reproduccion[]>([]);
+definePageMeta({ layout: "logged", middleware: "role-guard" });
+const toast = useToast();
 
-// Fetch reproducciones
+// ————— Estados de selección —————
+const rowSelection = ref<Record<string, boolean>>({});
+const selected = ref<Reproduccion[]>([]);
+
+// ————— Fetch reproducciones —————
 const { data: resp, pending, error, refresh: fetchReproductions } = await useFetch<{
   reproducciones: Reproduccion[];
-}>("/api/reproduction/reproductions", {
-  params: { page: 1, pageSize: 1000 },
-});
+}>("/api/reproduction/reproductions", { params: { page: 1, pageSize: 1000 } });
 const reproducciones = computed(() => resp.value?.reproducciones || []);
 
-// Form state
-const newRec = ref<Partial<ReproduccionRow>>({
+// ————— Fetch animales para selects —————
+const { data: aResp } = await useFetch<{ animals: Animal[] }>(
+  "/api/animal/animals",
+  { params: { page: 1, pageSize: 1000 } }
+);
+const animals = computed(() => aResp.value?.animals || []);
+
+// ————— Formulario —————
+// Añadimos child_id para el “hijo”
+const form = ref<Partial<ReproduccionRow> & { child_id?: string }>({
   madre_id: "",
   padre_id: "",
   tipo_concepcion: undefined,
   fecha_evento: "",
   raza: "",
+  child_id: "",
 });
-const editRec = ref<Partial<ReproduccionRow>>({ ...newRec.value });
 
 const isAdding = ref(false);
 const isEditing = ref(false);
 const isUpdating = ref(false);
 const isDeleting = ref(false);
 
-// Reset editing if selection changes
-watch(selectedRecords, (val) => {
-  if (isEditing.value && val.length !== 1) {
-    isEditing.value = false;
-  }
+// Si cambian selección, salimos de edición
+watch(selected, (v) => {
+  if (isEditing.value && v.length !== 1) cancelEdit();
 });
 
-// Start editing
+// ————— CRUD —————
 function startEdit() {
-  if (selectedRecords.value.length !== 1) return;
-  Object.assign(editRec.value, selectedRecords.value[0]);
+  if (selected.value.length !== 1) return;
+  Object.assign(form.value, selected.value[0], {
+    // si ya tenía descendencia, ponemos el primero como seleccionado
+    child_id: selected.value[0].descendencia[0]?.id_animal,
+  });
   isEditing.value = true;
 }
 
-// Cancel edit
 function cancelEdit() {
   isEditing.value = false;
+  Object.assign(form.value, {
+    madre_id: "",
+    padre_id: "",
+    tipo_concepcion: undefined,
+    fecha_evento: "",
+    raza: "",
+    child_id: "",
+  });
 }
 
-// Minimal validation
-function validate(r: Partial<ReproduccionRow>) {
-  const { madre_id, tipo_concepcion, fecha_evento, raza } = r;
-  if (!madre_id || !tipo_concepcion || !fecha_evento || !raza) {
-    toast.add({ color: "error", title: "Completa todos los campos." });
+function validate() {
+  const f = form.value as any;
+  if (
+    !f.child_id ||
+    !f.madre_id ||
+    !f.tipo_concepcion ||
+    !f.fecha_evento ||
+    !f.raza
+  ) {
+    toast.add({
+      color: "error",
+      icon: "i-heroicons-exclamation-circle",
+      title: "Completa todos los campos.",
+    });
     return false;
   }
   return true;
 }
 
-// Create
 async function addRec() {
-  if (isAdding.value) return;
-  if (!validate(newRec.value)) return;
+  if (isAdding.value || !validate()) return;
   isAdding.value = true;
   try {
+    // POST incluye child_id
     const { toast: t } = await $fetch("/api/reproduction/reproductions", {
       method: "POST",
-      body: newRec.value,
+      body: form.value,
     });
-    if (t) toast.add({ color: "success", title: t.message });
+    if (t)
+      toast.add({
+        color: "success",
+        icon: "i-heroicons-check-circle",
+        title: t.message,
+      });
     await fetchReproductions();
-    Object.assign(newRec.value, {
-      madre_id: "",
-      padre_id: "",
-      tipo_concepcion: undefined,
-      fecha_evento: "",
-      raza: "",
-    });
+    cancelEdit();
   } catch (e: any) {
-    toast.add({ color: "error", title: e.data?.statusMessage || "Error al agregar." });
+    toast.add({
+      color: "error",
+      title: e.data?.statusMessage || "Error al agregar.",
+    });
   } finally {
     isAdding.value = false;
   }
 }
 
-// Update
 async function updateRec() {
-  if (isUpdating.value) return;
-  if (!validate(editRec.value) || !editRec.value.id_reproduccion) return;
+  if (isUpdating.value || !validate() || !form.value.id_reproduccion) return;
   isUpdating.value = true;
   try {
     const { toast: t } = await $fetch("/api/reproduction/reproductions", {
       method: "PUT",
-      body: editRec.value,
+      body: form.value,
     });
-    if (t) toast.add({ color: "success", title: t.message });
+    if (t)
+      toast.add({
+        color: "success",
+        icon: "i-heroicons-check-circle",
+        title: t.message,
+      });
     await fetchReproductions();
-    isEditing.value = false;
-    rowSelection.value = {};
-    selectedRecords.value = [];
+    cancelEdit();
   } catch (e: any) {
-    toast.add({ color: "error", title: e.data?.statusMessage || "Error al actualizar." });
+    toast.add({
+      color: "error",
+      title: e.data?.statusMessage || "Error al actualizar.",
+    });
   } finally {
     isUpdating.value = false;
   }
 }
 
-// Delete
 async function deleteRecs() {
-  if (!selectedRecords.value.length || isDeleting.value) return;
+  if (!selected.value.length || isDeleting.value) return;
   isDeleting.value = true;
   try {
-    const ids = selectedRecords.value.map((r) => r.id_reproduccion);
+    const ids = selected.value.map((r) => r.id_reproduccion);
     const { toast: t } = await $fetch("/api/reproduction/reproductions", {
       method: "DELETE",
       body: { ids },
     });
-    if (t) toast.add({ color: "success", title: t.message });
+    if (t)
+      toast.add({
+        color: "success",
+        icon: "i-heroicons-check-circle",
+        title: t.message,
+      });
     await fetchReproductions();
     rowSelection.value = {};
-    selectedRecords.value = [];
+    selected.value = [];
   } catch (e: any) {
-    toast.add({ color: "error", title: e.data?.statusMessage || "Error al eliminar." });
+    toast.add({
+      color: "error",
+      title: e.data?.statusMessage || "Error al eliminar.",
+    });
   } finally {
     isDeleting.value = false;
   }
 }
 
-// Table columns
+// ————— Columnas —————
 const columns = ref<TableColumn<Reproduccion>[]>([
   { accessorKey: "id_reproduccion", header: "ID" },
-  { accessorKey: "madre_id", header: "Madre ID" },
-  { accessorKey: "padre_id", header: "Padre ID" },
+  {
+    header: "Hijo",
+    cell: ({ row }) =>
+      row.original.descendencia[0]?.id_animal ?? "—",
+  },
+  {
+    header: "Madre",
+    cell: ({ row }) =>
+      row.original.madre
+        ? row.original.madre.id_animal
+        : "—",
+  },
+  {
+    header: "Padre",
+    cell: ({ row }) =>
+      row.original.padre
+        ? row.original.padre.id_animal
+        : "—",
+  },
   { accessorKey: "tipo_concepcion", header: "Método" },
   { accessorKey: "fecha_evento", header: "Fecha Evento" },
   { accessorKey: "raza", header: "Raza Objetivo" },
@@ -159,79 +208,74 @@ const columns = ref<TableColumn<Reproduccion>[]>([
 
 <template>
   <div class="container mx-auto p-4 space-y-6">
-    <!-- Formulario Add/Edit -->
-    <div v-if="isEditing || isAdding" class="mb-6 p-4 bg-gray-50 rounded shadow">
-      <h2 class="mb-2 font-semibold">
-        {{ isEditing ? "Editar Registro" : "Agregar Registro" }}
+    <!-- Formulario -->
+    <div class="mb-6 p-4 bg-gray-50 rounded shadow">
+      <h2 class="font-semibold mb-2">
+        {{ isEditing ? "Editar registro" : "Nuevo registro" }}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <input
-          v-model="(isEditing ? editRec : newRec).madre_id"
-          placeholder="madre_id"
-          class="border rounded p-2"
-        />
-        <input
-          v-model="(isEditing ? editRec : newRec).padre_id"
-          placeholder="padre_id"
-          class="border rounded p-2"
-        />
-        <input
-          v-model="(isEditing ? editRec : newRec).tipo_concepcion"
-          placeholder="tipo_concepcion"
-          class="border rounded p-2"
-        />
-        <input
-          type="date"
-          v-model="(isEditing ? editRec : newRec).fecha_evento"
-          class="border rounded p-2"
-        />
-        <input
-          v-model="(isEditing ? editRec : newRec).raza"
-          placeholder="raza"
-          class="border rounded p-2"
-        />
+        <!-- 1) Hijo -->
+        <select v-model="form.child_id" class="border rounded p-2">
+          <option disabled value="">Selecciona Hijo</option>
+          <option v-for="a in animals" :key="a.id_animal" :value="a.id_animal">
+            {{ a.id_animal }} — {{ a.raza }}
+          </option>
+        </select>
+        <!-- 2) Madre -->
+        <select v-model="form.madre_id" class="border rounded p-2">
+          <option disabled value="">Selecciona Madre</option>
+          <option v-for="a in animals" :key="a.id_animal" :value="a.id_animal">
+            {{ a.id_animal }} — {{ a.raza }}
+          </option>
+        </select>
+        <!-- 3) Padre (opcional) -->
+        <select v-model="form.padre_id" class="border rounded p-2">
+          <option value="">(Opcional) Padre</option>
+          <option v-for="a in animals" :key="a.id_animal" :value="a.id_animal">
+            {{ a.id_animal }} — {{ a.raza }}
+          </option>
+        </select>
+        <select v-model="form.tipo_concepcion" class="border rounded p-2">
+          <option disabled value="">Método</option>
+          <option value="NATURAL">Natural</option>
+          <option value="INSEMINACION">Inseminación</option>
+        </select>
+        <input type="date" v-model="form.fecha_evento" class="border rounded p-2" />
+        <input v-model="form.raza" placeholder="Raza" class="border rounded p-2" />
       </div>
       <div class="flex gap-2">
-        <button
+        <UButton
+          color="primary"
           @click="isEditing ? updateRec() : addRec()"
-          :disabled="isAdding || isUpdating"
-          class="px-4 py-2 bg-blue-600 text-white rounded"
+          :loading="isAdding || isUpdating"
         >
-          {{ isEditing
-            ? (isUpdating ? "Guardando..." : "Guardar")
-            : (isAdding ? "Agregando..." : "Agregar") }}
-        </button>
-        <button
-          v-if="isEditing"
-          @click="cancelEdit"
-          class="px-4 py-2 bg-gray-400 text-white rounded"
-        >
+          {{ isEditing ? "Guardar" : "Agregar" }}
+        </UButton>
+        <UButton v-if="isEditing" variant="solid" @click="cancelEdit">
           Cancelar
-        </button>
+        </UButton>
       </div>
     </div>
 
-    <!-- Action Buttons -->
+    <!-- Acciones globales -->
     <div class="flex justify-between items-center">
       <h1 class="text-2xl font-bold">Registros de Reproducción</h1>
       <div class="flex gap-2">
-        <button
-          v-if="selectedRecords.length === 1 && !isEditing"
+        <UButton
+          v-if="selected.length === 1 && !isEditing"
+          color="secondary"
           @click="startEdit"
-          class="px-3 py-1 bg-yellow-500 text-white rounded"
         >
           Editar
-        </button>
-        <button
-          v-if="selectedRecords.length > 0"
+        </UButton>
+        <UButton
+          v-if="selected.length > 0"
+          color="error"
           @click="deleteRecs"
-          :disabled="isDeleting"
-          class="px-3 py-1 bg-red-600 text-white rounded"
+          :loading="isDeleting"
         >
-          {{ isDeleting
-            ? "Eliminando..."
-            : `Eliminar (${selectedRecords.length})` }}
-        </button>
+          Eliminar ({{ selected.length }})
+        </UButton>
       </div>
     </div>
 
@@ -239,15 +283,12 @@ const columns = ref<TableColumn<Reproduccion>[]>([
     <Table
       :columns="columns"
       :data="reproducciones"
-      v-model:rowSelection="rowSelection"
-      @selected="selectedRecords = $event"
+      v-model:row-selection="rowSelection"
+      @selected="selected = $event"
       @refresh="fetchReproductions"
     />
 
-    <!-- Loading / Error -->
-    <div v-if="pending" class="mt-4 text-gray-500">Cargando...</div>
-    <div v-else-if="error" class="mt-4 text-red-500">
-      Error: {{ error.message }}
-    </div>
+    <div v-if="pending" class="mt-4 text-gray-500">Cargando…</div>
+    <div v-else-if="error" class="mt-4 text-red-500">Error: {{ error.message }}</div>
   </div>
 </template>
