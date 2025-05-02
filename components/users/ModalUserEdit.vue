@@ -87,8 +87,8 @@ defineExpose({
       </template>
 
       <template #footer>
-        <UButton label="Cancelar" color="primary" @click="open = false" />
-        <UButton label="Guardar" type="submit" color="primary" @click="form.submit()" />
+        <UButton label="Cancelar" color="error" @click="open = false" />
+        <UButton label="Guardar" type="submit" color="success" @click="form.submit()" />
       </template>
     </UModal>
   </div>
