@@ -15,7 +15,6 @@ const bodySchema = z.object({
 
 export default defineEventHandler(async (event) => {
   // Tipar el cliente Supabase con tu tipo Database, usando el service role client
-  //                                       👇 CAMBIO AQUÍ
   const supabase = await serverSupabaseServiceRole<Database>(event);
 
   let body;
