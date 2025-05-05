@@ -1,75 +1,60 @@
-import { defineEventHandler } from "h3";
+// server/api/dashboard/metrics.get.ts
+import { defineEventHandler, createError } from "h3";
 import { serverSupabaseClient } from "#supabase/server";
 import type { Database } from "~/types/supabase";
-import { createError, getHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
-
-  // --- INICIO: Comprobación de Acceso Directo ---
-  // const secFetchSite = getHeader(event, 'sec-fetch-site')
-
-  // if (secFetchSite === 'none') {
-  //   console.warn(`Acceso directo bloqueado para la ruta ${event.path}. Sec-Fetch-Site: ${secFetchSite}`);
-  //   throw createError({
-  //     statusCode: 403, // Forbidden
-  //     statusMessage: 'Forbidden',
-  //     message: 'Direct access not allowed.'
-  //   });
-  // }
-  // --- FIN: Comprobación de Acceso Directo ---
-
   const client = await serverSupabaseClient<Database>(event);
 
   // 1) Total de animales
-  const { count: totalAnimals } = await client
+  const { count: totalAnimals, error: errA } = await client
     .from("animals")
     .select("id_animal", { head: true, count: "exact" });
+  if (errA) throw createError({ statusCode: 500, message: errA.message });
 
-  // 2) Incremento de peso (%): (sum(peso_actual)-sum(peso_inicial))/sum(peso_inicial)*100
-  const { data: pesos } = await client
+  // 2) Incremento de peso (%)
+  const { data: pesos, error: errP } = await client
     .from("animals")
     .select("peso_inicial, peso_actual");
-  let sumInicial = 0,
-      sumActual = 0;
-  pesos?.forEach((a) => {
+  if (errP) throw createError({ statusCode: 500, message: errP.message });
+  let sumInicial = 0, sumActual = 0;
+  pesos?.forEach(a => {
     sumInicial += a.peso_inicial;
     sumActual  += a.peso_actual;
   });
-  const weightIncreasePercent =
-    sumInicial > 0
-      ? Number(((sumActual - sumInicial) / sumInicial * 100).toFixed(2))
-      : 0;
+  const weightIncreasePercent = sumInicial > 0
+    ? Number(((sumActual - sumInicial) / sumInicial * 100).toFixed(2))
+    : 0;
 
   // 3) Total de insumos
-  const { count: totalInsumos } = await client
+  const { count: totalInsumos, error: errI } = await client
     .from("inventario")
     .select("id_inventario", { head: true, count: "exact" });
+  if (errI) throw createError({ statusCode: 500, message: errI.message });
 
-  // 4) Stock bajo (ejemplo umbral = 10 unidades)
+  // 4) Stock bajo (umbral 10 unidades)
   const LOW_THRESHOLD = 10;
-  const { count: lowStock } = await client
+  const { count: lowStock, error: errL } = await client
     .from("inventario")
     .select("id_inventario", { head: true, count: "exact" })
     .lte("cantidad", LOW_THRESHOLD);
+  if (errL) throw createError({ statusCode: 500, message: errL.message });
 
-  // 5) Gastos últimos 30 días (ejemplo: sumamos el monto de todas las ventas como “gastos”)
-  const hace30 = new Date();
-  hace30.setDate(hace30.getDate() - 30);
-  const fecha30 = hace30.toISOString().split("T")[0]; // YYYY-MM-DD
-  const { data: ventas } = await client
-    .from("ventas")
-    .select("monto")
-    .gte("fecha_venta", fecha30);
-  let totalExpenses = 0;
-  ventas?.forEach((v) => {
-    totalExpenses += v.monto ?? 0;
-  });  
+  // 5) Gastos = suma de TODOS los valores de `precio`
+  const { data: items, error: errX } = await client
+    .from("inventario")
+    .select("precio");
+  if (errX) throw createError({ statusCode: 500, message: errX.message });
+  const totalExpenses = items?.reduce(
+    (acc, i) => acc + (typeof i.precio === "number" ? i.precio : Number(i.precio) || 0),
+    0
+  ) ?? 0;
 
   return {
-    totalAnimals,
+    totalAnimals: totalAnimals || 0,
     weightIncreasePercent,
-    totalInsumos,
-    lowStock,
-    totalExpenses,
+    totalInsumos: totalInsumos || 0,
+    lowStock: lowStock || 0,
+    totalExpenses
   };
 });
