@@ -1,23 +1,9 @@
+<template>
+  <h1>Home W</h1>
+</template>
+
 <script setup lang="ts">
-const colorMode = useColorMode()
-const isDark = computed({
-  get() {
-    return colorMode.value === 'dark'
-  },
-  set() {
-    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
-  }
+definePageMeta({
+  layout: "logged"
 })
 </script>
-
-<template>
-  <ClientOnly>
-    <UButton :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun'" variant="ghost" aria-label="Theme"
-      @click="isDark = !isDark" size="xl" class="p-3 cursor-pointer" title="Cambiar Tema">
-    </UButton>
-    {{ colorMode.value }}
-    <template #fallback>
-      <div class="w-12 h-12" />
-    </template>
-  </ClientOnly>
-</template>
