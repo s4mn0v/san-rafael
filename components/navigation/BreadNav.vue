@@ -38,8 +38,8 @@ const nextItems = computed(() =>
         :label="item.label"
         :icon="item.icon"
         :to="item.to"
-        variant="ghost"
         color="secondary"
+        :ui="{ base: 'bg-[var(--color-custom-50)] text-[var(--color-custom-500) hover:bg-[var(--color-custom-100)]' }"
       />
     </div>
   </div>
