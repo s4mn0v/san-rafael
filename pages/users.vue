@@ -1,6 +1,5 @@
 <template>
-  <h1>Home W</h1>
-  <p>Lorem psum</p>
+  <h1>Usuarios</h1>
 </template>
 
 <script setup lang="ts">

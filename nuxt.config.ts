@@ -9,34 +9,43 @@ export default defineNuxtConfig({
   components: [{ path: "~/components", pathPrefix: false }],
 
   // Page Metadata
-  app: {
-    head: {
-      title: "La Leyenda De San Rafael",
-      meta: [
-        { name: "viewport", content: "width=device-width, initial-scale=1" },
-      ],
-      link: [
-        { rel: "icon", href: "/favicon.ico", sizes: "any" },
-        // Google Font
-        {
-          rel: "preconnect",
-          href: "https://fonts.googleapis.com",
-        },
-        {
-          rel: "preconnect",
-          href: "https://fonts.gstatic.com",
-          crossorigin: "", // Boolean attribute 'crossorigin'
-        },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap",
-        },
-      ],
-    },
-  },
+  // app: {
+  //   head: {
+  //     title: "La Leyenda De San Rafael",
+  //     meta: [
+  //       { name: "viewport", content: "width=device-width, initial-scale=1" },
+  //     ],
+  //     link: [
+  //       { rel: "icon", href: "/favicon.ico", sizes: "any" },
+  //       // Google Font
+  //       {
+  //         rel: "preconnect",
+  //         href: "https://fonts.googleapis.com",
+  //       },
+  //       {
+  //         rel: "preconnect",
+  //         href: "https://fonts.gstatic.com",
+  //         crossorigin: "", // Boolean attribute 'crossorigin'
+  //       },
+  //       {
+  //         rel: "stylesheet",
+  //         href: "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap",
+  //       },
+  //     ],
+  //   },
+  // },
 
   // Color Mode Nuxt UI
   colorMode: { preference: "dark" },
+
+  // UI Nuxt Module
+  ui: {
+    colorMode: true,
+    fonts: true,
+    theme: {
+      transitions: true,
+    }
+  },
 
   // Supabase Nuxt Module
   supabase: {
