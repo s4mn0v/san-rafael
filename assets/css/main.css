@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme static {
+  --font-sans: "Raleway", sans-serif;
+  
+  --color-custom-50: #fdfdfd; /* color-m7 */
+  --color-custom-100: #d0d0d0; /* color-m6 */
+  --color-custom-200: #b3b3b3; /* color-m5 */
+  --color-custom-300: #737373; /* color-m4 */
+  --color-custom-400: #404040; /* color-m3 */
+  --color-custom-500: #262626; /* color-m2 */
+  --color-custom-600: #0d0d0d; /* color-m1 */
+}
+
+:root {
+  /* Global colors light mode */
+  --ui-bg: var(--color-custom-50);
+  --ui-text: var(--color-custom-500);
+
+  /* Default colors light mode */
+  --ui-primary: var(--color-custom-500);
+}
+
+.dark {
+  /* Global colors dark mode */
+  --ui-bg: var(--color-custom-500);
+  --ui-text: var(--color-custom-50);
+
+  /* Default colors dark mode */
+  --ui-primary: var(--color-custom-50);
+}
