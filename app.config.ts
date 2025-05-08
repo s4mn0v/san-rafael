@@ -13,14 +13,29 @@ export default defineAppConfig({
       },
     },
     button: {
+      slots: {
+        base: "cursor-pointer px-4",
+      },
       variants: {
         color: {
-          secondary: "bg-[var(--color-custom-50)] hover:bg-[var(--color-custom-300)] dark:bg-[var(--color-custom-500)] dark:hover:bg-[var(--color-custom-500)] dark:hover:shadow-lg text-[var(--color-custom-500)] dark:text-[var(--color-custom-50)]",
+          secondary:
+            "bg-[var(--color-custom-50)] hover:bg-[var(--color-custom-300)] dark:bg-[var(--color-custom-500)] dark:hover:bg-[var(--color-custom-500)] dark:hover:shadow-lg text-[var(--color-custom-500)] dark:text-[var(--color-custom-50)]",
         },
         variant: {
-          subtle: 'bg-[var(--color-custom-50)] dark:bg-[var(--color-custom-500)] text-[var(--color-custom-500)] dark:text-[var(--color-custom-50)]',
-        }
+          subtle:
+            "bg-[var(--color-custom-50)] dark:bg-[var(--color-custom-500)] text-[var(--color-custom-500)] dark:text-[var(--color-custom-50)]",
+        },
       },
     },
+    toast: {
+      slots: {
+        root: "ring-0",
+      },
+    },
+    input: {
+      slots: {
+        base: "bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)]",
+      },
+    }
   },
 });
