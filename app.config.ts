@@ -34,7 +34,7 @@ export default defineAppConfig({
     },
     input: {
       slots: {
-        base: "bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)]",
+        base: "bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] text-[var(--color-custom-500)] dark:text-[var(--color-custom-500)]",
       },
     }
   },

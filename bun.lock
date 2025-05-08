@@ -16,6 +16,7 @@
       "devDependencies": {
         "@iconify-json/healthicons": "^1.2.8",
         "@iconify-json/heroicons": "^1.2.2",
+        "@iconify-json/lucide": "^1.2.41",
       },
     },
   },
@@ -159,6 +160,8 @@
     "@iconify-json/healthicons": ["@iconify-json/healthicons@1.2.8", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-MySyATOCMxgZJST/Mw1LG/cT9bkoEUgsrr/J5buvAT8AGs8JZZD9xvrY3p/1PILqT7DTPfgiqPjDIHeyMkV+kw=="],
 
     "@iconify-json/heroicons": ["@iconify-json/heroicons@1.2.2", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-qoW4pXr5kTTL6juEjgTs83OJIwpePu7q1tdtKVEdj+i0zyyVHgg/dd9grsXJQnpTpBt6/VwNjrXBvFjRsKPENg=="],
+
+    "@iconify-json/lucide": ["@iconify-json/lucide@1.2.41", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-rOOahfHMgWPqLyRLvLSqEwCmS4jEDxB1Pk63QTe0GObLBKgYKlPmuc1zKYzSuPPkLX/ND7rScVOIDb//ggMNzg=="],
 
     "@iconify/collections": ["@iconify/collections@1.0.546", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-ftDzfvN+9lX0zNeKrgunE2HmWGfek7hKJJC6R16pc/JU7Wv0uibJ6MS2cRlmrjUFvtl0Kl2c2wbZZGRgFmKvTg=="],
 

@@ -45,6 +45,11 @@
 
       </UCard>
       <USkeleton v-else class="h-48 w-full" />
+
+      <UCard class="mt-6 block md:hidden bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)]">
+        <h2 class="text-lg font-semibold my-2 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">Cambio de tema</h2>
+        <ThemingText />
+      </UCard>
     </div>
   </div>
 </template>
@@ -294,7 +299,3 @@ watch(user, (newUser, oldUser) => {
 }, { immediate: false }); // 'immediate: true' might cause issues if user isn't ready initially
 
 </script>
-
-<style scoped>
-/* Puedes añadir estilos específicos si es necesario */
-</style>

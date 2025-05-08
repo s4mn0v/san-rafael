@@ -1,17 +1,14 @@
-<script setup lang="ts">
-import { ClientOnly } from '#components';
-
-</script>
-
 <template>
   <div
-    class="flex h-screen flex-col md:flex-row overflow-hidden bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)]">
-    <!-- Sidebar -->
+    class="flex flex-col-reverse md:flex-row h-screen overflow-hidden bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)]">
+    <!-- Sidebar: bottom en móvil, izquierda en escritorio -->
     <div
-      class="flex-shrink-0 w-full md:w-auto flex flex-col px-4 py-8 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
-      <div class="flex flex-col items-center w-full h-screen gap-4">
-        <!-- Logo -->
-        <div class="hidden md:flex md:flex-col items-center justify-center gap-2">
+      class="w-full md:w-auto flex flex-row md:flex-col px-4 py-4 md:py-8 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] bg-[var(--color-custom-700)] md:bg-transparent flex-shrink-0">
+
+      <!-- Nav buttons: horizontal en móvil, vertical en escritorio -->
+      <div class="flex flex-1 justify-around md:justify-start md:items-center w-full md:flex-col gap-2">
+        <!-- Logo: solo visible en desktop -->
+        <div class="hidden md:flex flex-col items-center justify-center gap-2 mb-4">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
             class="h-10 w-10 text-[var(--color-m7)] sm:h-12 sm:w-12 md:h-16 md:w-16 lg:h-20 lg:w-20 dark:text-[var(--color-m2)]">
             <path fill="currentColor"
@@ -20,18 +17,16 @@ import { ClientOnly } from '#components';
           <span class="font-extrabold tracking-widest uppercase text-2xl">San. Rafael</span>
         </div>
 
-        <!-- Nav links -->
-        <div class="w-full h-6" />
         <NavButtons icon="i-heroicons-home-solid" text="Inicio" to="/" />
         <NavButtons icon="i-healthicons-animal-cow" text="Animales" to="/animals" />
         <NavButtons icon="i-healthicons-i-exam-multiple-choice" text="Inventario" to="/stock" />
         <NavButtons icon="i-healthicons-money-bag" text="Ventas" to="/sales" />
         <NavButtons icon="i-heroicons-user-solid" text="Perfil" to="/profile" />
-        <NavButtons icon="i-heroicons-users-solid" text="Usuarios" to="/users" />
+        <NavButtons v-if="userRole === 'admin'" icon="i-heroicons-users-solid" text="Usuarios" to="/users" />
       </div>
 
-      <!-- Logout & Theme -->
-      <div class="hidden md:flex flex-row items-center justify-between w-full gap-4">
+      <!-- Logout & Theming: solo en escritorio -->
+      <div class="hidden md:flex flex-row items-center justify-between w-full gap-4 mt-4">
         <Logout />
         <Theming />
       </div>
@@ -39,8 +34,49 @@ import { ClientOnly } from '#components';
 
     <!-- Main content -->
     <div
-      class="flex-1 min-w-0 overflow-auto p-4 m-4 md:p-6 bg-[var(--color-custom-50)] dark:bg-[var(--color-custom-500)] rounded-xl">
-      <slot />
+      class="flex-1 overflow-auto p-4 md:p-6 bg-[var(--color-custom-50)] dark:bg-[var(--color-custom-500)] rounded-xl m-4">
+      <div>
+        <div v-if="!isAppLoaded">Cargando...</div>
+        <div v-else>
+          <slot />
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useUserRole } from '~/composables/arestricted';
+import { ref, onMounted, nextTick } from 'vue'
+
+const { userRole } = useUserRole();
+
+const isAppLoaded = ref(false)
+
+onMounted(async () => {
+  // Espera a que el DOM esté listo
+  await nextTick()
+  // Espera a que todas las imágenes estén cargadas
+  const images = Array.from(document.images)
+  if (images.length === 0) {
+    isAppLoaded.value = true
+  } else {
+    let loaded = 0
+    images.forEach(img => {
+      if (img.complete) {
+        loaded++
+      } else {
+        img.addEventListener('load', () => {
+          loaded++
+          if (loaded === images.length) isAppLoaded.value = true
+        })
+        img.addEventListener('error', () => {
+          loaded++
+          if (loaded === images.length) isAppLoaded.value = true
+        })
+      }
+    })
+    if (loaded === images.length) isAppLoaded.value = true
+  }
+})
+</script>

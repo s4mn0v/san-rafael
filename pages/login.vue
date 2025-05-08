@@ -35,7 +35,7 @@
               </div>
 
               <div class="animate-fade-in-up delay-300">
-                <UFormGroup label="Contraseña" name="password">
+                <div label="Contraseña" name="password">
                   <div class="relative">
                     <UInput v-model="state.password" :type="showPassword ? 'text' : 'password'"
                       placeholder="Ingresa tu contraseña" icon="i-heroicons-lock-closed" class="w-full rounded-lg pr-10"
@@ -46,11 +46,11 @@
                       <UIcon :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" class="h-5 w-5" />
                     </button>
                   </div>
-                </UFormGroup>
+                </div>
               </div>
 
               <div class="animate-fade-in-up delay-500">
-                <UButton block type="submit" :loading="isLoading" >
+                <UButton block type="submit" :loading="isLoading">
                   <span v-if="!isLoading" class="uppercase tracking-widest font-bold">Ingresar</span>
                 </UButton>
               </div>
@@ -115,8 +115,8 @@ const login = async () => {
     if (error) throw error;
 
     // Animación de salida antes de redireccionar
-    document.querySelector('.animate-fade-in-right').classList.add('animate-fade-out-left');
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // document.querySelector('.animate-fade-in-right').classList.add('animate-fade-out-left');
+    // await new Promise(resolve => setTimeout(resolve, 500));
 
     useToast().add({
       title: '¡Bienvenido!',
@@ -125,7 +125,7 @@ const login = async () => {
       color: 'success'
     });
 
-    router.push('/');
+    await router.push('/');
   } catch (err) {
     let message = 'Error al iniciar sesión';
     if (err.message.includes('Invalid login credentials')) {
