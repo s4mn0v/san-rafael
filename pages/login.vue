@@ -2,7 +2,7 @@
   <div class="flex min-h-screen w-full overflow-hidden bg-[var(--color-m7)] dark:bg-[var(--color-m2)]">
     <!-- Form Container con animación de entrada -->
     <div class="animate-fade-in-right flex w-full items-center justify-center p-6 md:w-1/2 md:p-10">
-      <div class="absolute top-4 right-4 z-50">
+      <div class="absolute top-4 right-4 z-50 bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] rounded-full">
         <Theming />
       </div>
       <div class="w-full max-w-md space-y-6">
