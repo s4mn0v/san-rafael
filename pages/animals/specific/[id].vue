@@ -109,6 +109,13 @@ const transformGenealogyData = (apiData: any) => {
   };
 };
 
+const showPrintOptions = ref(false)
+const printSections = reactive({
+  genealogy: true,
+  venta: true,
+  detalles: true
+})
+
 const printReport = () => {
   if (typeof window !== 'undefined') {
     window.print();
@@ -132,11 +139,22 @@ const printReport = () => {
       icon="i-heroicons-exclamation-circle" color="error" variant="subtle" />
 
     <div v-else-if="animal?.animal" class="max-w-4xl mx-auto p-6 print:max-w-full print:px-0">
-      <div class="flex justify-between items-center mb-8 print:hidden">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 print:hidden">
         <UButton icon="i-heroicons-arrow-left" label="Volver" @click="$router.back()" />
-        <UButton icon="i-heroicons-printer" label="Imprimir" @click="printReport" />
+        <div class="space-x-2">
+          <UButton icon="i-heroicons-adjustments-horizontal"
+            :label="showPrintOptions ? 'Ocultar opciones' : 'Seleccionar para imprimir'"
+            @click="showPrintOptions = !showPrintOptions" color="gray" />
+          <UButton icon="i-heroicons-printer" label="Imprimir" @click="printReport" />
+        </div>
       </div>
-      <UCard class="shadow-lg print:shadow-none print:w-full print:mt-[-55px]">
+      <div v-if="showPrintOptions" class="flex flex-col md:flex-row gap-4 mb-6 print:hidden">
+        <UCheckbox v-model="printSections.detalles" label="Detalle del animal" />
+        <UCheckbox v-model="printSections.venta" label="Información de venta" />
+      </div>
+
+      <UCard class="shadow-lg print:shadow-none print:w-full print:mt-[-55px]"
+        :class="{ 'print:hidden': !printSections.detalles }">
         <template #header>
           <h1 class="text-2xl">
             Animal: <span class="font-bold font-mono">{{ animal.animal.id_animal }} </span>
@@ -220,7 +238,8 @@ const printReport = () => {
         </div>
       </UCard>
 
-      <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none">
+      <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none"
+        :class="{ 'print:hidden': !printSections.venta }">
         <template #header>
           <h2 class="text-xl font-bold">Información de Venta</h2>
         </template>
@@ -239,66 +258,7 @@ const printReport = () => {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0
                 }).format(animal.venta.monto)
-              : 'No especificado' }}
-            </p>
-          </div>
-        </div>
-        <div>
-          <label class="text-sm text-gray-500">Notas</label>
-          <p class="text-lg font-medium">{{ animal.venta.notas || 'Sin notas' }}</p>
-        </div>
-      </UCard>
-
-      <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none">
-        <template #header>
-          <h2 class="text-xl font-bold">Información de Venta</h2>
-        </template>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 print:grid print:grid-cols-2">
-          <div>
-            <label class="text-sm text-gray-500">Fecha de Venta</label>
-            <p class="text-lg font-medium">{{ new Date(animal.venta.fecha_venta).toLocaleDateString() }}</p>
-          </div>
-          <div>
-            <label class="text-sm text-gray-500">Monto</label>
-            <p class="text-lg font-medium">
-              {{ animal.venta.monto !== null
-                ? new Intl.NumberFormat('es-CO', {
-                  style: 'currency',
-                  currency: 'COP',
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0
-                }).format(animal.venta.monto)
-              : 'No especificado' }}
-            </p>
-          </div>
-        </div>
-        <div>
-          <label class="text-sm text-gray-500">Notas</label>
-          <p class="text-lg font-medium">{{ animal.venta.notas || 'Sin notas' }}</p>
-        </div>
-      </UCard>
-
-
-      <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none">
-        <template #header>
-          <h2 class="text-xl font-bold">Información de Venta</h2>
-        </template>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 print:grid print:grid-cols-2">
-          <div>
-            <label class="text-sm text-gray-500">Fecha de Venta</label>
-            <p class="text-lg font-medium">{{ new Date(animal.venta.fecha_venta).toLocaleDateString() }}</p>
-          </div>
-          <div>
-            <label class="text-sm text-gray-500">Monto</label>
-            <p class="text-lg font-medium">
-              {{ animal.venta.monto !== null
-                ? new Intl.NumberFormat('es-CO', {
-                  style: 'currency',
-                  currency: 'COP',
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0
-                }).format(animal.venta.monto)
-              : 'No especificado' }}
+                : 'No especificado' }}
             </p>
           </div>
         </div>
