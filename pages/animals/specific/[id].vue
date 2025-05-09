@@ -8,7 +8,7 @@ import type { GenealogyResponse } from '~/types/animal'
 const route = useRoute()
 const id = route.params.id
 
-const { data: animal, pending, error } = await useLazyFetch<{ animal: Animal }>(
+const { data: animal, pending, error } = await useLazyFetch<{ animal: Animal, venta: Venta | null }>(
   `/api/animal/specific/${id}`,
   {
     server: false
@@ -87,35 +87,33 @@ const { data: genealogy, pending: genealogyPending } = await useLazyFetch<Geneal
     transform: (res: any) => transformGenealogyData(res)
   }
 )
+
 // Función para transformar la respuesta de la API
 const transformGenealogyData = (apiData: any) => {
-  if (!apiData?.reproduccion) return null
+  if (!apiData?.reproduccion) return null;
 
-  // Helper to convert Animal to TreeNode
-  const transformAnimalToNode = (animal: Animal): TreeNode => ({
-    id: animal.id_animal,
-    raza: animal.raza,
-    tipo_animal: animal.tipo_animal,
-    madre: undefined, // API doesn't provide deeper genealogy
+  const transformAnimalToNode = (animalItem: Animal): TreeNode => ({
+    id: animalItem.id_animal,
+    raza: animalItem.raza,
+    tipo_animal: animalItem.tipo_animal,
+    madre: undefined,
     padre: undefined
-  })
+  });
 
-  const baseNode: TreeNode = {
+  return {
     id: apiData.animal.id_animal,
     raza: apiData.animal.raza,
     tipo_animal: apiData.animal.tipo_animal,
     madre: apiData.reproduccion.madre ? transformAnimalToNode(apiData.reproduccion.madre) : undefined,
     padre: apiData.reproduccion.padre ? transformAnimalToNode(apiData.reproduccion.padre) : undefined
-  }
-
-  return baseNode
-}
+  };
+};
 
 const printReport = () => {
-  if (process.client) {
+  if (typeof window !== 'undefined') {
     window.print();
   }
-}
+};
 </script>
 
 <template>
@@ -200,19 +198,19 @@ const printReport = () => {
           <div class="grid grid-cols-3 gap-4 text-center">
             <div>
               <label class="text-sm font-medium text-[var(--color-custom-300)]">Peso Inicial</label>
-              <p class="text-lg">{{ animal.animal.peso_inicial }} kg</p>
+              <p class="text-lg font-semibold">{{ animal.animal.peso_inicial }} kg</p>
             </div>
 
             <div>
               <label class="text-sm font-medium text-[var(--color-custom-300)]">ID Reproducción</label>
-              <p class="text-lg">
+              <p class="text-lg font-semibold">
                 {{ animal.animal.id_reproduccion || 'N/A' }}
               </p>
             </div>
 
             <div>
               <label class="text-sm font-medium text-[var(--color-custom-300)]">Fecha Fallecimiento</label>
-              <p class="text-lg">
+              <p class="text-lg font-semibold">
                 {{ animal.animal.fecha_fallecimiento
                   ? new Date(animal.animal.fecha_fallecimiento).toLocaleDateString()
                   : 'N/A' }}
@@ -222,22 +220,55 @@ const printReport = () => {
         </div>
       </UCard>
 
+      <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none">
+        <template #header>
+          <h2 class="text-xl font-bold">Información de Venta</h2>
+        </template>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 print:grid print:grid-cols-2">
+          <div>
+            <label class="text-sm text-gray-500">Fecha de Venta</label>
+            <p class="text-lg font-medium">{{ new Date(animal.venta.fecha_venta).toLocaleDateString() }}</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-500">Monto</label>
+            <p class="text-lg font-medium">
+              {{ animal.venta.monto !== null
+                ? new Intl.NumberFormat('es-CO', {
+                  style: 'currency',
+                  currency: 'COP',
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0
+                }).format(animal.venta.monto)
+              : 'No especificado' }}
+            </p>
+          </div>
+        </div>
+        <div>
+          <label class="text-sm text-gray-500">Notas</label>
+          <p class="text-lg font-medium">{{ animal.venta.notas || 'Sin notas' }}</p>
+        </div>
+      </UCard>
+
+      <UAlert v-else-if="animal?.animal" title="Sin información de venta"
+        description="Este animal no tiene datos de venta registrados." icon="i-heroicons-exclamation-circle"
+        color="warning" variant="subtle" class="mt-8" />
+
       <div v-if="genealogyPending" class="mt-8 text-center p-4 print:hidden">
         <p class="text-[var(--color-custom-300)]">Cargando árbol genealógico...</p>
       </div>
 
       <template v-else>
         <div class="print:hidden">
-          <h2 class="text-2xl font-semibold mt-8"> Árbol Genealógico </h2>
+          <h2 v-if="genealogy" class="text-2xl font-semibold mt-8"> Árbol Genealógico </h2>
           <GenealogyTree v-if="genealogy" :tree-data="genealogy" class="mt-8" />
           <UAlert v-else title="Sin registro genealógico"
             description="No se encontraron datos de parentesco para este animal." icon="i-heroicons-information-circle"
-            color="error" variant="subtle" class="mt-8" />
+            color="warning" variant="subtle" class="mt-8" />
         </div>
       </template>
     </div>
 
     <UAlert v-else title="Animal no encontrado" description="No existe un animal con el ID proporcionado"
-      icon="i-heroicons-magnifying-glass" color="yellow" variant="subtle" class="max-w-4xl mx-auto" />
+      icon="i-heroicons-magnifying-glass" color="error" variant="subtle" class="max-w-4xl mx-auto" />
   </div>
 </template>

@@ -28,7 +28,7 @@ const nextItems = computed(() =>
 <template>
   <div class="space-y-2 bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] p-4 rounded-xl mb-6">
     <!-- Breadcrumb (con ítems visibles) -->
-    <UBreadcrumb :items="breadcrumbItems">
+    <UBreadcrumb :items="breadcrumbItems" :ui="{ link: 'hover:text-white dark:hover:text-[var(--color-custom-500)]' }">
       <template #item-label="{ item, index }">
         <span :class="index === breadcrumbItems.length - 1 ? '' : 'hidden sm:inline'">
           {{ item.label }}

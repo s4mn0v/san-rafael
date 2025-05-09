@@ -16,20 +16,31 @@ export default defineEventHandler(async (event) => {
   const client = await serverSupabaseClient<Database>(event);
 
   try {
-    const { data, error, status } = await client
-      .from("animals")
-      .select("*")
-      .eq("id_animal", id)
-      .single(); // Esperamos un solo resultado
+    // Obtener datos del animal
+    const {
+      data: animal,
+      error: animalError,
+      status: animalStatus,
+    } = await client.from("animals").select("*").eq("id_animal", id).single();
 
-    if (error) {
+    if (animalError) {
       throw createError({
-        statusCode: status || 500,
-        statusMessage: error.message,
+        statusCode: animalStatus || 500,
+        statusMessage: animalError.message,
       });
     }
 
-    return { animal: data };
+    // Obtener datos de venta del animal
+    const { data: venta, error: ventaError } = await client
+      .from("ventas")
+      .select("*")
+      .eq("animal_id", id)
+      .order("fecha_venta", { ascending: false }) // En caso de múltiples ventas
+      .limit(1)
+      .single();
+
+    // No lanza error si no hay venta
+    return { animal, venta };
   } catch (err: any) {
     console.error("Error al obtener el animal:", err);
     throw createError({
