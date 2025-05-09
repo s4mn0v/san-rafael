@@ -1,9 +1,11 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+@import "@vue-flow/core/dist/style.css";
+@import "@vue-flow/core/dist/theme-default.css";
 
 @theme static {
   --font-sans: "Raleway", sans-serif;
-  
+
   --color-custom-50: #fdfdfd; /* color-m7 */
   --color-custom-100: #d0d0d0; /* color-m6 */
   --color-custom-200: #b3b3b3; /* color-m5 */
@@ -29,4 +31,13 @@
 
   /* Default colors dark mode */
   --ui-primary: var(--color-custom-50);
+}
+
+/* Vue Flow */
+.dark .vue-flow-container {
+  background-color: var(--color-custom-50);
+  border: none;
+}
+.vue-flow-container {
+  background-color: var(--color-custom-500);
 }

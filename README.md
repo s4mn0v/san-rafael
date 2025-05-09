@@ -20,3 +20,8 @@ bun i -D @iconify-json/healthicons
 ```bash
 bun i -D @iconify-json/lucide
 ```
+
+# Supabase
+```bash
+npx supabase gen types typescript --project-id "tu_project_id" --schema public > types/supabase.ts
+```

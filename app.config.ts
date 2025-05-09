@@ -36,6 +36,18 @@ export default defineAppConfig({
       slots: {
         base: "bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] text-[var(--color-custom-500)] dark:text-[var(--color-custom-500)]",
       },
-    }
+    },
+    card: {
+      variants: {
+        variant: {
+          solid: {
+            root: "ring-0 bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)]",
+          },
+        },
+      },
+      defaultVariants: {
+        variant: "solid",
+      },
+    },
   },
 });
