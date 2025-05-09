@@ -1,3 +1,4 @@
+<!-- pages/index.vue -->
 <template>
   <!-- Breadcrumb + Header -->
   <UBreadcrumb :items="items" />
@@ -18,9 +19,7 @@
 
   <!-- VISTA MÉTRICAS -->
   <div v-if="!viewCharts">
-    <!-- Tu bloque original de DashboardCards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-      <!-- ... Total Animales y Peso ... -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
       <DashboardCard title="Total de Animales" icon="i-healthicons-animal-cow">
         <div class="p-4 bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl text-2xl font-semibold text-center">
           {{ pending ? "…" : metrics.totalAnimals }}
@@ -31,11 +30,15 @@
           {{ pending ? "…" : weightPctDisplay }}
         </div>
       </DashboardCard>
+      <DashboardCard title="Ventas Totales" icon="i-heroicons-currency-dollar-20-solid">
+        <div class="p-4 bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl text-2xl font-semibold text-center">
+          {{ pending ? "…" : `$${metrics.totalSales.toLocaleString()}` }}
+        </div>
+      </DashboardCard>
     </div>
 
     <DashboardCard title="Control de Inventario">
       <div class="flex flex-col sm:flex-row gap-6 w-full">
-        <!-- ... Total Insumos, Stock Bajo, Gastos ... -->
         <DashboardContainer title="Total Insumos" icon="i-healthicons-ui-menu-grid-outline" class="w-full">
           <div class="text-2xl font-semibold text-center">{{ pending ? "…" : metrics.totalInsumos }}</div>
         </DashboardContainer>
@@ -51,45 +54,64 @@
 
   <!-- VISTA GRÁFICOS -->
   <div v-else class="space-y-6">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
-      <!-- Gráfico 1: Animales & Peso -->
+    <!-- Fila 1: tres gráficos de barras -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <DashboardCard title="Animales y Peso" icon="i-heroicons-chart-bar">
         <div class="p-4 bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl">
           <ClientOnly>
-            <BarChart :data="animalBarData" :options="barOptions" />
+            <BarChart :data="animalBarData" :options="chartOptions" />
           </ClientOnly>
         </div>
       </DashboardCard>
 
-      <!-- Gráfico 2: Inventario & Gastos -->
       <DashboardCard title="Inventario y Gastos" icon="i-heroicons-chart-bar">
         <div class="p-4 bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl">
           <ClientOnly>
-            <BarChart :data="inventoryBarData" :options="barOptions" />
+            <BarChart :data="inventoryBarData" :options="chartOptions" />
           </ClientOnly>
         </div>
       </DashboardCard>
 
-      <!-- Gráfico 3: Solo Costos -->
       <DashboardCard title="Gastos Totales" icon="i-heroicons-currency-dollar-20-solid">
         <div class="p-4 bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl">
           <ClientOnly>
-            <BarChart :data="costBarData" :options="barOptions" />
+            <BarChart :data="costBarData" :options="chartOptions" />
+          </ClientOnly>
+        </div>
+      </DashboardCard>
+    </div>
+
+    <!-- Fila 2: ventas por animal y comparativa lado a lado -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <DashboardCard title="Ventas por Animal" icon="i-heroicons-chart-bar">
+        <div class="p-4 bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl">
+          <ClientOnly>
+            <BarChart :data="salesBarData" :options="chartOptions" />
+          </ClientOnly>
+        </div>
+      </DashboardCard>
+
+      <DashboardCard title="Comparativa de Ventas" icon="i-heroicons-chart-line">
+        <div class="p-4 bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl">
+          <ClientOnly>
+            <LineChart :data="salesLineData" :options="chartOptions" />
           </ClientOnly>
         </div>
       </DashboardCard>
     </div>
   </div>
 
-  <div v-if="error" class="mt-4 text-red-500">Error al cargar métricas: {{ error.message }}</div>
+  <div v-if="error" class="mt-4 text-red-500">
+    Error al cargar métricas: {{ error.message }}
+  </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: "logged" });
+definePageMeta({ layout: 'logged' });
 
-import { ref, computed } from "vue";
-import { useFetch } from "#app";
-import type { BreadcrumbItem } from "@nuxt/ui";
+import { ref, computed, onMounted } from 'vue';
+import { useFetch } from '#app';
+import type { BreadcrumbItem } from '@nuxt/ui';
 
 // Chart.js + vue-chartjs
 import {
@@ -98,78 +120,122 @@ import {
   Tooltip,
   Legend,
   BarElement,
+  LineElement,
+  PointElement,
   CategoryScale,
   LinearScale,
-} from "chart.js";
-import { Bar as BarChart } from "vue-chartjs";
-import type { ChartData, ChartOptions } from "chart.js";
+} from 'chart.js';
+import { Bar as BarChart, Line as LineChart } from 'vue-chartjs';
+import type { ChartData, ChartOptions } from 'chart.js';
 
-// 1) Registra Chart.js
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale
+);
 
-// 2) Breadcrumb
+// Breadcrumb
 const items = ref<BreadcrumbItem[]>([
-  { label: "Inicio", icon: "i-heroicons-home-solid", to: "/" },
+  { label: 'Inicio', icon: 'i-heroicons-home-solid', to: '/' }
 ]);
 
-// 3) Interfaz de métricas
+// Metrics interface
+interface SalesPoint { animal_id: string; monto: number; fecha_venta: string }
 interface Metrics {
   totalAnimals: number;
   weightIncreasePercent: number;
   totalInsumos: number;
   lowStock: number;
   totalExpenses: number;
+  totalSales: number;
+  salesData: SalesPoint[];
 }
 
-// 4) Fetch solo en cliente
+// Fetch metrics client-side
 const { data: mr, pending, error } = await useFetch<Metrics>(
-  "/api/dashboard/metrics",
+  '/api/dashboard/metrics',
   { server: false }
 );
-
-// 5) Safe metrics
 const metrics = computed(() => mr.value ?? {
   totalAnimals: 0,
   weightIncreasePercent: 0,
   totalInsumos: 0,
   lowStock: 0,
   totalExpenses: 0,
+  totalSales: 0,
+  salesData: []
 });
 
-// 6) Porcentaje con 2 decimales
 const weightPctDisplay = computed(() => `${metrics.value.weightIncreasePercent.toFixed(2)}%`);
-
-// 7) Toggle vistas
 const viewCharts = ref(false);
 
-// 8) Opciones compartidas
-const barOptions = {
+// Detect dark mode
+const isDark = ref(false);
+onMounted(() => {
+  isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches;
+});
+
+// Sort sales by date
+const sortedSales = computed(() =>
+  [...metrics.value.salesData].sort(
+    (a, b) => new Date(a.fecha_venta).getTime() - new Date(b.fecha_venta).getTime()
+  )
+);
+
+// Central chart options, line & bar color dynamic
+const chartOptions = computed<ChartOptions<any>>(() => ({
   responsive: true,
   plugins: {
-    legend: { position: "top" as const },
-    title: { display: false },
+    legend: { position: 'top' }
   },
-} as ChartOptions<"bar">;
-
-// 9) Datos gráfico Animales & Peso
-const animalBarData = computed<ChartData<"bar", number[], unknown>>(() => ({
-  labels: ["Total Animales", "Peso ↑ (%)"],
-  datasets: [{ label: "Valor", backgroundColor: "var(--color-primary)", data: [metrics.value.totalAnimals, metrics.value.weightIncreasePercent] }],
+  datasets: {
+    bar: {
+      backgroundColor: isDark.value ? '#FFA500' : 'var(--color-primary)'
+    },
+    line: {
+      borderColor: isDark.value ? '#FFA500' : 'var(--color-primary)',
+      borderWidth: 2,
+      pointBackgroundColor: isDark.value ? '#FFA500' : 'var(--color-primary)',
+      pointRadius: 6,
+      pointHoverRadius: 8
+    }
+  },
+  scales: {
+    x: { title: { display: true, text: 'Categoría / Fecha' } },
+    y: { title: { display: true, text: 'Valor' } }
+  }
 }));
 
-// 10) Datos gráfico Inventario & Gastos
-const inventoryBarData = computed<ChartData<"bar", number[], unknown>>(() => ({
-  labels: ["Total Insumos", "Stock Bajo"],
+// Bar chart data
+const animalBarData = computed<ChartData<'bar', number[]>>(() => ({
+  labels: ['Total Animales', 'Peso ↑ (%)'],
+  datasets: [{ data: [metrics.value.totalAnimals, metrics.value.weightIncreasePercent] }]
+}));
+const inventoryBarData = computed<ChartData<'bar', number[]>>(() => ({
+  labels: ['Total Insumos', 'Stock Bajo'],
+  datasets: [{ data: [metrics.value.totalInsumos, metrics.value.lowStock] }]
+}));
+const costBarData = computed<ChartData<'bar', number[]>>(() => ({
+  labels: ['Gastos Totales'],
+  datasets: [{ data: [metrics.value.totalExpenses] }]
+}));
+const salesBarData = computed<ChartData<'bar', number[]>>(() => ({
+  labels: sortedSales.value.map(p => p.animal_id),
+  datasets: [{ data: sortedSales.value.map(p => p.monto) }]
+}));
+
+// Line chart data
+const salesLineData = computed<ChartData<'line', number[], string>>(() => ({
+  labels: sortedSales.value.map(p => new Date(p.fecha_venta).toLocaleDateString()),
   datasets: [{
-    label: "Inventario",
-    backgroundColor: "var(--color-primary)",
-    data: [metrics.value.totalInsumos, metrics.value.lowStock],
-  }],
-}));
-
-// 11) **Nuevo**: Datos gráfico Solo Costos
-const costBarData = computed<ChartData<"bar", number[], unknown>>(() => ({
-  labels: ["Gastos Totales"],
-  datasets: [{ label: "Gastos", backgroundColor: "var(--color-primary)", data: [metrics.value.totalExpenses] }],
+    label: 'Ventas',
+    data: sortedSales.value.map(p => p.monto),
+    fill: false
+  }]
 }));
 </script>
