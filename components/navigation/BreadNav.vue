@@ -28,19 +28,19 @@ const nextItems = computed(() =>
 <template>
   <div class="space-y-2 bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] p-4 rounded-xl mb-6">
     <!-- Breadcrumb (con ítems visibles) -->
-    <UBreadcrumb :items="breadcrumbItems" :ui="{ link: 'hover:text-white dark:hover:text-[var(--color-custom-500)]' }" />
+    <UBreadcrumb :items="breadcrumbItems">
+      <template #item-label="{ item, index }">
+        <span :class="index === breadcrumbItems.length - 1 ? '' : 'hidden sm:inline'">
+          {{ item.label }}
+        </span>
+      </template>
+    </UBreadcrumb>
 
     <!-- Botones adicionales de navegación -->
     <div v-if="nextItems.length" class="flex flex-wrap gap-2 mt-4">
-      <UButton
-        v-for="item in nextItems"
-        :key="item.to as string"
-        :label="item.label"
-        :icon="item.icon"
-        :to="item.to"
+      <UButton v-for="item in nextItems" :key="item.to as string" :label="item.label" :icon="item.icon" :to="item.to"
         color="secondary"
-        :ui="{ base: 'bg-[var(--color-custom-50)] text-[var(--color-custom-500) hover:bg-[var(--color-custom-100)]' }"
-      />
+        :ui="{ base: 'bg-[var(--color-custom-50)] text-[var(--color-custom-500) hover:bg-[var(--color-custom-100)]' }" />
     </div>
   </div>
 </template>

@@ -65,7 +65,10 @@ watch(
         title: 'Animal encontrado',
         description: `Se cargó correctamente el animal con ID ${val.animal.id_animal}`,
         color: 'success',
-        icon: 'i-heroicons-check-circle'
+        icon: 'i-heroicons-check-circle',
+        ui: {
+          root: "print:hidden"
+        }
       })
 
       // Agregar el ID al breadcrumb
@@ -107,14 +110,21 @@ const transformGenealogyData = (apiData: any) => {
 
   return baseNode
 }
+
+const printReport = () => {
+  if (process.client) {
+    window.print();
+  }
+}
 </script>
 
 <template>
   <div class="space-y-8">
 
-    <BreadNav :items="breadcrumbItems" />
+    <BreadNav :items="breadcrumbItems" class="print:hidden" />
 
-    <AnimalSearch />
+    <AnimalSearch class="print:hidden" />
+
 
     <div v-if="pending" class="text-center p-8">
       <p class="mt-4 text-[var(--color-custom-300)]">Cargando información del animal...</p>
@@ -123,15 +133,19 @@ const transformGenealogyData = (apiData: any) => {
     <UAlert v-else-if="error" :title="'Error al cargar el animal' || error.data?.statusMessage"
       icon="i-heroicons-exclamation-circle" color="error" variant="subtle" />
 
-    <div v-else-if="animal?.animal" class="max-w-4xl mx-auto p-6">
-      <UCard class="shadow-lg">
+    <div v-else-if="animal?.animal" class="max-w-4xl mx-auto p-6 print:max-w-full print:px-0">
+      <div class="flex justify-between items-center mb-8 print:hidden">
+        <UButton icon="i-heroicons-arrow-left" label="Volver" @click="$router.back()" />
+        <UButton icon="i-heroicons-printer" label="Imprimir" @click="printReport" />
+      </div>
+      <UCard class="shadow-lg print:shadow-none print:w-full">
         <template #header>
           <h1 class="text-2xl font-bold">
             Animal ID: {{ animal.animal.id_animal }}
           </h1>
         </template>
 
-        <div class="grid md:grid-cols-2 gap-6">
+        <div class="grid md:grid-cols-2 gap-6 print:grid print:grid-cols-2">
           <!-- Columna Izquierda -->
           <div class="space-y-4">
             <div>
@@ -208,16 +222,18 @@ const transformGenealogyData = (apiData: any) => {
         </div>
       </UCard>
 
-      <div v-if="genealogyPending" class="mt-8 text-center p-4">
+      <div v-if="genealogyPending" class="mt-8 text-center p-4 print:hidden">
         <p class="text-[var(--color-custom-300)]">Cargando árbol genealógico...</p>
       </div>
 
       <template v-else>
-        <h2 class="text-2xl font-semibold mt-8"> Árbol Genealógico </h2>
-        <GenealogyTree v-if="genealogy" :tree-data="genealogy" class="mt-8" />
-        <UAlert v-else title="Sin registro genealógico"
-          description="No se encontraron datos de parentesco para este animal." icon="i-heroicons-information-circle"
-          color="error" variant="subtle" class="mt-8" />
+        <div class="print:hidden">
+          <h2 class="text-2xl font-semibold mt-8"> Árbol Genealógico </h2>
+          <GenealogyTree v-if="genealogy" :tree-data="genealogy" class="mt-8" />
+          <UAlert v-else title="Sin registro genealógico"
+            description="No se encontraron datos de parentesco para este animal." icon="i-heroicons-information-circle"
+            color="error" variant="subtle" class="mt-8" />
+        </div>
       </template>
     </div>
 
