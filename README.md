@@ -23,5 +23,5 @@ bun i -D @iconify-json/lucide
 
 # Supabase
 ```bash
-npx supabase gen types typescript --project-id "tu_project_id" --schema public > types/supabase.ts
+bunx supabase gen types typescript --project-id "yhydjqxtnqinaxnqnegn" --schema public > types/supabase.ts
 ```

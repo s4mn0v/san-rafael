@@ -4,384 +4,468 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[];
+  | Json[]
 
 export type Database = {
   public: {
     Tables: {
-      // Tabla existente de perfiles (ejemplo)
-      profiles: {
-        Row: {
-          id: string;
-          role: string;
-          name: string;
-          email: string;
-        };
-        Insert: {
-          id: string; // Generalmente coincide con auth.users.id
-          role: string;
-          email: string;
-          name: string;
-        };
-        Update: {
-          id?: string;
-          role?: string;
-          email?: string;
-          name?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey";
-            columns: ["id"];
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-
-      // --- INICIO: Definiciones para Gestor Ganadero ---
-
       animals: {
         Row: {
-          // Datos como vienen de la BD
-          id_animal: string;
-          fecha_nacimiento: string; // DATE se maneja como string (ISO 8601)
-          fecha_fallecimiento: string | null;
-          raza: string;
-          tipo_animal: "NOVILLO" | "TERNERO" | "TERNERA" | "VACA" | "TORO";
-          peso_inicial: number; // DECIMAL se maneja como number
-          peso_actual: number;
-          estado_salud: string;
-          venta: boolean;
-          // Columnas añadidas por ALTER TABLE
-          id_reproduccion: string | null;
-        };
+          estado_salud: string
+          fecha_fallecimiento: string | null
+          fecha_nacimiento: string
+          id_animal: string
+          id_reproduccion: number | null
+          peso_actual: number
+          peso_inicial: number
+          raza: string
+          tipo_animal: string
+          venta: boolean | null
+        }
         Insert: {
-          // Datos necesarios para crear un animal
-          id_animal: string; // ID manual, debe ser proporcionado
-          fecha_nacimiento: string;
-          fecha_fallecimiento?: string | null; // Opcional al crear
-          raza: string;
-          tipo_animal: "NOVILLO" | "TERNERO" | "TERNERA" | "VACA" | "TORO";
-          peso_inicial: number;
-          peso_actual: number; // Usualmente igual al inicial al crear, pero requerido
-          estado_salud: string;
-          venta?: boolean; // Opcional, default es false
-          id_reproduccion?: string | null;
-        };
+          estado_salud: string
+          fecha_fallecimiento?: string | null
+          fecha_nacimiento: string
+          id_animal: string
+          id_reproduccion?: number | null
+          peso_actual: number
+          peso_inicial: number
+          raza: string
+          tipo_animal: string
+          venta?: boolean | null
+        }
         Update: {
-          // Datos que se pueden actualizar (todos opcionales)
-          id_animal?: string; // Generalmente no se actualiza la PK
-          fecha_nacimiento?: string;
-          fecha_fallecimiento?: string | null;
-          raza?: string;
-          tipo_animal?: "NOVILLO" | "TERNERO" | "TERNERA" | "VACA" | "TORO";
-          peso_inicial?: number;
-          peso_actual?: number;
-          estado_salud?: string;
-          venta?: boolean;
-          id_reproduccion?: string | null;
-        };
+          estado_salud?: string
+          fecha_fallecimiento?: string | null
+          fecha_nacimiento?: string
+          id_animal?: string
+          id_reproduccion?: number | null
+          peso_actual?: number
+          peso_inicial?: number
+          raza?: string
+          tipo_animal?: string
+          venta?: boolean | null
+        }
         Relationships: [
           {
-            foreignKeyName: "animals_id_reproduccion_fkey";
-            columns: ["id_reproduccion"];
-            referencedRelation: "reproduccion";
-            referencedColumns: ["id_reproduccion"];
-          }
-        ];
-      };
-
-      tratamientos: {
-        Row: {
-          id_tratamiento: number;
-          animal_id: string;
-          nombre: string;
-          descripcion: string | null;
-          fecha: string | null; // DATE se maneja como string
-        };
-        Insert: {
-          id_tratamiento?: number; // SERIAL es autogenerado
-          animal_id: string;
-          nombre: string;
-          descripcion?: string | null;
-          fecha?: string | null;
-        };
-        Update: {
-          id_tratamiento?: number;
-          animal_id?: string;
-          nombre?: string;
-          descripcion?: string | null;
-          fecha?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fk_tratamiento_animal";
-            columns: ["animal_id"];
-            referencedRelation: "animals";
-            referencedColumns: ["id_animal"];
-          }
-        ];
-      };
-
-      ventas: {
-        Row: {
-          id_venta: number;
-          animal_id: string;
-          fecha_venta: string; // DATE
-          monto: number | null; // DECIMAL
-        };
-        Insert: {
-          id_venta?: number; // SERIAL
-          animal_id: string;
-          fecha_venta: string;
-          monto?: number | null;
-        };
-        Update: {
-          id_venta?: number;
-          animal_id?: string;
-          fecha_venta?: string;
-          monto?: number | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fk_venta_animal";
-            columns: ["animal_id"];
-            referencedRelation: "animals";
-            referencedColumns: ["id_animal"];
-          }
-        ];
-      };
-
-      vacunas: {
-        Row: {
-          id_vacuna: number;
-          nombre: string;
-          cantidad_implementada: number; // INTEGER
-          animal_id: string | null;
-          fecha_aplicacion: string | null; // DATE
-        };
-        Insert: {
-          id_vacuna?: number; // SERIAL
-          nombre: string;
-          cantidad_implementada: number;
-          animal_id?: string | null;
-          fecha_aplicacion?: string | null;
-        };
-        Update: {
-          id_vacuna?: number;
-          nombre?: string;
-          cantidad_implementada?: number;
-          animal_id?: string | null;
-          fecha_aplicacion?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fk_vacuna_animal";
-            columns: ["animal_id"];
-            referencedRelation: "animals";
-            referencedColumns: ["id_animal"];
-          }
-        ];
-      };
-
-      historial_salud: {
-        Row: {
-          id_historial: number;
-          animal_id: string;
-          descripcion: string;
-          observaciones: string | null;
-          fecha_evento: string; // DATE
-        };
-        Insert: {
-          id_historial?: number; // SERIAL
-          animal_id: string;
-          descripcion: string;
-          observaciones?: string | null;
-          fecha_evento: string;
-        };
-        Update: {
-          id_historial?: number;
-          animal_id?: string;
-          descripcion?: string;
-          observaciones?: string | null;
-          fecha_evento?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fk_historial_animal";
-            columns: ["animal_id"];
-            referencedRelation: "animals";
-            referencedColumns: ["id_animal"];
-          }
-        ];
-      };
-
-      proveedores: {
-        // Definir Proveedores ANTES de Inventario
-        Row: {
-          id_proveedor: string;
-          nombre_empresa: string;
-          correo_empresa: string;
-          telefono: string;
-          direccion: string;
-        };
-        Insert: {
-          id_proveedor: string; // Manual
-          nombre_empresa: string;
-          correo_empresa: string;
-          telefono: string;
-          direccion: string;
-        };
-        Update: {
-          id_proveedor?: string;
-          nombre_empresa?: string;
-          correo_empresa?: string;
-          telefono?: string;
-          direccion?: string;
-        };
-        Relationships: []; // No tiene FKs salientes directas aquí
-      };
-
-      inventario: {
-        Row: {
-          id_inventario: number;
-          tipo: "SALUD" | "ALIMENTOS" | "ELEMENTOS";
-          descripcion: string;
-          cantidad: number; // INTEGER
-          precio: number; // DECIMAL
-          proveedor_id: string;
-        };
-        Insert: {
-          id_inventario?: number; // SERIAL
-          tipo: "SALUD" | "ALIMENTOS" | "ELEMENTOS";
-          descripcion: string;
-          cantidad: number;
-          precio: number;
-          proveedor_id: string;
-        };
-        Update: {
-          id_inventario?: number;
-          tipo?: "SALUD" | "ALIMENTOS" | "ELEMENTOS";
-          descripcion?: string;
-          cantidad?: number;
-          precio?: number;
-          proveedor_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fk_inventario_proveedor";
-            columns: ["proveedor_id"];
-            referencedRelation: "proveedores";
-            referencedColumns: ["id_proveedor"];
-          }
-        ];
-      };
-
-      reproduccion: {
-        Row: {
-          id_reproduccion: number;
-          madre_id: string;
-          padre_id: string | null;
-          tipo_concepcion: "NATURAL" | "INSEMINACION";
-          fecha_evento: string; // DATE
-          raza: string;
-        };
-        Insert: {
-          id_reproduccion?: number; // SERIAL
-          madre_id: string;
-          padre_id?: string | null;
-          tipo_concepcion: "NATURAL" | "INSEMINACION";
-          fecha_evento: string;
-          raza: string;
-        };
-        Update: {
-          id_reproduccion?: number;
-          madre_id?: string;
-          padre_id?: string | null;
-          tipo_concepcion?: "NATURAL" | "INSEMINACION";
-          fecha_evento?: string;
-          raza?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fk_reproduccion_madre";
-            columns: ["madre_id"];
-            referencedRelation: "animals";
-            referencedColumns: ["id_animal"];
+            foreignKeyName: "animals_id_reproduccion_fkey"
+            columns: ["id_reproduccion"]
+            isOneToOne: false
+            referencedRelation: "reproduccion"
+            referencedColumns: ["id_reproduccion"]
           },
-          {
-            foreignKeyName: "fk_reproduccion_padre";
-            columns: ["padre_id"];
-            referencedRelation: "animals";
-            referencedColumns: ["id_animal"];
-          }
-        ];
-      };
-
+        ]
+      }
       genealogia: {
         Row: {
-          id_documento: number;
-          animal_id: string;
-          tipo_registro: "CON_REGISTRO" | "SIN_REGISTRO";
-          documento: string | null;
-          observaciones: string | null;
-        };
+          animal_id: string
+          documento: string | null
+          id_documento: number
+          observaciones: string | null
+          tipo_registro: string
+        }
         Insert: {
-          id_documento?: number; // SERIAL
-          animal_id: string;
-          tipo_registro: "CON_REGISTRO" | "SIN_REGISTRO";
-          documento?: string | null;
-          observaciones?: string | null;
-        };
+          animal_id: string
+          documento?: string | null
+          id_documento?: number
+          observaciones?: string | null
+          tipo_registro: string
+        }
         Update: {
-          id_documento?: number;
-          animal_id?: string;
-          tipo_registro?: "CON_REGISTRO" | "SIN_REGISTRO";
-          documento?: string | null;
-          observaciones?: string | null;
-        };
+          animal_id?: string
+          documento?: string | null
+          id_documento?: number
+          observaciones?: string | null
+          tipo_registro?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "fk_genealogia_animal";
-            columns: ["animal_id"];
-            referencedRelation: "animals";
-            referencedColumns: ["id_animal"];
-          }
-        ];
-      };
-
-      // --- FIN: Definiciones para Gestor Ganadero ---
-    }; // Fin de Tables
+            foreignKeyName: "fk_genealogia_animal"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id_animal"]
+          },
+        ]
+      }
+      historial_salud: {
+        Row: {
+          animal_id: string
+          descripcion: string
+          fecha_evento: string
+          id_historial: number
+          observaciones: string | null
+        }
+        Insert: {
+          animal_id: string
+          descripcion: string
+          fecha_evento: string
+          id_historial?: number
+          observaciones?: string | null
+        }
+        Update: {
+          animal_id?: string
+          descripcion?: string
+          fecha_evento?: string
+          id_historial?: number
+          observaciones?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_historial_animal"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id_animal"]
+          },
+        ]
+      }
+      inventario: {
+        Row: {
+          cantidad: number
+          descripcion: string
+          id_inventario: number
+          precio: number
+          proveedor_id: string
+          tipo: string
+        }
+        Insert: {
+          cantidad: number
+          descripcion: string
+          id_inventario?: number
+          precio: number
+          proveedor_id: string
+          tipo: string
+        }
+        Update: {
+          cantidad?: number
+          descripcion?: string
+          id_inventario?: number
+          precio?: number
+          proveedor_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_inventario_proveedor"
+            columns: ["proveedor_id"]
+            isOneToOne: false
+            referencedRelation: "proveedores"
+            referencedColumns: ["id_proveedor"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          email: string
+          id: string
+          name: string | null
+          role: Database["public"]["Enums"]["user_role"]
+        }
+        Insert: {
+          email: string
+          id: string
+          name?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+        }
+        Update: {
+          email?: string
+          id?: string
+          name?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+        }
+        Relationships: []
+      }
+      proveedores: {
+        Row: {
+          correo_empresa: string
+          direccion: string
+          id_proveedor: string
+          nombre_empresa: string
+          telefono: string
+        }
+        Insert: {
+          correo_empresa: string
+          direccion: string
+          id_proveedor: string
+          nombre_empresa: string
+          telefono: string
+        }
+        Update: {
+          correo_empresa?: string
+          direccion?: string
+          id_proveedor?: string
+          nombre_empresa?: string
+          telefono?: string
+        }
+        Relationships: []
+      }
+      reproduccion: {
+        Row: {
+          fecha_evento: string
+          id_reproduccion: number
+          madre_id: string
+          padre_id: string | null
+          raza: string
+          tipo_concepcion: string
+        }
+        Insert: {
+          fecha_evento: string
+          id_reproduccion?: number
+          madre_id: string
+          padre_id?: string | null
+          raza: string
+          tipo_concepcion: string
+        }
+        Update: {
+          fecha_evento?: string
+          id_reproduccion?: number
+          madre_id?: string
+          padre_id?: string | null
+          raza?: string
+          tipo_concepcion?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_reproduccion_madre"
+            columns: ["madre_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id_animal"]
+          },
+          {
+            foreignKeyName: "fk_reproduccion_padre"
+            columns: ["padre_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id_animal"]
+          },
+        ]
+      }
+      tratamientos: {
+        Row: {
+          animal_id: string
+          descripcion: string | null
+          fecha: string | null
+          id_tratamiento: number
+          nombre: string
+        }
+        Insert: {
+          animal_id: string
+          descripcion?: string | null
+          fecha?: string | null
+          id_tratamiento?: number
+          nombre: string
+        }
+        Update: {
+          animal_id?: string
+          descripcion?: string | null
+          fecha?: string | null
+          id_tratamiento?: number
+          nombre?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_tratamiento_animal"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id_animal"]
+          },
+        ]
+      }
+      vacunas: {
+        Row: {
+          animal_id: string | null
+          cantidad_implementada: number
+          fecha_aplicacion: string | null
+          id_vacuna: number
+          nombre: string
+        }
+        Insert: {
+          animal_id?: string | null
+          cantidad_implementada: number
+          fecha_aplicacion?: string | null
+          id_vacuna?: number
+          nombre: string
+        }
+        Update: {
+          animal_id?: string | null
+          cantidad_implementada?: number
+          fecha_aplicacion?: string | null
+          id_vacuna?: number
+          nombre?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_vacuna_animal"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id_animal"]
+          },
+        ]
+      }
+      ventas: {
+        Row: {
+          animal_id: string
+          fecha_venta: string
+          id_venta: number
+          monto: number | null
+          notas: string | null
+        }
+        Insert: {
+          animal_id: string
+          fecha_venta: string
+          id_venta?: number
+          monto?: number | null
+          notas?: string | null
+        }
+        Update: {
+          animal_id?: string
+          fecha_venta?: string
+          id_venta?: number
+          monto?: number | null
+          notas?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_venta_animal"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id_animal"]
+          },
+        ]
+      }
+    }
     Views: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Functions: {
-      [_ in never]: never;
-    };
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+    }
     Enums: {
-      [_ in never]: never;
-    };
+      user_role: "admin" | "user"
+    }
     CompositeTypes: {
-      [_ in never]: never;
-    };
-  }; // Fin de public
-}; // Fin de Database
-
-// Helper para extraer los tipos específicos si los necesitas
-export type Tables<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Row"];
-export type Enums<T extends keyof Database["public"]["Enums"]> =
-  Database["public"]["Enums"][T];
-
-// Puedes exportar tipos específicos para facilitar su uso
-// Añadir en el tipo Profile
-export type Profile = Tables<"profiles"> & {
-  id: string
-  email: string
-  role: string
+      [_ in never]: never
+    }
+  }
 }
-export type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
-export type Animal = Tables<"animals">;
-export type AnimalInsert = Database["public"]["Tables"]["animals"]["Insert"];
-export type AnimalUpdate = Database["public"]["Tables"]["animals"]["Update"];
+
+type DefaultSchema = Database[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof Database },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      user_role: ["admin", "user"],
+    },
+  },
+} as const
