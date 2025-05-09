@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col-reverse md:flex-row h-screen overflow-hidden bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)]">
+    class="flex flex-col-reverse md:flex-row h-screen overflow-hidden bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] print-unset-height">
     <!-- Sidebar: bottom en móvil, izquierda en escritorio -->
     <div
       class="w-full md:w-auto flex flex-row md:flex-col px-4 py-4 md:py-8 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] bg-[var(--color-custom-700)] md:bg-transparent flex-shrink-0">

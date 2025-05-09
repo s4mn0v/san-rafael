@@ -22,6 +22,13 @@ bun i -D @iconify-json/lucide
 ```
 
 # Supabase
+
+## Get db structure
+
+```bash
+bunx supabase login
+```
+
 ```bash
 bunx supabase gen types typescript --project-id "yhydjqxtnqinaxnqnegn" --schema public > types/supabase.ts
 ```

@@ -41,3 +41,16 @@
 .vue-flow-container {
   background-color: var(--color-custom-500);
 }
+
+/* Print display */
+@media print {
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .print-unset-height {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}

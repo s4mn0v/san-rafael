@@ -19,7 +19,7 @@ export type Database = {
           peso_actual: number
           peso_inicial: number
           raza: string
-          tipo_animal: string
+          tipo_animal: Database["public"]["Enums"]["tipo_animal"] | null
           venta: boolean | null
         }
         Insert: {
@@ -31,7 +31,7 @@ export type Database = {
           peso_actual: number
           peso_inicial: number
           raza: string
-          tipo_animal: string
+          tipo_animal?: Database["public"]["Enums"]["tipo_animal"] | null
           venta?: boolean | null
         }
         Update: {
@@ -43,7 +43,7 @@ export type Database = {
           peso_actual?: number
           peso_inicial?: number
           raza?: string
-          tipo_animal?: string
+          tipo_animal?: Database["public"]["Enums"]["tipo_animal"] | null
           venta?: boolean | null
         }
         Relationships: [
@@ -349,6 +349,7 @@ export type Database = {
       }
     }
     Enums: {
+      tipo_animal: "NOVILLO" | "TERNERO" | "TERNERA" | "VACA" | "TORO"
       user_role: "admin" | "user"
     }
     CompositeTypes: {
@@ -465,6 +466,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      tipo_animal: ["NOVILLO", "TERNERO", "TERNERA", "VACA", "TORO"],
       user_role: ["admin", "user"],
     },
   },

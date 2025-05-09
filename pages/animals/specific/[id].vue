@@ -136,10 +136,10 @@ const printReport = () => {
         <UButton icon="i-heroicons-arrow-left" label="Volver" @click="$router.back()" />
         <UButton icon="i-heroicons-printer" label="Imprimir" @click="printReport" />
       </div>
-      <UCard class="shadow-lg print:shadow-none print:w-full">
+      <UCard class="shadow-lg print:shadow-none print:w-full print:mt-[-55px]">
         <template #header>
-          <h1 class="text-2xl font-bold">
-            Animal ID: {{ animal.animal.id_animal }}
+          <h1 class="text-2xl">
+            Animal: <span class="font-bold font-mono">{{ animal.animal.id_animal }} </span>
           </h1>
         </template>
 
@@ -219,6 +219,65 @@ const printReport = () => {
           </div>
         </div>
       </UCard>
+
+      <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none">
+        <template #header>
+          <h2 class="text-xl font-bold">Información de Venta</h2>
+        </template>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 print:grid print:grid-cols-2">
+          <div>
+            <label class="text-sm text-gray-500">Fecha de Venta</label>
+            <p class="text-lg font-medium">{{ new Date(animal.venta.fecha_venta).toLocaleDateString() }}</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-500">Monto</label>
+            <p class="text-lg font-medium">
+              {{ animal.venta.monto !== null
+                ? new Intl.NumberFormat('es-CO', {
+                  style: 'currency',
+                  currency: 'COP',
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0
+                }).format(animal.venta.monto)
+              : 'No especificado' }}
+            </p>
+          </div>
+        </div>
+        <div>
+          <label class="text-sm text-gray-500">Notas</label>
+          <p class="text-lg font-medium">{{ animal.venta.notas || 'Sin notas' }}</p>
+        </div>
+      </UCard>
+
+      <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none">
+        <template #header>
+          <h2 class="text-xl font-bold">Información de Venta</h2>
+        </template>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 print:grid print:grid-cols-2">
+          <div>
+            <label class="text-sm text-gray-500">Fecha de Venta</label>
+            <p class="text-lg font-medium">{{ new Date(animal.venta.fecha_venta).toLocaleDateString() }}</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-500">Monto</label>
+            <p class="text-lg font-medium">
+              {{ animal.venta.monto !== null
+                ? new Intl.NumberFormat('es-CO', {
+                  style: 'currency',
+                  currency: 'COP',
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0
+                }).format(animal.venta.monto)
+              : 'No especificado' }}
+            </p>
+          </div>
+        </div>
+        <div>
+          <label class="text-sm text-gray-500">Notas</label>
+          <p class="text-lg font-medium">{{ animal.venta.notas || 'Sin notas' }}</p>
+        </div>
+      </UCard>
+
 
       <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none">
         <template #header>
