@@ -213,6 +213,7 @@ const transformGenealogyData = (apiData: any) => {
       </div>
 
       <template v-else>
+        <h2 class="text-2xl font-semibold mt-8"> Árbol Genealógico </h2>
         <GenealogyTree v-if="genealogy" :tree-data="genealogy" class="mt-8" />
         <UAlert v-else title="Sin registro genealógico"
           description="No se encontraron datos de parentesco para este animal." icon="i-heroicons-information-circle"
