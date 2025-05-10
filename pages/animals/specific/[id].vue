@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import type { Animal } from '~/types/animal'
 import AnimalSearch from '~/components/animal/AnimalSearch.vue'
 import BreadNav from '~/components/navigation/BreadNav.vue';
 import type { BreadcrumbItem } from '@nuxt/ui'
-import type { GenealogyResponse } from '~/types/animal'
+import type { GenealogyResponse, Venta, Animal, HistorialSalud } from '~/types/animal'
 
 const route = useRoute()
 const id = route.params.id
 
-const { data: animal, pending, error } = await useLazyFetch<{ animal: Animal, venta: Venta | null }>(
+const { data: animal, pending, error } = await useLazyFetch<{ animal: Animal, venta: Venta | null, historial: HistorialSalud[] }>(
   `/api/animal/specific/${id}`,
   {
     server: false
@@ -151,6 +150,7 @@ const printReport = () => {
       <div v-if="showPrintOptions" class="flex flex-col md:flex-row gap-4 mb-6 print:hidden">
         <UCheckbox v-model="printSections.detalles" label="Detalle del animal" />
         <UCheckbox v-model="printSections.venta" label="Información de venta" />
+        <UCheckbox v-model="printSections.salud" label="Historial de salud" />
       </div>
 
       <UCard class="shadow-lg print:shadow-none print:w-full print:mt-[-55px]"
@@ -238,6 +238,7 @@ const printReport = () => {
         </div>
       </UCard>
 
+      <!-- Sección Venta -->
       <UCard v-if="animal?.venta" class="mt-8 shadow-md print:shadow-none"
         :class="{ 'print:hidden': !printSections.venta }">
         <template #header>
@@ -272,6 +273,34 @@ const printReport = () => {
         description="Este animal no tiene datos de venta registrados." icon="i-heroicons-exclamation-circle"
         color="warning" variant="subtle" class="mt-8" />
 
+      <!-- Sección Historial de Salud -->
+      <UCard class="mt-8 shadow-md print:shadow-none" :class="{ 'print:hidden': !printSections.salud }">
+        <template #header>
+          <h2 class="text-xl font-bold">Historial de Salud</h2>
+        </template>
+
+        <div v-if="animal?.historialSalud?.length" class="max-h-96 overflow-y-auto space-y-4 pr-2">
+          <div v-for="registro in animal.historialSalud" :key="registro.id_historial"
+            class="border-b pb-4 last:border-b-0">
+            <div class="flex justify-between items-start">
+              <div class="space-y-1">
+                <p class="font-semibold">{{ registro.descripcion }}</p>
+                <p class="text-sm text-gray-500" v-if="registro.observaciones">
+                  {{ registro.observaciones }}
+                </p>
+              </div>
+              <p class="text-sm text-gray-500 shrink-0 ml-4">
+                {{ new Date(registro.fecha_evento).toLocaleDateString() }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <UAlert v-else title="Sin registros de salud" description="No se encontró historial médico para este animal"
+          icon="i-heroicons-information-circle" color="gray" variant="subtle" />
+      </UCard>
+
+      <!-- Sección Árbol Genealógico -->
       <div v-if="genealogyPending" class="mt-8 text-center p-4 print:hidden">
         <p class="text-[var(--color-custom-300)]">Cargando árbol genealógico...</p>
       </div>
@@ -287,6 +316,7 @@ const printReport = () => {
       </template>
     </div>
 
+    <!-- Animal no encontrado -->
     <UAlert v-else title="Animal no encontrado" description="No existe un animal con el ID proporcionado"
       icon="i-heroicons-magnifying-glass" color="error" variant="subtle" class="max-w-4xl mx-auto" />
   </div>

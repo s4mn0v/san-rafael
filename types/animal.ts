@@ -25,3 +25,19 @@ export interface Animal {
   id_reproduccion: string | null;
   fecha_fallecimiento: string | null;
 }
+
+export interface Venta {
+  id_venta: number;
+  animal_id: string;
+  fecha_venta: string;
+  monto: number | null;
+  notas: string | null;
+}
+
+export interface HistorialSalud {
+  id_historial: number;
+  animal_id: string;
+  fecha_evento: string;
+  descripcion: string;
+  observaciones: string | null;
+}

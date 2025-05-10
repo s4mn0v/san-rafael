@@ -11,7 +11,7 @@ export type Database = {
     Tables: {
       animals: {
         Row: {
-          estado_salud: string
+          estado_salud: Database["public"]["Enums"]["estado_salud"] | null
           fecha_fallecimiento: string | null
           fecha_nacimiento: string
           id_animal: string
@@ -23,7 +23,7 @@ export type Database = {
           venta: boolean | null
         }
         Insert: {
-          estado_salud: string
+          estado_salud?: Database["public"]["Enums"]["estado_salud"] | null
           fecha_fallecimiento?: string | null
           fecha_nacimiento: string
           id_animal: string
@@ -35,7 +35,7 @@ export type Database = {
           venta?: boolean | null
         }
         Update: {
-          estado_salud?: string
+          estado_salud?: Database["public"]["Enums"]["estado_salud"] | null
           fecha_fallecimiento?: string | null
           fecha_nacimiento?: string
           id_animal?: string
@@ -279,21 +279,21 @@ export type Database = {
           animal_id: string | null
           cantidad_implementada: number
           fecha_aplicacion: string | null
-          id_vacuna: number
+          id_vacunacion: number
           nombre: string
         }
         Insert: {
           animal_id?: string | null
           cantidad_implementada: number
           fecha_aplicacion?: string | null
-          id_vacuna?: number
+          id_vacunacion?: number
           nombre: string
         }
         Update: {
           animal_id?: string | null
           cantidad_implementada?: number
           fecha_aplicacion?: string | null
-          id_vacuna?: number
+          id_vacunacion?: number
           nombre?: string
         }
         Relationships: [
@@ -349,6 +349,14 @@ export type Database = {
       }
     }
     Enums: {
+      estado_salud:
+        | "EXCELENTE"
+        | "BUENO"
+        | "REGULAR"
+        | "MALO"
+        | "CRITICO"
+        | "RECUPERACION"
+        | "OBSERVACION"
       tipo_animal: "NOVILLO" | "TERNERO" | "TERNERA" | "VACA" | "TORO"
       user_role: "admin" | "user"
     }
@@ -466,6 +474,15 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      estado_salud: [
+        "EXCELENTE",
+        "BUENO",
+        "REGULAR",
+        "MALO",
+        "CRITICO",
+        "RECUPERACION",
+        "OBSERVACION",
+      ],
       tipo_animal: ["NOVILLO", "TERNERO", "TERNERA", "VACA", "TORO"],
       user_role: ["admin", "user"],
     },

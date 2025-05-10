@@ -39,8 +39,14 @@ export default defineEventHandler(async (event) => {
       .limit(1)
       .single();
 
+    const { data: historialSalud } = await client
+      .from("historial_salud")
+      .select("*")
+      .eq("animal_id", id)
+      .order("fecha_evento", { ascending: false });
+
     // No lanza error si no hay venta
-    return { animal, venta };
+    return { animal, venta, historialSalud };
   } catch (err: any) {
     console.error("Error al obtener el animal:", err);
     throw createError({
