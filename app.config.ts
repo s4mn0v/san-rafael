@@ -49,5 +49,10 @@ export default defineAppConfig({
         variant: "solid",
       },
     },
+    formField: {
+      slots: {
+        label: "text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]",
+      },
+    }
   },
 });

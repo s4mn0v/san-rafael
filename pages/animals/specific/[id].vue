@@ -9,7 +9,7 @@ import type { GenealogyResponse, Venta, Animal, HistorialSalud } from '~/types/a
 const route = useRoute()
 const id = route.params.id
 
-const { data: animal, pending, error } = await useLazyFetch<{ animal: Animal, venta: Venta | null, historialSalud: HistorialSalud[] }>(
+const { data: animal, pending, refresh, error } = await useLazyFetch<{ animal: Animal, venta: Venta | null, historialSalud: HistorialSalud[] }>(
   `/api/animal/specific/${id}`,
   {
     server: false
@@ -122,6 +122,15 @@ const printReport = () => {
     window.print();
   }
 };
+
+const handleAnimalUpdated = (updatedAnimal: Animal) => {
+  if (animal.value) {
+    // Actualizar la referencia reactiva
+    animal.value.animal = { ...animal.value.animal, ...updatedAnimal }
+    // Forzar actualización de datos
+    refresh()
+  }
+}
 </script>
 
 <template>
@@ -156,8 +165,7 @@ const printReport = () => {
       </div>
 
       <!-- Sección Detalles -->
-      <AnimalDetailsCard :animal="animal.animal" :show="printSections.detalles" />
-
+      <AnimalDetailsCard :animal="animal.animal" :show="printSections.detalles" @updated="handleAnimalUpdated" />
       <!-- Sección Venta -->
       <SaleInfoCard v-if="animal.venta" :venta="animal.venta" :show="printSections.venta" />
       <UAlert v-else title="Sin información de venta" description="Este animal no tiene datos de venta registrados."
