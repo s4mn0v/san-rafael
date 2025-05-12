@@ -30,7 +30,6 @@ declare global {
     madre?: TreeNode;
     padre?: TreeNode;
   };
-
 }
 
 export {};

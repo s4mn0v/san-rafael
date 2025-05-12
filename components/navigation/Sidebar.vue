@@ -22,7 +22,7 @@
         <NavButtons icon="i-healthicons-syringe" text="Reproducción" to="/reproduction" />
         <NavButtons icon="i-healthicons-i-exam-multiple-choice" text="Inventario" to="/stock" />
         <NavButtons icon="i-healthicons-money-bag" text="Ventas" to="/sales" />
-        <NavButtons icon="i-heroicons-user-solid" text="Perfil" to="/profile" />
+        <NavButtons icon="i-heroicons-cog" text="Ajustes" to="/settings" />
         <NavButtons v-if="userRole === 'admin'" icon="i-heroicons-users-solid" text="Usuarios" to="/users" />
       </div>
 
