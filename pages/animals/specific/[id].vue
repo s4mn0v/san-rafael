@@ -32,7 +32,7 @@ watch(
   (err) => {
     if (err) {
       toast.add({
-        title: err?.data?.statusMessage ?? 'Error al cargar el animal',
+        title: err?.data?.message ?? 'Error al cargar el animal',
         description: err?.data?.message ?? 'Ocurrió un error inesperado.',
         color: 'error',
         icon: 'i-heroicons-exclamation-circle'

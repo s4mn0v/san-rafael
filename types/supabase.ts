@@ -402,7 +402,13 @@ export type Database = {
         | "CRITICO"
         | "RECUPERACION"
         | "OBSERVACION"
-      tipo_animal: "NOVILLO" | "TERNERO" | "TERNERA" | "VACA" | "TORO"
+      tipo_animal:
+        | "NOVILLO"
+        | "TERNERO"
+        | "TERNERA"
+        | "VACA"
+        | "TORO"
+        | "LECHONA"
       tipo_concepcion: "NATURAL" | "INSEMINACION"
       user_role: "admin" | "user"
     }
@@ -529,7 +535,7 @@ export const Constants = {
         "RECUPERACION",
         "OBSERVACION",
       ],
-      tipo_animal: ["NOVILLO", "TERNERO", "TERNERA", "VACA", "TORO"],
+      tipo_animal: ["NOVILLO", "TERNERO", "TERNERA", "VACA", "TORO", "LECHONA"],
       tipo_concepcion: ["NATURAL", "INSEMINACION"],
       user_role: ["admin", "user"],
     },
