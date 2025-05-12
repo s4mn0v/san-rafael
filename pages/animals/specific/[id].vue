@@ -72,11 +72,16 @@ watch(
         }
       })
 
-      // Agregar el ID al breadcrumb
-      breadcrumbItems.value.push({
-        label: `ID: ${val.animal.id_animal}`,
-        icon: 'i-heroicons-identification',
-      })
+      const alreadyExists = breadcrumbItems.value.some(
+        item => item.label === `ID: ${val.animal.id_animal}`
+      )
+
+      if (!alreadyExists) {
+        breadcrumbItems.value.push({
+          label: `ID: ${val.animal.id_animal}`,
+          icon: 'i-heroicons-identification',
+        })
+      }
     }
   }
 )
@@ -184,7 +189,8 @@ const handleAnimalUpdated = (updatedAnimal: Animal) => {
         icon="i-heroicons-exclamation-circle" color="warning" variant="subtle" class="mt-8" />
 
       <!-- Sección Historial de Salud -->
-      <HealthHistoryCard v-if="animal.historialSalud && animal.historialSalud.length > 0" :historial-salud="animal.historialSalud" :show="printSections.salud" />
+      <HealthHistoryCard v-if="animal.historialSalud && animal.historialSalud.length > 0"
+        :historial-salud="animal.historialSalud" :show="printSections.salud" />
 
       <!-- Alerta externa si no hay registros -->
       <UAlert v-if="!animal.historialSalud || animal.historialSalud.length === 0" title="Sin registros de salud"
