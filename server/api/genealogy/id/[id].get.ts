@@ -48,9 +48,7 @@ export default defineEventHandler(async (event) => {
 
     // 3. Obtener reproducción (si existe id_reproduccion)
     let reproduccionData = null;
-    const reproduccionId = animal.id_reproduccion
-      ? parseInt(animal.id_reproduccion, 10)
-      : null;
+    const reproduccionId = animal.id_reproduccion ?? null;
 
     if (reproduccionId && !isNaN(reproduccionId)) {
       const { data, error: errReproduccion } = await client
