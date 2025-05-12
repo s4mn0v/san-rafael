@@ -5,7 +5,7 @@
         <h1 class="text-2xl">
           Animal: <span class="font-bold font-mono">{{ animal.id_animal }}</span>
         </h1>
-        <UButton v-if="!isEditing" icon="i-heroicons-pencil-square" @click="enableEditing"
+        <UButton v-if="!isEditing && userRole === 'admin'" icon="i-heroicons-pencil-square" @click="enableEditing"
           class="print:hidden bg-[var(--color-custom-50)] text-[var(--color-custom-500)] dark:bg-[var(--color-custom-500)] dark:text-[var(--color-custom-50)] rounded-full p-2" />
       </div>
     </template>
@@ -90,7 +90,7 @@
     </div>
 
     <!-- Modo Edición -->
-    <UForm v-else :state="formData" @submit="handleSubmit" class="space-y-6">
+    <UForm v-else="userRole === 'admin'" :state="formData" @submit="handleSubmit" class="space-y-6">
       <div class="grid md:grid-cols-2 gap-6">
         <!-- Columna Izquierda -->
         <div class="space-y-4">
@@ -154,7 +154,10 @@
 </template>
 
 <script setup lang="ts">
+import { useUserRole } from '~/composables/arestricted';
 import type { Animal } from '~/types/animal'
+
+const { userRole } = useUserRole();
 
 const props = defineProps({
   animal: {
