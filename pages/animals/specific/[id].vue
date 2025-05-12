@@ -177,13 +177,19 @@ const handleAnimalUpdated = (updatedAnimal: Animal) => {
 
       <!-- Sección Detalles -->
       <AnimalDetailsCard :animal="animal.animal" :show="printSections.detalles" @updated="handleAnimalUpdated" />
+
       <!-- Sección Venta -->
       <SaleInfoCard v-if="animal.venta" :venta="animal.venta" :show="printSections.venta" />
       <UAlert v-else title="Sin información de venta" description="Este animal no tiene datos de venta registrados."
         icon="i-heroicons-exclamation-circle" color="warning" variant="subtle" class="mt-8" />
 
       <!-- Sección Historial de Salud -->
-      <HealthHistoryCard :historial-salud="animal.historialSalud" :show="printSections.salud" />
+      <HealthHistoryCard v-if="animal.historialSalud && animal.historialSalud.length > 0" :historial-salud="animal.historialSalud" :show="printSections.salud" />
+
+      <!-- Alerta externa si no hay registros -->
+      <UAlert v-if="!animal.historialSalud || animal.historialSalud.length === 0" title="Sin registros de salud"
+        description="No se encontró historial de salud para este animal." icon="i-heroicons-information-circle"
+        color="warning" variant="subtle" class="mt-4 print:hidden" />
 
       <!-- Sección Árbol Genealógico -->
       <div v-if="genealogyPending" class="mt-8 text-center p-4 print:hidden">

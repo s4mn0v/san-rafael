@@ -5,6 +5,7 @@
       <h2 class="text-xl font-bold">Historial de Salud</h2>
     </template>
 
+    <!-- Sólo renderizamos la lista de eventos si hay alguno -->
     <div v-if="historialSalud?.length" class="max-h-96 overflow-y-auto space-y-4 pr-2">
       <div v-for="registro in historialSalud" :key="registro.id_historial" class="border-b pb-4 last:border-b-0">
         <div class="flex justify-between items-start">
@@ -20,9 +21,6 @@
         </div>
       </div>
     </div>
-
-    <UAlert v-else title="Sin registros de salud" description="No se encontró historial médico para este animal"
-      icon="i-heroicons-information-circle" color="warning" variant="subtle" />
   </UCard>
 </template>
 
@@ -30,7 +28,7 @@
 import type { HistorialSalud } from '~/types/animal'
 
 defineProps({
-  historialSalud: {  // Nombre de prop corregido
+  historialSalud: {
     type: Array as () => HistorialSalud[],
     default: () => []
   },
