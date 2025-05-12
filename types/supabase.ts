@@ -56,6 +56,47 @@ export type Database = {
           },
         ]
       }
+      calendario_salud: {
+        Row: {
+          animal_id: string
+          fecha_programada: string
+          fecha_realizado: string | null
+          id_evento: number
+          observaciones: string | null
+          realizado: boolean
+          repetir_cada_dias: number | null
+          tipo_evento: string
+        }
+        Insert: {
+          animal_id: string
+          fecha_programada: string
+          fecha_realizado?: string | null
+          id_evento?: number
+          observaciones?: string | null
+          realizado?: boolean
+          repetir_cada_dias?: number | null
+          tipo_evento: string
+        }
+        Update: {
+          animal_id?: string
+          fecha_programada?: string
+          fecha_realizado?: string | null
+          id_evento?: number
+          observaciones?: string | null
+          realizado?: boolean
+          repetir_cada_dias?: number | null
+          tipo_evento?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_calendario_animal"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id_animal"]
+          },
+        ]
+      }
       genealogia: {
         Row: {
           animal_id: string
@@ -207,7 +248,7 @@ export type Database = {
           madre_id: string
           padre_id: string | null
           raza: string
-          tipo_concepcion: string
+          tipo_concepcion: Database["public"]["Enums"]["tipo_concepcion"] | null
         }
         Insert: {
           fecha_evento: string
@@ -215,7 +256,9 @@ export type Database = {
           madre_id: string
           padre_id?: string | null
           raza: string
-          tipo_concepcion: string
+          tipo_concepcion?:
+            | Database["public"]["Enums"]["tipo_concepcion"]
+            | null
         }
         Update: {
           fecha_evento?: string
@@ -223,7 +266,9 @@ export type Database = {
           madre_id?: string
           padre_id?: string | null
           raza?: string
-          tipo_concepcion?: string
+          tipo_concepcion?:
+            | Database["public"]["Enums"]["tipo_concepcion"]
+            | null
         }
         Relationships: [
           {
@@ -358,6 +403,7 @@ export type Database = {
         | "RECUPERACION"
         | "OBSERVACION"
       tipo_animal: "NOVILLO" | "TERNERO" | "TERNERA" | "VACA" | "TORO"
+      tipo_concepcion: "NATURAL" | "INSEMINACION"
       user_role: "admin" | "user"
     }
     CompositeTypes: {
@@ -484,6 +530,7 @@ export const Constants = {
         "OBSERVACION",
       ],
       tipo_animal: ["NOVILLO", "TERNERO", "TERNERA", "VACA", "TORO"],
+      tipo_concepcion: ["NATURAL", "INSEMINACION"],
       user_role: ["admin", "user"],
     },
   },
