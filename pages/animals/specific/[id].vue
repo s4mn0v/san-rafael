@@ -32,8 +32,8 @@ watch(
   (err) => {
     if (err) {
       toast.add({
-        title: 'Error al cargar el animal' || err.data?.statusMessage,
-        description: 'Ocurrió un error inesperado.' || err.data?.message,
+        title: err?.data?.statusMessage ?? 'Error al cargar el animal',
+        description: err?.data?.message ?? 'Ocurrió un error inesperado.',
         color: 'error',
         icon: 'i-heroicons-exclamation-circle'
       })
@@ -90,8 +90,16 @@ const { data: genealogy, pending: genealogyPending } = await useLazyFetch<Geneal
 )
 
 // Función para transformar la respuesta de la API
-const transformGenealogyData = (apiData: any) => {
-  if (!apiData?.reproduccion) return null;
+const transformGenealogyData = (apiData: any): GenealogyResponse => {
+  if (!apiData?.reproduccion) {
+    return {
+      id: apiData.animal.id_animal,
+      raza: apiData.animal.raza,
+      tipo_animal: apiData.animal.tipo_animal,
+      madre: undefined,
+      padre: undefined
+    }
+  }
 
   const transformAnimalToNode = (animalItem: Animal): TreeNode => ({
     id: animalItem.id_animal,
@@ -110,11 +118,13 @@ const transformGenealogyData = (apiData: any) => {
   };
 };
 
+
 const showPrintOptions = ref(false)
 const printSections = reactive({
   genealogy: true,
   venta: true,
-  detalles: true
+  detalles: true,
+  salud: true
 })
 
 const printReport = () => {
@@ -145,8 +155,9 @@ const handleAnimalUpdated = (updatedAnimal: Animal) => {
       <p class="mt-4 text-[var(--color-custom-300)]">Cargando información del animal...</p>
     </div>
 
-    <UAlert v-else-if="error" :title="'Error al cargar el animal' || error.data?.statusMessage"
-      icon="i-heroicons-exclamation-circle" color="error" variant="subtle" />
+    <!-- <UAlert v-else-if="error" :title="'error.data?.statusMessage" -->
+    <UAlert v-else-if="error" title="Error al cargar el animal" icon="i-heroicons-exclamation-circle" color="error"
+      variant="subtle" />
 
     <div v-else-if="animal?.animal" class="max-w-4xl mx-auto p-6 print:max-w-full print:px-0">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 print:hidden">
@@ -154,7 +165,7 @@ const handleAnimalUpdated = (updatedAnimal: Animal) => {
         <div class="space-x-2">
           <UButton icon="i-heroicons-adjustments-horizontal"
             :label="showPrintOptions ? 'Ocultar opciones' : 'Seleccionar para imprimir'"
-            @click="showPrintOptions = !showPrintOptions" color="gray" />
+            @click="showPrintOptions = !showPrintOptions" color="primary" />
           <UButton icon="i-heroicons-printer" label="Imprimir" @click="printReport" />
         </div>
       </div>

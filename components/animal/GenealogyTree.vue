@@ -2,7 +2,7 @@
   <div class="vue-flow-container h-[500px] w-full border rounded-lg">
     <VueFlow v-model:nodes="nodes" v-model:edges="edges" :fit-view-on-init="true" :max-zoom="1.5" :min-zoom="0.5"
       :node-drag-threshold="0">
-      <Background variant="dots" :gap="35" :size="1" />
+      <Background :gap="35" :size="1" />
       <Controls />
     </VueFlow>
   </div>

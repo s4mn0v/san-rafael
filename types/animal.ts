@@ -1,17 +1,12 @@
-export interface GenealogyResponse {
-  animal: Animal;
-  genealogia: {
-    tipo_registro: string;
-    documento: string;
-    observaciones: string;
-  } | null;
-  reproduccion: {
-    tipo_concepcion: string;
-    fecha_evento: string;
-    madre: Animal;
-    padre: Animal;
-  } | null;
+export interface GenealogyTreeNode {
+  id: string;
+  raza: string;
+  tipo_animal: string;
+  madre?: GenealogyTreeNode;
+  padre?: GenealogyTreeNode;
 }
+
+export type GenealogyResponse = GenealogyTreeNode
 
 export interface Animal {
   id_animal: string;

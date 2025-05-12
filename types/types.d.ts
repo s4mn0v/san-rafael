@@ -22,7 +22,15 @@ declare global {
     class?: string;
     click?: () => void;
   };
-  
+
+  type TreeNode = {
+    id: string;
+    raza: string;
+    tipo_animal: string;
+    madre?: TreeNode;
+    padre?: TreeNode;
+  };
+
 }
 
 export {};

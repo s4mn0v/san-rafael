@@ -142,7 +142,7 @@
       </div>
 
       <div class="flex justify-end gap-3 mt-8">
-        <UButton type="button" color="gray" @click="cancelEditing" :disabled="isSubmitting">
+        <UButton type="button" color="primary" @click="cancelEditing" :disabled="isSubmitting">
           Cancelar
         </UButton>
         <UButton type="submit" :loading="isSubmitting" :disabled="isSubmitting">
@@ -234,11 +234,19 @@ const handleSubmit = async () => {
 
     isEditing.value = false
     emit('updated', response.animal)
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error en actualización:', error)
+
+    let message = 'Error desconocido'
+    if (error instanceof Error) {
+      message = error.message
+    } else if (typeof error === 'object' && error !== null && 'data' in error && typeof (error as any).data?.message === 'string') {
+      message = (error as any).data.message
+    }
+
     toast.add({
       title: 'Error al actualizar',
-      description: error.data?.message || error.message || 'Error desconocido',
+      description: message,
       color: 'error',
       icon: 'i-heroicons-exclamation-circle'
     })
