@@ -5,6 +5,9 @@ import SaleInfoCard from '~/components/animal/SaleInfoCard.vue'
 import HealthHistoryCard from '~/components/animal/HealthHistoryCard.vue'
 import type { BreadcrumbItem } from '@nuxt/ui'
 import type { GenealogyResponse, Venta, Animal, HistorialSalud } from '~/types/animal'
+import { useUserRole } from '~/composables/arestricted'
+
+const { userRole } = useUserRole();
 
 const route = useRoute()
 const id = route.params.id
@@ -147,6 +150,14 @@ const handleAnimalUpdated = (updatedAnimal: Animal) => {
   }
 }
 
+const handleVentaCreated = () => {
+  refresh()
+  useToast().add({
+    title: 'Venta registrada!',
+    color: 'success'
+  })
+}
+
 const handleVentaUpdated = () => {
   refresh() // Recargar los datos del animal
   toast.add({
@@ -215,7 +226,8 @@ watch(
       </div>
 
       <!-- Sección Detalles -->
-      <AnimalDetailsCard :animal="animal.animal" :show="printSections.detalles" @updated="handleAnimalUpdated" />
+      <AnimalDetailsCard :animal="animal.animal" :venta="animal.venta" :show="printSections.detalles"
+        @updated="handleAnimalUpdated" @venta-created="handleVentaCreated" />
 
       <!-- Sección Venta -->
       <template v-if="animal?.venta">

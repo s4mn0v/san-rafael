@@ -20,7 +20,6 @@ export type Database = {
           peso_inicial: number
           raza: string
           tipo_animal: Database["public"]["Enums"]["tipo_animal"] | null
-          venta: boolean | null
         }
         Insert: {
           estado_salud?: Database["public"]["Enums"]["estado_salud"] | null
@@ -32,7 +31,6 @@ export type Database = {
           peso_inicial: number
           raza: string
           tipo_animal?: Database["public"]["Enums"]["tipo_animal"] | null
-          venta?: boolean | null
         }
         Update: {
           estado_salud?: Database["public"]["Enums"]["estado_salud"] | null
@@ -44,7 +42,6 @@ export type Database = {
           peso_inicial?: number
           raza?: string
           tipo_animal?: Database["public"]["Enums"]["tipo_animal"] | null
-          venta?: boolean | null
         }
         Relationships: [
           {

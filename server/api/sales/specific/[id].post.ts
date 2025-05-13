@@ -3,7 +3,6 @@ import { serverSupabaseClient } from "#supabase/server";
 import type { Database } from "~/types/supabase";
 
 export default defineEventHandler(async (event) => {
-
   const supabase = await serverSupabaseClient<Database>(event);
 
   const body = await readBody(event);
@@ -18,6 +17,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    // Insertar la venta
     const { data, error } = await supabase
       .from("ventas")
       .insert({

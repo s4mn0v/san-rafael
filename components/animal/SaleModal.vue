@@ -63,15 +63,19 @@ const resetForm = () => {
   form.notas = ''
 }
 
+const emit = defineEmits<{
+  (e: 'created', venta: any): void
+}>()
+
 // SaleModal.vue – handleSubmit
 const handleSubmit = async () => {
   isSubmitting.value = true
   try {
-    const { venta } = await $fetch<{ venta: any }>('/api/sales/sales', {
+    const { venta } = await $fetch<{ venta: any }>('/api/sales/specific/:id', {
       method: 'POST',
       body: {
-        animal_id: props.animalId,
-        ...form
+        ...form,
+        animal_id: props.animalId
       }
     })
 
@@ -80,6 +84,8 @@ const handleSubmit = async () => {
       title: 'Venta registrada!',
       color: 'success'
     })
+
+    emit('created', venta)
   } catch (error: any) {
     useToast().add({
       title: 'Error',
