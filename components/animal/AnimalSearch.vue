@@ -10,8 +10,8 @@ const searchAnimal = () => {
 
 <template>
   <div class="flex gap-2 max-w-xl mx-auto p-4">
-    <UInput v-model="animalId" placeholder="Ingrese el ID del animal" class="flex-1 font-mono" @keyup.enter="searchAnimal" />
-    <UButton icon="i-heroicons-magnifying-glass-solid" @click="searchAnimal" :disabled="!animalId">
+    <UInput v-model="animalId" placeholder="Ingrese el ID del animal (Recurde las may. y min.)" class="flex-1 font-mono" @keyup.enter="searchAnimal" />
+    <UButton icon="i-heroicons-magnifying-glass-solid" @click="searchAnimal" :disabled="!animalId" title="Buscar animal, recurde las mayúsculas y minúsculas">
       Buscar
     </UButton>
   </div>

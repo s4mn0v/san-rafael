@@ -193,8 +193,7 @@ const handleHealthUpdated = () => {
     </div>
 
     <!-- <UAlert v-else-if="error" :title="'error.data?.statusMessage" -->
-    <UAlert v-else-if="error" title="Error al cargar el animal" icon="i-heroicons-exclamation-circle" color="error"
-      variant="subtle" />
+    <UAlert v-else-if="error" title="Error al cargar el animal" icon="i-heroicons-exclamation-circle" color="error" />
 
     <div v-else-if="animal?.animal" class="max-w-4xl mx-auto p-6 print:max-w-full print:px-0">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 print:hidden">
@@ -223,7 +222,7 @@ const handleHealthUpdated = () => {
           @click="$router.push(`/sales/edit/${animal.venta.id_venta}`)" class="mt-4 print:hidden" />
       </template>
       <UAlert v-else title="Sin información de venta" description="Este animal no tiene datos de venta registrados."
-        icon="i-heroicons-exclamation-circle" color="warning" variant="subtle" class="mt-8" />
+        icon="i-heroicons-exclamation-circle" color="warning" class="mt-8" />
 
       <!-- Sección Historial de Salud -->
       <HealthHistoryCard v-if="animal.historialSalud && animal.historialSalud.length > 0"
@@ -233,7 +232,7 @@ const handleHealthUpdated = () => {
       <!-- Alerta externa si no hay registros -->
       <UAlert v-if="!animal.historialSalud || animal.historialSalud.length === 0" title="Sin registros de salud"
         description="No se encontró historial de salud para este animal." icon="i-heroicons-information-circle"
-        color="warning" variant="subtle" class="mt-4 print:hidden" />
+        color="warning" class="mt-4 print:hidden" />
 
       <!-- Sección Árbol Genealógico -->
       <div v-if="genealogyPending" class="mt-8 text-center p-4 print:hidden">
@@ -246,13 +245,13 @@ const handleHealthUpdated = () => {
           <GenealogyTree v-if="genealogy" :tree-data="genealogy" class="mt-8" />
           <UAlert v-else title="Sin registro genealógico"
             description="No se encontraron datos de parentesco para este animal." icon="i-heroicons-information-circle"
-            color="warning" variant="subtle" class="mt-8" />
+            color="warning" class="mt-8" />
         </div>
       </template>
     </div>
 
     <!-- Animal no encontrado -->
     <UAlert v-else title="Animal no encontrado" description="No existe un animal con el ID proporcionado"
-      icon="i-heroicons-magnifying-glass" color="error" variant="subtle" class="max-w-4xl mx-auto" />
+      icon="i-heroicons-magnifying-glass" color="error" class="max-w-4xl mx-auto" />
   </div>
 </template>
