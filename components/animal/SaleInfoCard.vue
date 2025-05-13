@@ -34,21 +34,32 @@
     </div>
 
     <!-- Modal de Edición -->
-    <UModal v-model:open="isEditModalOpen" title="Editar Información de Venta" description="Formulario para editar la venta.">
+    <UModal v-model:open="isEditModalOpen" title="Editar Información de Venta"
+      description="Formulario para editar la venta.">
       <template #body>
-        <h3 class="text-lg font-semibold">Editar Información de Venta</h3>
-
         <UForm :state="editForm" @submit="handleEditSubmit" class="space-y-4">
-          <UFormField label="Fecha de Venta" name="fecha_venta" required>
-            <UInput type="date" v-model="editForm.fecha_venta" :max="new Date().toISOString().split('T')[0]" />
-          </UFormField>
+          <div class="flex space-x-4">
+            <UFormField name="fecha_venta" required>
+              <template #label>
+                <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Fecha de Venta</span>
+              </template>
+              <UInput type="date" v-model="editForm.fecha_venta" :max="new Date().toISOString().split('T')[0]" />
+            </UFormField>
 
-          <UFormField label="Monto" name="monto" required>
-            <UInput type="number" step="0.01" v-model="editForm.monto" min="0" />
-          </UFormField>
-
-          <UFormField label="Notas" name="notas">
-            <UTextarea v-model="editForm.notas" />
+            <UFormField name="monto" required>
+              <template #label>
+                <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Monto</span>
+              </template>
+              <UInputNumber v-model="editForm.monto" :min="0" :step="0.01"
+                :format-options="{ useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }"
+                placeholder="Ingrese el monto" />
+            </UFormField>
+          </div>
+          <UFormField name="notas" class="w-full">
+            <template #label>
+              <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Notas</span>
+            </template>
+            <UTextarea v-model="editForm.notas" :maxlength="200" class="w-full" />
           </UFormField>
 
           <div class="flex justify-end gap-3 mt-4">
@@ -127,4 +138,32 @@ const handleEditSubmit = async () => {
     isSubmitting.value = false
   }
 }
+
+const onlyAllowNumericInput = (event: KeyboardEvent) => {
+  const allowedKeys = [
+    'Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete',
+    '.', '-', // decimal and negative sign if needed
+  ]
+
+  // Allow control keys
+  if (
+    allowedKeys.includes(event.key) ||
+    (event.ctrlKey || event.metaKey) // for copy/paste
+  ) {
+    return
+  }
+
+  // Block non-numeric keys
+  if (!/^\d$/.test(event.key)) {
+    event.preventDefault()
+  }
+}
+
+const preventInvalidPaste = (event: ClipboardEvent) => {
+  const pasted = event.clipboardData?.getData('text') ?? ''
+  if (!/^\d*\.?\d*$/.test(pasted)) {
+    event.preventDefault()
+  }
+}
+
 </script>

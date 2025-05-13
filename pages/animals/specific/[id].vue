@@ -167,30 +167,6 @@ const handleVentaUpdated = () => {
     icon: 'i-heroicons-check-circle'
   })
 }
-
-// Modificar el watch de animal.value para incluir venta
-watch(
-  () => animal.value,
-  (val) => {
-    if (val?.animal) {
-      // ... código existente ...
-
-      // Actualizar ítem de breadcrumb para venta
-      if (val.venta) {
-        const ventaExists = breadcrumbItems.value.some(
-          item => item.label === `Venta: ${val.venta?.id_venta}`
-        )
-        if (!ventaExists) {
-          breadcrumbItems.value.push({
-            label: `Venta: ${val.venta.id_venta}`,
-            icon: 'i-heroicons-currency-dollar',
-          })
-        }
-      }
-    }
-  },
-  { deep: true }
-)
 </script>
 
 <template>
