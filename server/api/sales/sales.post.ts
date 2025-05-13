@@ -1,13 +1,10 @@
 // server/api/sales/sales.post.ts
-import { createClient } from "@supabase/supabase-js";
+import { serverSupabaseClient } from "#supabase/server";
+import type { Database } from "~/types/supabase";
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig();
 
-  const supabase = createClient(
-    config.supabaseUrl,
-    config.supabaseKey
-  );
+  const supabase = await serverSupabaseClient<Database>(event);
 
   const body = await readBody(event);
 

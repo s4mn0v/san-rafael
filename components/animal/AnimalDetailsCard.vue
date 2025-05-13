@@ -123,44 +123,12 @@
           <UFormField label="En Venta" name="venta">
             <div class="flex items-center gap-2">
               <UCheckbox v-model="formData.venta" />
-              <UModal v-if="!formData.venta" title="Agregar Información de Venta"
-                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.">
-                <UButton label="Agregar Información de Venta" color="neutral" variant="subtle" />
-
-                <template #body>
-                  <UForm :state="saleForm" @submit="submitSale" class="space-y-6">
-                    <div class="flex space-x-4">
-                      <UFormField name="fecha_venta" required>
-                        <template #label>
-                          <span class="text-[var(--color-custom-300)] dark:text-[var(--color-custom-200)]">Fecha de
-                            Venta</span>
-                        </template>
-                        <UInput type="date" v-model="saleForm.fecha_venta" />
-                      </UFormField>
-
-                      <UFormField name="monto" required>
-                        <template #label>
-                          <span class="text-[var(--color-custom-300)] dark:text-[var(--color-custom-200)]">Monto</span>
-                        </template>
-                        <UInput type="number" step="0.01" v-model="saleForm.monto" />
-                      </UFormField>
-                    </div>
-
-
-
-                    <UFormField name="notas">
-                      <template #label>
-                        <span class="text-[var(--color-custom-300)] dark:text-[var(--color-custom-200)]">Notas</span>
-                      </template>
-                      <UTextarea v-model="saleForm.notas" />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-3 mt-4">
-                      <UButton type="submit" :loading="isSubmittingSale">Guardar</UButton>
-                    </div>
-                  </UForm>
-                </template>
-              </UModal>
+              <SaleModal :animal-id="animal.id_animal" v-slot="{ open }">
+                <UButton v-if="!formData.venta" @click="open()"
+                  class="ml-2 bg-[var(--color-custom-50)] dark:bg-[var(--color-custom-500)] text-[var(--color-custom-500)] dark:text-[var(--color-custom-50)] hover:text-[var(--color-custom-50)] dark:hover:text-[var(--color-custom-500)]">
+                  Agregar Información de Venta
+                </UButton>
+              </SaleModal>
             </div>
           </UFormField>
         </div>
@@ -190,7 +158,6 @@
         </UButton>
       </div>
     </UForm>
-    <SaleModal v-model="saleModalOpen" :animal-id="animal.id_animal" @submit="handleSaleSuccess" />
   </UCard>
 </template>
 
@@ -199,6 +166,7 @@ import { useUserRole } from '~/composables/arestricted';
 import type { Animal } from '~/types/animal'
 
 const { userRole } = useUserRole();
+const toast = useToast()
 
 const props = defineProps({
   animal: {
@@ -216,7 +184,6 @@ const emit = defineEmits(['updated'])
 // Variables para edición principal
 const isEditing = ref(false)
 const isSubmitting = ref(false)
-const toast = useToast()
 
 const formData = reactive({
   id_animal: props.animal.id_animal,
@@ -230,17 +197,6 @@ const formData = reactive({
   id_reproduccion: props.animal.id_reproduccion,
   fecha_fallecimiento: props.animal.fecha_fallecimiento?.split('T')[0] || ''
 })
-
-// Variables para el formulario de venta
-const isSaleModalOpen = ref(false)
-const isSubmittingSale = ref(false)
-const saleForm = reactive({
-  fecha_venta: '',
-  monto: null as number | null,
-  notas: ''
-})
-
-// watch(isSaleModalOpen, val => console.log('modal open?', val))
 
 const enableEditing = () => {
   isEditing.value = true
@@ -306,44 +262,6 @@ const handleSubmit = async () => {
     })
   } finally {
     isSubmitting.value = false
-  }
-}
-
-const submitSale = async () => {
-  isSubmittingSale.value = true
-  try {
-    await $fetch('/api/sales/sales', {
-      method: 'POST',
-      body: {
-        animal_id: props.animal.id_animal,
-        fecha_venta: saleForm.fecha_venta,
-        monto: saleForm.monto,
-        notas: saleForm.notas
-      }
-    })
-
-    toast.add({
-      title: 'Venta registrada exitosamente',
-      description: 'La información de venta se ha guardado correctamente',
-      color: 'success',
-      icon: 'i-heroicons-check-circle'
-    })
-
-    isSaleModalOpen.value = false
-    saleForm.fecha_venta = ''
-    saleForm.monto = null
-    saleForm.notas = ''
-
-  } catch (error: any) {
-    console.error('Error al registrar venta:', error)
-    toast.add({
-      title: 'Error al registrar la venta',
-      description: error.data?.message || error.message,
-      color: 'error',
-      icon: 'i-heroicons-exclamation-circle'
-    })
-  } finally {
-    isSubmittingSale.value = false
   }
 }
 </script>

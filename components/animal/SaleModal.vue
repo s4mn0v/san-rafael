@@ -1,54 +1,59 @@
 <template>
-  <UModal v-model="isOpen">
-    <UCard>
-      <template #header>
-        <h3 class="text-lg font-semibold">Agregar Información de Venta</h3>
-      </template>
+  <slot :open="openModal" />
 
-      <UForm :state="form" @submit="handleSubmit" class="space-y-6">
+  <UModal v-model:open="isOpen" title="Agregar Información de Venta" description="Formulario para registrar una venta.">
+    <template #body>
+      <UForm :state="form" @submit="handleSubmit" class="space-y-4">
         <div class="flex space-x-4">
-          <UFormField label="Fecha de Venta" name="fecha_venta" required>
+          <UFormField name="fecha_venta" required>
+            <template #label>
+              <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Fecha de
+                Venta</span>
+            </template>
             <UInput type="date" v-model="form.fecha_venta" />
           </UFormField>
 
-          <UFormField label="Monto" name="monto" required>
+          <UFormField name="monto" required>
+            <template #label>
+              <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Monto</span>
+            </template>
             <UInput type="number" step="0.01" v-model="form.monto" />
           </UFormField>
         </div>
 
-        <UFormField label="Notas" name="notas">
+        <UFormField name="notas">
+          <template #label>
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Notas</span>
+          </template>
           <UTextarea v-model="form.notas" />
         </UFormField>
 
         <div class="flex justify-end gap-3 mt-4">
-          <UButton type="button" @click="close">Cancelar</UButton>
-          <UButton type="submit" :loading="isSubmitting">Guardar</UButton>
+          <UButton type="button" @click="isOpen = false">Cancelar</UButton>
+          <UButton type="submit" :loading="isSubmitting" @click="handleSubmit">Guardar</UButton>
         </div>
       </UForm>
-    </UCard>
+    </template>
   </UModal>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  animalId: {
-    type: String,
-    required: true
-  }
-})
+const props = defineProps<{ animalId: string }>()
 
-const emit = defineEmits(['submit'])
+console.log('🎯 SaleModal recibe animalId =', props.animalId)
 
-const isOpen = defineModel<boolean>({ default: false })
+
+const isOpen = ref(false)
 const isSubmitting = ref(false)
 const form = reactive({
+  animal_id: props.animalId,
   fecha_venta: '',
   monto: null as number | null,
   notas: ''
 })
 
-const close = () => {
-  isOpen.value = false
+const openModal = () => {
+  isOpen.value = true
   resetForm()
 }
 
@@ -58,10 +63,11 @@ const resetForm = () => {
   form.notas = ''
 }
 
+// SaleModal.vue – handleSubmit
 const handleSubmit = async () => {
   isSubmitting.value = true
   try {
-    await $fetch('/api/sales/sales', {
+    const { venta } = await $fetch<{ venta: any }>('/api/sales/sales', {
       method: 'POST',
       body: {
         animal_id: props.animalId,
@@ -69,13 +75,20 @@ const handleSubmit = async () => {
       }
     })
 
-    emit('submit')
-    close()
+    isOpen.value = false
+    useToast().add({
+      title: 'Venta registrada!',
+      color: 'success'
+    })
   } catch (error: any) {
-    console.error('Error al registrar venta:', error)
-    throw error
+    useToast().add({
+      title: 'Error',
+      description: error.data?.message || error.message,
+      color: 'error'
+    })
   } finally {
     isSubmitting.value = false
   }
 }
+
 </script>
