@@ -38,7 +38,7 @@ const fetchAnimals = async () => {
       page: pagination.value.pageIndex,
       pageSize: pagination.value.pageSize
     }
-    const response = await $fetch('/api/animal/animals', { params })
+    const response = await $fetch('/api/animal/animals', { params }) as { animals: Animal[], total: number }
     data.value = response.animals
     total.value = response.total
   } catch (error) {
