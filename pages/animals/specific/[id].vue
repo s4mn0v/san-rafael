@@ -167,6 +167,17 @@ const handleVentaUpdated = () => {
     icon: 'i-heroicons-check-circle'
   })
 }
+
+// En la sección de métodos del componente padre
+const handleHealthUpdated = () => {
+  refresh()
+  toast.add({
+    title: 'Historial actualizado',
+    description: 'El historial de salud se ha actualizado correctamente',
+    color: 'success',
+    icon: 'i-heroicons-check-circle'
+  })
+}
 </script>
 
 <template>
@@ -217,7 +228,7 @@ const handleVentaUpdated = () => {
       <!-- Sección Historial de Salud -->
       <HealthHistoryCard v-if="animal.historialSalud && animal.historialSalud.length > 0"
         :historial-salud="animal.historialSalud" :animal-id="animal.animal.id_animal.toString()"
-        :show="printSections.salud" />
+        :show="printSections.salud" @updated="handleHealthUpdated" />
 
       <!-- Alerta externa si no hay registros -->
       <UAlert v-if="!animal.historialSalud || animal.historialSalud.length === 0" title="Sin registros de salud"
