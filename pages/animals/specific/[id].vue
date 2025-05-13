@@ -146,6 +146,40 @@ const handleAnimalUpdated = (updatedAnimal: Animal) => {
     refresh()
   }
 }
+
+const handleVentaUpdated = () => {
+  refresh() // Recargar los datos del animal
+  toast.add({
+    title: 'Venta actualizada',
+    description: 'La información de venta se ha actualizado correctamente',
+    color: 'success',
+    icon: 'i-heroicons-check-circle'
+  })
+}
+
+// Modificar el watch de animal.value para incluir venta
+watch(
+  () => animal.value,
+  (val) => {
+    if (val?.animal) {
+      // ... código existente ...
+
+      // Actualizar ítem de breadcrumb para venta
+      if (val.venta) {
+        const ventaExists = breadcrumbItems.value.some(
+          item => item.label === `Venta: ${val.venta?.id_venta}`
+        )
+        if (!ventaExists) {
+          breadcrumbItems.value.push({
+            label: `Venta: ${val.venta.id_venta}`,
+            icon: 'i-heroicons-currency-dollar',
+          })
+        }
+      }
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <template>
@@ -184,7 +218,11 @@ const handleAnimalUpdated = (updatedAnimal: Animal) => {
       <AnimalDetailsCard :animal="animal.animal" :show="printSections.detalles" @updated="handleAnimalUpdated" />
 
       <!-- Sección Venta -->
-      <SaleInfoCard v-if="animal.venta" :venta="animal.venta" :show="printSections.venta" />
+      <template v-if="animal?.venta">
+        <SaleInfoCard :venta="animal.venta" :show="printSections.venta" @updated="handleVentaUpdated" />
+        <UButton v-if="showPrintOptions && userRole === 'admin'" icon="i-heroicons-pencil-square" label="Editar Venta"
+          @click="$router.push(`/sales/edit/${animal.venta.id_venta}`)" class="mt-4 print:hidden" />
+      </template>
       <UAlert v-else title="Sin información de venta" description="Este animal no tiene datos de venta registrados."
         icon="i-heroicons-exclamation-circle" color="warning" variant="subtle" class="mt-8" />
 
