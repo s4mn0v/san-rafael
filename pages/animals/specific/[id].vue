@@ -216,7 +216,8 @@ const handleVentaUpdated = () => {
 
       <!-- Sección Historial de Salud -->
       <HealthHistoryCard v-if="animal.historialSalud && animal.historialSalud.length > 0"
-        :historial-salud="animal.historialSalud" :show="printSections.salud" />
+        :historial-salud="animal.historialSalud" :animal-id="animal.animal.id_animal.toString()"
+        :show="printSections.salud" />
 
       <!-- Alerta externa si no hay registros -->
       <UAlert v-if="!animal.historialSalud || animal.historialSalud.length === 0" title="Sin registros de salud"

@@ -21,7 +21,7 @@
           </UFormField>
         </div>
 
-        <UFormField name="notas" class="w-full">
+        <UFormField name="notas">
           <template #label>
             <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Notas</span>
           </template>

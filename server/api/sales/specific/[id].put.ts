@@ -1,3 +1,4 @@
+// server/api/sales/specific/[id].put.ts
 import { serverSupabaseClient } from "#supabase/server";
 import type { Database } from "~/types/supabase";
 
