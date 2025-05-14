@@ -17,7 +17,7 @@
             <template #label>
               <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Monto</span>
             </template>
-            <UInput type="number" step="0.01" v-model="form.monto" />
+            <UInputNumber :step="100" v-model="form.monto" :format-options="{ useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }" placeholder="Ingrese el monto" />
           </UFormField>
         </div>
 
@@ -38,6 +38,8 @@
 </template>
 
 <script setup lang="ts">
+import { UInputNumber } from '#components';
+
 const props = defineProps<{ animalId: string }>()
 
 console.log('🎯 SaleModal recibe animalId =', props.animalId)

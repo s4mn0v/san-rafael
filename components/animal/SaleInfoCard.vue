@@ -50,7 +50,7 @@
               <template #label>
                 <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Monto</span>
               </template>
-              <UInputNumber v-model="editForm.monto" :min="0" :step="0.01"
+              <UInputNumber v-model="editForm.monto" :min="100" :step="100"
                 :format-options="{ useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }"
                 placeholder="Ingrese el monto" />
             </UFormField>
