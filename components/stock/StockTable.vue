@@ -4,7 +4,7 @@ import { ref, watch } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
 
-const table = useTemplateRef('table')
+const table = ref()
 
 const UButton = resolveComponent('UButton')
 const UCheckbox = resolveComponent('UCheckbox')
@@ -170,7 +170,7 @@ const expanded = ref({})
 
     <div class="flex justify-center border-t border-default pt-4">
       <UPagination v-model:page="pagination.pageIndex" :items-per-page="pagination.pageSize" :total="total"
-        @update:page="(newPage) => pagination.pageIndex = newPage" />
+        @update:page="(newPage: number) => pagination.pageIndex = newPage" />
     </div>
   </div>
 </template>
