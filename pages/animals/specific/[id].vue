@@ -248,6 +248,9 @@ const handleHealthUpdated = () => {
             color="warning" class="mt-8" />
         </div>
       </template>
+
+      <DeleteAnimalCard v-if="animal?.animal" :animal-id="animal.animal.id_animal.toString()"
+        class="mt-8 print:hidden" />
     </div>
 
     <!-- Animal no encontrado -->

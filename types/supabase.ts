@@ -385,6 +385,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_animal_cascade: {
+        Args: { animal_id: string }
+        Returns: undefined
+      }
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
