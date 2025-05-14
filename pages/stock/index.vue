@@ -2,6 +2,7 @@
   <BreadNav :items="breadcrumbItems" />
   <h1>Inventario</h1>
 
+  <StockTable />
 </template>
 
 <script setup lang="ts">

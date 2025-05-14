@@ -1,3 +1,4 @@
+<!-- components/inventory/StockTable.vue -->
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
@@ -8,20 +9,16 @@ const table = useTemplateRef('table')
 const UButton = resolveComponent('UButton')
 const UCheckbox = resolveComponent('UCheckbox')
 
-type Animal = {
-  id_animal: string
-  fecha_nacimiento: string
-  fecha_fallecimiento: string | null
-  raza: string
-  tipo_animal: 'NOVILLO' | 'TERNERO' | 'TERNERA' | 'VACA' | 'TORO'
-  peso_inicial: number
-  peso_actual: number
-  estado_salud: string
-  venta: boolean
-  id_reproduccion: string | null
+type InventoryItem = {
+  id_inventario: number
+  tipo: string
+  descripcion: string
+  cantidad: number
+  precio: number
+  proveedor_id: string
 }
 
-const data = ref<Animal[]>([])
+const data = ref<InventoryItem[]>([])
 const total = ref(0)
 const isPending = ref(false)
 
@@ -30,30 +27,29 @@ const pagination = ref({
   pageSize: 10
 })
 
-const fetchAnimals = async () => {
+const fetchInventory = async () => {
   isPending.value = true
   try {
     const params = {
       page: pagination.value.pageIndex,
       pageSize: pagination.value.pageSize
     }
-    const response = await $fetch('/api/animal/animals', { params }) as { animals: Animal[], total: number }
-    data.value = response.animals
+    const response = await $fetch('/api/stock/stock', { params }) as { items: InventoryItem[], total: number }
+    data.value = response.items
     total.value = response.total
   } catch (error) {
-    console.error('Error fetching animals:', error)
+    console.error('Error fetching inventory:', error)
   } finally {
     isPending.value = false
   }
 }
 
-watch([() => pagination.value.pageIndex, () => pagination.value.pageSize], fetchAnimals)
+watch([() => pagination.value.pageIndex, () => pagination.value.pageSize], fetchInventory)
 
 // Carga inicial
-fetchAnimals()
+fetchInventory()
 
-// Columnas se mantienen igual
-const columns: TableColumn<Animal>[] = [
+const columns: TableColumn<InventoryItem>[] = [
   {
     id: 'select',
     header: ({ table }) =>
@@ -91,14 +87,14 @@ const columns: TableColumn<Animal>[] = [
       })
   },
   {
-    accessorKey: 'id_animal',
+    accessorKey: 'id_inventario',
     header: ({ column }) => {
       const isSorted = column.getIsSorted()
 
       return h(UButton, {
         color: 'neutral',
         variant: 'ghost',
-        label: 'Codigo Animal',
+        label: 'ID Inventario',
         icon: isSorted
           ? isSorted === 'asc'
             ? 'i-lucide-arrow-up-narrow-wide'
@@ -110,42 +106,32 @@ const columns: TableColumn<Animal>[] = [
     }
   },
   {
-    accessorKey: 'fecha_nacimiento',
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted()
-
-      return h(UButton, {
-        color: 'neutral',
-        variant: 'ghost',
-        label: 'Fecha de Nacimiento',
-        icon: isSorted
-          ? isSorted === 'asc'
-            ? 'i-lucide-arrow-up-narrow-wide'
-            : 'i-lucide-arrow-down-wide-narrow'
-          : 'i-lucide-arrow-up-down',
-        class: '-mx-2.5',
-        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-      })
-    },
-    cell: ({ row }) => new Date(row.getValue('fecha_nacimiento')).toLocaleDateString()
+    accessorKey: 'tipo',
+    header: 'Tipo',
   },
-  { accessorKey: 'raza', header: 'Raza' },
-  { accessorKey: 'tipo_animal', header: ({ column }) => {
-      const isSorted = column.getIsSorted()
-
-      return h(UButton, {
-        color: 'neutral',
-        variant: 'ghost',
-        label: 'Tipo',
-        icon: isSorted
-          ? isSorted === 'asc'
-            ? 'i-lucide-arrow-up-narrow-wide'
-            : 'i-lucide-arrow-down-wide-narrow'
-          : 'i-lucide-arrow-up-down',
-        class: '-mx-2.5',
-        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
-      })
-    }, }
+  {
+    accessorKey: 'descripcion',
+    header: 'Descripción',
+  },
+  {
+    accessorKey: 'cantidad',
+    header: 'Cantidad',
+    cell: ({ row }) => row.original.cantidad.toLocaleString()
+  },
+  {
+    accessorKey: 'precio',
+    header: 'Precio',
+    cell: ({ row }) => new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(row.original.precio)
+  },
+  {
+    accessorKey: 'proveedor_id',
+    header: 'ID Proveedor',
+  }
 ]
 
 const expanded = ref({})
@@ -153,20 +139,27 @@ const expanded = ref({})
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <AnimalSearch />
-
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
-        <p><strong>ID:</strong> {{ row.original.id_animal }}</p>
-        <p><strong>Fecha de nacimiento:</strong> {{ row.original.fecha_nacimiento }}</p>
-        <p><strong>Fexcha de fallecimiento:</strong> {{ row.original.fecha_fallecimiento || 'N/A' }}</p>
-        <p><strong>Raza:</strong> {{ row.original.raza }}</p>
-        <p><strong>Tipo:</strong> {{ row.original.tipo_animal }}</p>
-        <p><strong>Peso inicial:</strong> {{ row.original.peso_inicial }}</p>
-        <p><strong>Peso actual:</strong> {{ row.original.peso_actual }}</p>
-        <p><strong>Estado de salud:</strong> {{ row.original.estado_salud }}</p>
-        <p><strong>Venta:</strong> {{ row.original.venta }}</p>
-        <p><strong>ID reproducción:</strong> {{ row.original.id_reproduccion }}</p>
+        <div class="grid grid-cols-2 gap-4 p-4">
+          <div>
+            <p><strong>ID Inventario:</strong> {{ row.original.id_inventario }}</p>
+            <p><strong>Tipo:</strong> {{ row.original.tipo }}</p>
+            <p><strong>Descripción:</strong> {{ row.original.descripcion }}</p>
+          </div>
+          <div>
+            <p><strong>Cantidad:</strong> {{ row.original.cantidad.toLocaleString() }}</p>
+            <p><strong>Precio:</strong> {{
+              new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }).format(row.original.precio)
+            }}</p>
+            <p><strong>Proveedor ID:</strong> {{ row.original.proveedor_id }}</p>
+          </div>
+        </div>
       </template>
     </UTable>
 
