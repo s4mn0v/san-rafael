@@ -36,7 +36,6 @@ export default defineEventHandler(async (event) => {
     tipo_animal: body.tipo_animal,
     peso_actual: body.peso_actual,
     estado_salud: body.estado_salud,
-    venta: body.venta,
     peso_inicial: body.peso_inicial,
     id_reproduccion: body.id_reproduccion,
   };
