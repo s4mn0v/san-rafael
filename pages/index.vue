@@ -1,27 +1,50 @@
+<!-- pages/index.vue -->
 <template>
   <BreadNav :items="breadcrumbItems" />
-  <h1>Dashboard</h1>
-  <StadisticCards />
 
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold uppercase tracking-widest text-gray-800 dark:text-white">
+      Dashboard
+    </h1>
+    <NuxtLink to="/sales" class="text-blue-600 hover:underline">
+      Ventas
+    </NuxtLink>
+  </div>
+
+  <!-- Único Toggle Métricas / Gráficos -->
+  <div class="flex gap-2 mb-8">
+    <UButton :color="!viewCharts ? 'primary' : 'secondary'" @click="viewCharts = false">
+      Métricas
+    </UButton>
+    <UButton :color="viewCharts ? 'primary' : 'secondary'" @click="viewCharts = true">
+      Gráficos
+    </UButton>
+  </div>
+
+  <!-- Aquí van las tarjetas -->
+  <div v-if="!viewCharts">
+    <!-- MetricsCards ya envuelve cada métrica en un <UCard> -->
+    <MetricsCards />
+  </div>
+  <div v-else>
+    <!-- StadisticCards ya envuelve cada gráfico en un <UCard> -->
+    <StadisticCards />
+  </div>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: "logged" });
-
-import BreadNav from '~/components/navigation/BreadNav.vue';
+import { ref } from 'vue'
 import type { BreadcrumbItem } from '@nuxt/ui'
+import BreadNav from '~/components/navigation/BreadNav.vue'
+import MetricsCards from '~/components/dashboard/MetricsCards.vue'
+import StadisticCards from '~/components/dashboard/StadisticCards.vue'
+
+definePageMeta({ layout: 'logged' })
 
 const breadcrumbItems = ref<BreadcrumbItem[]>([
-  {
-    label: 'Inicio',
-    icon: 'i-heroicons-home-solid',
-    to: '/'
-  },
-  {
-    label: 'Ventas',
-    icon: 'i-healthicons-money-bag',
-    to: '/sales',
-    showInBreadcrumb: false
-  }
+  { label: 'Inicio', icon: 'i-heroicons-home-solid', to: '/' }
 ])
+
+// Control único de vista
+const viewCharts = ref(false)
 </script>
