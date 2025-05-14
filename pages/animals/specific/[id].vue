@@ -225,14 +225,8 @@ const handleHealthUpdated = () => {
         icon="i-heroicons-exclamation-circle" color="warning" class="mt-8" />
 
       <!-- Sección Historial de Salud -->
-      <HealthHistoryCard v-if="animal.historialSalud && animal.historialSalud.length > 0"
-        :historial-salud="animal.historialSalud" :animal-id="animal.animal.id_animal.toString()"
+      <HealthHistoryCard :historial-salud="animal.historialSalud" :animal-id="animal.animal.id_animal.toString()"
         :show="printSections.salud" @updated="handleHealthUpdated" />
-
-      <!-- Alerta externa si no hay registros -->
-      <UAlert v-if="!animal.historialSalud || animal.historialSalud.length === 0" title="Sin registros de salud"
-        description="No se encontró historial de salud para este animal." icon="i-heroicons-information-circle"
-        color="warning" class="mt-4 print:hidden" />
 
       <!-- Sección Árbol Genealógico -->
       <div v-if="genealogyPending" class="mt-8 text-center p-4 print:hidden">

@@ -32,6 +32,9 @@
         </div>
       </div>
     </div>
+    <UAlert v-if="!historialSalud.length" title="Sin registros de salud"
+      description="No se encontró historial de salud para este animal." icon="i-heroicons-information-circle"
+      color="warning" class="mb-4" />
 
     <!-- Modal de Edición/Creación -->
     <UModal v-model:open="isModalOpen" :title="modalTitle"
@@ -58,7 +61,7 @@
             <template #label>
               <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Observaciones</span>
             </template>
-            <UTextarea v-model="form.observaciones" :maxlength="250" class="w-full"/>
+            <UTextarea v-model="form.observaciones" :maxlength="250" class="w-full" />
           </UFormField>
 
           <div class="flex justify-end gap-3 mt-4">
