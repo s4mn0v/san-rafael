@@ -4,7 +4,7 @@
     <template #header>
       <div class="flex justify-between items-center">
         <h2 class="text-xl font-bold text-red-600 dark:text-red-300">Eliminar Animal</h2>
-        <UButton v-if="userRole === 'admin'" icon="i-heroicons-trash" color="error" @click="confirmDelete"
+        <UButton icon="i-heroicons-trash" color="error" @click="confirmDelete"
           class="print:hidden" />
       </div>
     </template>
@@ -22,9 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { useUserRole } from '~/composables/arestricted'
-
-const { userRole } = useUserRole()
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()

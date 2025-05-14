@@ -243,7 +243,7 @@ const handleHealthUpdated = () => {
         </div>
       </template>
 
-      <DeleteAnimalCard v-if="animal?.animal" :animal-id="animal.animal.id_animal.toString()"
+      <DeleteAnimalCard v-if="animal?.animal && userRole === 'admin'" :animal-id="animal.animal.id_animal.toString()"
         class="mt-8 print:hidden" />
     </div>
 
