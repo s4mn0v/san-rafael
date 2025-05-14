@@ -18,11 +18,10 @@
         <UCard>
           <template #header>
             <div class="flex items-center justify-between">
-              <span class="text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
+              <span>
                 Recursos por Animal
               </span>
-              <UIcon name="i-heroicons-chart-bar"
-                class="w-6 h-6 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] ml-2" />
+              <UIcon name="i-heroicons-chart-bar" class="w-6 h-6 ml-2" />
             </div>
           </template>
           <div class="h-64 p-4">
@@ -37,11 +36,10 @@
         <UCard>
           <template #header>
             <div class="flex items-center justify-between">
-              <span class="text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
+              <span>
                 Control de Inventario
               </span>
-              <UIcon name="i-heroicons-chart-bar"
-                class="w-6 h-6 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] ml-2" />
+              <UIcon name="i-heroicons-chart-bar" class="w-6 h-6 ml-2" />
             </div>
           </template>
           <div class="h-64 p-4">
@@ -56,11 +54,10 @@
         <UCard>
           <template #header>
             <div class="flex items-center justify-between">
-              <span class="text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
+              <span>
                 Gastos Totales
               </span>
-              <UIcon name="i-heroicons-currency-dollar-20-solid"
-                class="w-6 h-6 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] ml-2" />
+              <UIcon name="i-heroicons-currency-dollar-20-solid" class="w-6 h-6 ml-2" />
             </div>
           </template>
           <div class="h-64 p-4">
@@ -78,11 +75,10 @@
         <UCard>
           <template #header>
             <div class="flex items-center justify-between w-full">
-              <span class="text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
+              <span>
                 Ventas por Animal
               </span>
-              <UIcon name="i-heroicons-chart-bar"
-                class="w-6 h-6 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] ml-2" />
+              <UIcon name="i-heroicons-chart-bar" class="w-6 h-6 ml-2" />
             </div>
           </template>
           <div class="h-64 p-4">
@@ -97,11 +93,10 @@
         <UCard>
           <template #header>
             <div class="flex items-center justify-between w-full">
-              <span class="text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
+              <span>
                 Evolución de Ventas
               </span>
-              <UIcon name="i-heroicons-presentation-chart-line"
-                class="w-6 h-6 text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] ml-2" />
+              <UIcon name="i-heroicons-presentation-chart-line" class="w-6 h-6 ml-2" />
             </div>
           </template>
           <div class="h-64 p-4">
