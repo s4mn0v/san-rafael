@@ -1,5 +1,5 @@
+# Estructura de carpetas
 ```
-.
 ├── app.config.ts                       # Configuración global del UI en Nuxt
 ├── app.vue                             # Componente raíz de la app Vue
 ├── error.vue                           # Vista de manejo de errores
