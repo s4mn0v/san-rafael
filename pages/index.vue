@@ -155,7 +155,7 @@
 
       <DashboardCard
         title="Comparativa de Ventas"
-        icon="i-heroicons-chart-line"
+        icon="i-heroicons-presentation-chart-line"
       >
         <div
           class="p-4 bg-[var(--color-m7)] dark:bg-[var(--color-m2)] rounded-2xl text-gray-800 dark:text-white"
@@ -192,9 +192,9 @@ import {
   PointElement,
   CategoryScale,
   LinearScale,
-} from "chart.js";
+} from "chart.js/auto";
 import { Bar as BarChart, Line as LineChart } from "vue-chartjs";
-import type { ChartData, ChartOptions } from "chart.js";
+import type { ChartData, ChartOptions } from "chart.js/auto";
 
 ChartJS.register(
   Title,

@@ -68,6 +68,6 @@ export default defineNuxtConfig({
 
   // Nuxt Build
   build: {
-    transpile: ["@vue-flow/core", "@vue-flow/additional-components"],
+    transpile: ["@vue-flow/core", "@vue-flow/additional-components", "vue-chartjs"],
   },
 });

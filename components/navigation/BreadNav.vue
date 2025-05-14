@@ -1,46 +1,72 @@
 <script setup lang="ts">
 import type { BreadcrumbItem } from '@nuxt/ui'
+import type { DropdownMenuItem } from '@nuxt/ui'
 import { useRoute } from 'vue-router'
+import { ref, computed } from 'vue'
 
 // Props
-const props = defineProps<{
-  items: BreadcrumbItem[]
-}>()
+const props = defineProps<{ items: BreadcrumbItem[] }>()
 
 const route = useRoute()
 
-// Filtro de ítems visibles en el breadcrumb
+// Items para el breadcrumb
 const breadcrumbItems = computed(() =>
   props.items.filter(item => item.showInBreadcrumb !== false)
 )
 
-// Ítems posteriores a la ruta actual (como botones)
+// Índice de la ruta actual
 const currentIndex = computed(() =>
   props.items.findIndex(item => item.to === route.path)
 )
 
 // Ítems posteriores a la ruta actual
-const nextItems = computed(() =>
+const nextItemsRaw = computed(() =>
   currentIndex.value !== -1 ? props.items.slice(currentIndex.value + 1) : []
+)
+
+// Mapeamos a DropdownMenuItem
+const dropdownItems = computed<DropdownMenuItem[]>(() =>
+  nextItemsRaw.value.map(item => ({
+    item: item.label,
+    label: item.label,
+    icon: item.icon ?? undefined,
+    to: item.to,
+    onSelect: (e: Event) => {
+      // Evitamos el comportamiento por defecto si hace falta
+      e.preventDefault()
+    }
+  }))
 )
 </script>
 
 <template>
-  <div class="space-y-2 bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] p-4 rounded-xl mb-6">
-    <!-- Breadcrumb (con ítems visibles) -->
-    <UBreadcrumb :items="breadcrumbItems" :ui="{ link: 'hover:text-white dark:hover:text-[var(--color-custom-500)]' }">
-      <template #item-label="{ item, index }">
-        <span :class="index === breadcrumbItems.length - 1 ? '' : 'hidden sm:inline'">
-          {{ item.label }}
-        </span>
-      </template>
-    </UBreadcrumb>
+  <div class="space-y-2 bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] px-4 py-2 rounded-xl mb-6">
+    <div class="flex items-center justify-between">
+      <!-- Breadcrumb -->
+      <UBreadcrumb
+        :items="breadcrumbItems"
+        :ui="{ link: 'hover:text-white dark:hover:text-[var(--color-custom-500)]' }"
+      >
+        <template #item-label="{ item, index }">
+          <span :class="index === breadcrumbItems.length - 1 ? '' : 'hidden sm:inline'">
+            {{ item.label }}
+          </span>
+        </template>
+      </UBreadcrumb>
 
-    <!-- Botones adicionales de navegación -->
-    <div v-if="nextItems.length" class="flex flex-wrap gap-2 mt-4">
-      <UButton v-for="item in nextItems" :key="item.to as string" :label="item.label" :icon="item.icon" :to="item.to"
-        color="secondary"
-        :ui="{ base: 'bg-[var(--color-custom-50)] text-[var(--color-custom-500) hover:bg-[var(--color-custom-100)]' }" />
+      <!-- Desplegable al lado derecho -->
+      <UDropdownMenu
+        v-if="dropdownItems.length"
+        :items="dropdownItems"
+        :content="{ align: 'end' }"
+        :ui="{ content: 'w-48' }"
+      >
+        <!-- Botón que activa el menú -->
+        <UButton
+          label=""
+          icon="i-lucide-menu"
+        />
+      </UDropdownMenu>
     </div>
   </div>
 </template>
