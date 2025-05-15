@@ -201,7 +201,7 @@ const animalBarData = computed<ChartData<'bar'>>(() => ({
   datasets: [{ 
     label: 'Animales', 
     data: [metrics.value.totalAnimals, metrics.value.weightIncreasePercent],
-    backgroundColor: ['#6366F1', '#10B981']
+    backgroundColor: ['#c3791b', '#c3791b']
   }]
 }))
 
@@ -210,7 +210,7 @@ const inventoryBarData = computed<ChartData<'bar'>>(() => ({
   datasets: [{ 
     label: 'Inventario', 
     data: [metrics.value.totalInsumos, metrics.value.lowStock],
-    backgroundColor: ['#3B82F6', '#EF4444']
+    backgroundColor: ['#c3791b', '#c3791b']
   }]
 }))
 
@@ -219,7 +219,7 @@ const costBarData = computed<ChartData<'bar'>>(() => ({
   datasets: [{ 
     label: 'Gastos', 
     data: [metrics.value.totalExpenses],
-    backgroundColor: '#F59E0B'
+    backgroundColor: '#c3791b'
   }]
 }))
 
@@ -233,7 +233,7 @@ const salesBarData = computed<ChartData<'bar'>>(() => {
     datasets: [{
       label: 'Ventas por Animal',
       data: Object.values(byAnimal),
-      backgroundColor: '#4F46E5'
+      backgroundColor: '#c3791b'
     }]
   }
 })
@@ -250,7 +250,7 @@ const salesLineData = computed<ChartData<'line'>>(() => {
     datasets: [{
       label: 'Ventas por Fecha',
       data: dates.map(d => byDate[d]),
-      borderColor: '#10B981',
+      borderColor: '#c3791b',
       tension: 0.1,
       fill: false
     }]

@@ -14,13 +14,13 @@
   <!-- Único Toggle Métricas / Gráficos -->
   <div class="flex gap-2 mb-8">
     <UButton
-      :color="!viewCharts ? 'primary' : 'secondary'"
+      :color="!viewCharts ? 'primary' : 'neutral'"
       @click="viewCharts = false"
     >
       Métricas
     </UButton>
     <UButton
-      :color="viewCharts ? 'primary' : 'secondary'"
+      :color="viewCharts ? 'primary' : 'neutral'"
       @click="viewCharts = true"
     >
       Gráficos
