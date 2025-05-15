@@ -29,6 +29,9 @@
 │   │   ├── HealthHistoryCard.vue       # Historial de salud
 │   │   ├── SaleInfoCard.vue            # Info de venta de animal
 │   │   └── SaleModal.vue               # Modal de gestión de venta
+|   |__ dashboard/                      # Componentes para la pagina principal         
+|   |   |__ StadisticCards.vue          # Componente para la estadistica
+|   |   |__ MetricsCards.vue            # Componente para la informacion de el inicio metricas          
 │   ├── navigation/                     # Componentes de navegación
 │   │   ├── BreadNav.vue                # Migas de pan
 │   │   ├── NavButtons.vue              # Botones de navegación
@@ -73,6 +76,8 @@
 │   │   │       ├── [id].get.ts         # Obtener animal por ID
 │   │   │       ├── [id].put.ts         # Actualizar animal por ID
 │   │   │       └── [id].delete.ts      # Eliminar animal por ID
+│   │   ├── dashboard/                  # Endpoints de la pagina de inicio de las metricas y estadistica
+│   │   │   ├── metrics.get.ts          # Obtener animales, inventario, ventas
 │   │   ├── genealogy/                  # Endpoints de genealogía
 │   │   │   └── id/
 │   │   │       └── [id].get.ts         # Obtener genealogía por ID

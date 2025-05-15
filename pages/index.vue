@@ -3,20 +3,26 @@
   <BreadNav :items="breadcrumbItems" />
 
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-semibold uppercase tracking-widest text-gray-800 dark:text-white">
+    <h1
+      class="text-2xl font-semibold uppercase tracking-widest text-gray-800 dark:text-white"
+    >
       Dashboard
     </h1>
-    <NuxtLink to="/sales" class="text-blue-600 hover:underline">
-      Ventas
-    </NuxtLink>
+
   </div>
 
   <!-- Único Toggle Métricas / Gráficos -->
   <div class="flex gap-2 mb-8">
-    <UButton :color="!viewCharts ? 'primary' : 'secondary'" @click="viewCharts = false">
+    <UButton
+      :color="!viewCharts ? 'primary' : 'secondary'"
+      @click="viewCharts = false"
+    >
       Métricas
     </UButton>
-    <UButton :color="viewCharts ? 'primary' : 'secondary'" @click="viewCharts = true">
+    <UButton
+      :color="viewCharts ? 'primary' : 'secondary'"
+      @click="viewCharts = true"
+    >
       Gráficos
     </UButton>
   </div>
@@ -33,18 +39,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { BreadcrumbItem } from '@nuxt/ui'
-import BreadNav from '~/components/navigation/BreadNav.vue'
-import MetricsCards from '~/components/dashboard/MetricsCards.vue'
-import StadisticCards from '~/components/dashboard/StadisticCards.vue'
+import { ref } from "vue";
+import type { BreadcrumbItem } from "@nuxt/ui";
+import BreadNav from "~/components/navigation/BreadNav.vue";
+import MetricsCards from "~/components/dashboard/MetricsCards.vue";
+import StadisticCards from "~/components/dashboard/StadisticCards.vue";
 
-definePageMeta({ layout: 'logged' })
+
+definePageMeta({ layout: "logged" });
 
 const breadcrumbItems = ref<BreadcrumbItem[]>([
-  { label: 'Inicio', icon: 'i-heroicons-home-solid', to: '/' }
-])
+  {
+    label: "Dashboard",
+    icon: "i-healthicons-i-exam-multiple-choice-outline",
+    to: "/",
+  },
+
+  
+]);
+
 
 // Control único de vista
-const viewCharts = ref(false)
+const viewCharts = ref(false);
 </script>
