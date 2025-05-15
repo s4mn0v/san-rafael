@@ -43,8 +43,8 @@ const confirmDelete = async () => {
 
 <template>
   <!-- Botón que abre el modal -->
-  <UButton color="red" :disabled="props.selectedIds.length === 0" @click="isOpen = true" class="mb-4">
-    Eliminar seleccionados ({{ props.selectedIds.length }})
+  <UButton color="error" :disabled="props.selectedIds.length === 0" @click="isOpen = true" class="mb-4">
+    Eliminar seleccionado(s) [{{ props.selectedIds.length }}]
   </UButton>
 
   <!-- Modal correctamente enlazado -->

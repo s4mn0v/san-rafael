@@ -134,7 +134,7 @@ const refreshTable = () => {
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <DeleteProfiles :selected-ids="selectedIds" @deleted="refreshTable" />
+    <DeleteProfiles v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending"
       :row-class="(row: { original: Profile }) => row.original.role === 'admin' ? 'bg-gray-100 dark:bg-gray-800' : ''"
       class="flex-1">
