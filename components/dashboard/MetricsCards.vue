@@ -1,171 +1,130 @@
-<!-- components/dashboard/MetricsCards.vue -->
 <template>
-  <div>
+  <div class="space-y-6">
     <!-- Fila 1: tres métricas principales -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Card 1: Total de Animales -->
-      <UCard>
+      <UCard v-for="(item, i) in metricsList" :key="i">
         <template #header>
           <div class="flex items-center justify-between">
-            <span>Total de Animales</span>
-            <UIcon name="i-healthicons-animal-cow" class="w-6 h-6 ml-2" />
+            <span>{{ item.title }}</span>
+            <UIcon :name="item.icon" class="w-6 h-6 ml-2" />
           </div>
         </template>
         <div class="p-4 text-2xl font-semibold text-center">
-          <client-only>
-            <span v-if="!pending">{{ metrics.totalAnimals }}</span>
-            <div
-              v-else
-              class="mx-auto w-6 h-6 animate-pulse bg-gray-200 dark:bg-gray-800 rounded-full"
-            />
-          </client-only>
-        </div>
-      </UCard>
-
-      <!-- Card 2: Incremento de Peso (Mensual) -->
-      <UCard>
-        <template #header>
-          <div class="flex items-center justify-between">
-            <span>Incremento de Peso (Mensual)</span>
-            <UIcon name="i-healthicons-cardiogram-outline-24px" class="w-6 h-6 ml-2" />
+          <div
+            v-if="pending"
+            class="animate-pulse text-transparent bg-gray-300 dark:bg-gray-700 rounded"
+          >
+            &nbsp;
           </div>
-        </template>
-        <div class="p-4 text-2xl font-semibold text-center">
-          <client-only>
-            <span v-if="!pending">{{ weightPctDisplay }}</span>
-            <div
-              v-else
-              class="mx-auto w-6 h-6 animate-pulse bg-gray-200 dark:bg-gray-800 rounded-full"
-            />
-          </client-only>
-        </div>
-      </UCard>
-
-      <!-- Card 3: Ventas Totales -->
-      <UCard>
-        <template #header>
-          <div class="flex items-center justify-between">
-            <span>Ventas Totales</span>
-            <UIcon name="i-heroicons-currency-dollar-20-solid" class="w-6 h-6 ml-2" />
+          <div v-else>
+            {{ item.format(metrics) }}
           </div>
-        </template>
-        <div class="p-4 text-2xl font-semibold text-center">
-          <client-only>
-            <span v-if="!pending">{{ formatCurrency(metrics.totalSales) }}</span>
-            <div
-              v-else
-              class="mx-auto w-6 h-6 animate-pulse bg-gray-200 dark:bg-gray-800 rounded-full"
-            />
-          </client-only>
         </div>
       </UCard>
     </div>
 
-    <!-- Fila 2: métricas de inventario -->
+    <!-- Fila 2: inventario -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-      <!-- Card 4: Total Insumos -->
-      <UCard>
+      <UCard v-for="(item, i) in inventoryList" :key="i">
         <template #header>
           <div class="flex items-center justify-between">
-            <span>Total Insumos</span>
-            <UIcon name="i-healthicons-ui-menu-grid-outline" class="w-6 h-6 ml-2" />
+            <span>{{ item.title }}</span>
+            <UIcon :name="item.icon" class="w-6 h-6 ml-2" />
           </div>
         </template>
         <div class="p-4 text-2xl font-semibold text-center">
-          <client-only>
-            <span v-if="!pending">{{ metrics.totalInsumos }}</span>
-            <div
-              v-else
-              class="mx-auto w-6 h-6 animate-pulse bg-gray-200 dark:bg-gray-800 rounded-full"
-            />
-          </client-only>
-        </div>
-      </UCard>
-
-      <!-- Card 5: Stock Bajo -->
-      <UCard>
-        <template #header>
-          <div class="flex items-center justify-between">
-            <span>Stock Bajo</span>
-            <UIcon name="i-heroicons-arrow-trending-down-16-solid" class="w-6 h-6 ml-2" />
+          <div
+            v-if="pending"
+            class="animate-pulse text-transparent bg-gray-300 dark:bg-gray-700 rounded"
+          >
+            &nbsp;
           </div>
-        </template>
-        <div class="p-4 text-2xl font-semibold text-center">
-          <client-only>
-            <span v-if="!pending">{{ metrics.lowStock }}</span>
-            <div
-              v-else
-              class="mx-auto w-6 h-6 animate-pulse bg-gray-200 dark:bg-gray-800 rounded-full"
-            />
-          </client-only>
-        </div>
-      </UCard>
-
-      <!-- Card 6: Gastos Inventario -->
-      <UCard>
-        <template #header>
-          <div class="flex items-center justify-between">
-            <span>Gastos Inventario</span>
-            <UIcon name="i-heroicons-currency-dollar-20-solid" class="w-6 h-6 ml-2" />
+          <div v-else>
+            {{ item.format(metrics) }}
           </div>
-        </template>
-        <div class="p-4 text-2xl font-semibold text-center">
-          <client-only>
-            <span v-if="!pending">{{ formatCurrency(metrics.totalExpenses) }}</span>
-            <div
-              v-else
-              class="mx-auto w-6 h-6 animate-pulse bg-gray-200 dark:bg-gray-800 rounded-full"
-            />
-          </client-only>
         </div>
       </UCard>
-    </div>
-
-    <div v-if="error" class="mt-4 text-red-500">
-      Error al cargar métricas: {{ error.message }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useFetch } from '#app'
+import { computed } from "vue";
+import { useFetch } from "#app";
 
-interface SalesPoint { animal_id: string; monto: number; fecha_venta: string }
 interface Metrics {
-  totalAnimals: number
-  weightIncreasePercent: number
-  totalInsumos: number
-  lowStock: number
-  totalExpenses: number
-  totalSales: number
-  salesData: SalesPoint[]
+  totalAnimals: number;
+  weightIncreasePercent: number;
+  totalInsumos: number;
+  lowStock: number;
+  totalExpenses: number;
+  totalSales: number;
 }
 
-const { data: mr, pending, error } = await useFetch<Metrics>(
-  '/api/dashboard/metrics',
+const { data: mr, pending } = await useFetch<Metrics>(
+  "/api/dashboard/metrics",
   { server: false }
-)
+);
 
-const metrics = computed(() => mr.value ?? {
-  totalAnimals: 0,
-  weightIncreasePercent: 0,
-  totalInsumos: 0,
-  lowStock: 0,
-  totalExpenses: 0,
-  totalSales: 0,
-  salesData: []
-})
+const metrics = computed(
+  () =>
+    mr.value ?? {
+      totalAnimals: 0,
+      weightIncreasePercent: 0,
+      totalInsumos: 0,
+      lowStock: 0,
+      totalExpenses: 0,
+      totalSales: 0,
+    }
+);
 
-const weightPctDisplay = computed(
-  () => `${metrics.value.weightIncreasePercent.toFixed(2)}%`
-)
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value)
+function fmtNum(n: number) {
+  return n.toLocaleString();
 }
+function fmtPct(n: number) {
+  return `${n.toFixed(2)}%`;
+}
+function fmtMoney(n: number) {
+  return new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+    maximumFractionDigits: 0,
+  }).format(n);
+}
+
+const metricsList = [
+  {
+    title: "Total de Animales",
+    icon: "i-healthicons-animal-cow",
+    format: (m: Metrics) => fmtNum(m.totalAnimals),
+  },
+  {
+    title: "Incremento de Peso (Mensual)",
+    icon: "i-healthicons-cardiogram-outline-24px",
+    format: (m: Metrics) => fmtPct(m.weightIncreasePercent),
+  },
+  {
+    title: "Ventas Totales",
+    icon: "i-heroicons-currency-dollar-20-solid",
+    format: (m: Metrics) => fmtMoney(m.totalSales),
+  },
+];
+
+const inventoryList = [
+  {
+    title: "Total Insumos",
+    icon: "i-healthicons-ui-menu-grid-outline",
+    format: (m: Metrics) => fmtNum(m.totalInsumos),
+  },
+  {
+    title: "Stock Bajo",
+    icon: "i-heroicons-arrow-trending-down-16-solid",
+    format: (m: Metrics) => fmtNum(m.lowStock),
+  },
+  {
+    title: "Gastos Inventario",
+    icon: "i-heroicons-currency-dollar-20-solid",
+    format: (m: Metrics) => fmtMoney(m.totalExpenses),
+  },
+];
 </script>
