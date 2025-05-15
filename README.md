@@ -66,4 +66,5 @@ bunx supabase gen types typescript --project-id "yhydjqxtnqinaxnqnegn" --schema 
 
 ## Usuarios
 
+- [X] Agregar la tabla de usuarios y funcionalidad de eliminar
 - [ ] Agregar el apartado de usuarios de la version (prueba) a la version (stable).

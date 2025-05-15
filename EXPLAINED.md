@@ -38,6 +38,8 @@
 │   │   └── Sidebar.vue                 # Barra lateral
 │   ├── profile/                        # Componentes de perfil de usuario
 │   │   └── ProfileEditor.vue           # Editor de perfil
+│   │   └── DeleteProfiles.vue          # Modal para eliminiar uno o varios usuarios
+│   │   └── ProfilesTable.vue          # Tabla apra enlisatar los usuarios dentro de la tabla profiles
 │   ├── stock/                          # Componentes de inventario
 │   │   └── StockTable.vue              # Tabla de stock
 │   ├── theming/                        # Componentes de temas
@@ -58,7 +60,7 @@
 │   ├── reproduction.vue                # Página de reproducción general
 │   ├── sales.vue                       # Página de ventas
 │   ├── settings.vue                    # Página de configuración
-│   ├── users.vue                       # Gestión de usuarios
+│   ├── profiles.vue                    # Gestión de usuarios
 │   ├── animals/                        # Rutas de animales
 │   │   ├── genealogy.vue               # Vista de genealogía
 │   │   ├── index.vue                   # Listado de animales
@@ -94,6 +96,9 @@
 │   │   │   ├── stock.get.ts            # Listar stock
 │   │   │   └── specific/
 │   │   │       └── [id].get.ts         # Stock por ID
+│   │   ├── profiles/                   # Endpoints del apartado de usuarios (Profiles en la tabla)
+│   │   │   ├── delete.delete.ts        # Eliminar usuarios (Authentication | Table Profiles)
+│   │   │   └── profiles.get.ts         # Obtener usuarios
 │   │   └── test.get.ts                 # Endpoint de prueba
 │   └── tsconfig.json                   # Configuración TS para el servidor
 └── types/                              # Definiciones de tipos TypeScript
