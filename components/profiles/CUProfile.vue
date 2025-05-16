@@ -30,11 +30,11 @@
 
         <div>
           <UFormField label="Password">
-            <UInput v-model="password" placeholder="Password" :color="color" :type="show ? 'text' : 'password'"
+            <UInput v-model="password" placeholder="Contraseña" :color="color" :type="show ? 'text' : 'password'"
               :ui="{ trailing: 'pe-1' }" :aria-invalid="score < 4" aria-describedby="password-strength" class="w-full">
               <template #trailing>
                 <UButton color="neutral" variant="link" size="sm" :icon="show ? 'i-lucide-eye-off' : 'i-lucide-eye'"
-                  :aria-label="show ? 'Hide password' : 'Show password'" :aria-pressed="show" aria-controls="password"
+                  :aria-label="show ? 'Ocultar contraseña' : 'Mostrar contraseña'" :aria-pressed="show" aria-controls="password"
                   @click="show = !show" />
               </template>
             </UInput>
@@ -42,8 +42,8 @@
 
           <UProgress :color="color" :indicator="text" :model-value="score" :max="4" size="sm" />
 
-          <p id="password-strength" class="text-sm font-medium">
-            {{ text }}. Must contain:
+          <p id="password-strength" class="text-sm font-medium mb-4">
+            {{ text }}. Debe contener:
           </p>
 
           <ul class="space-y-1" aria-label="Password requirements">
@@ -141,10 +141,10 @@ const handleSubmit = async () => {
 // Password strength logic
 const checkStrength = (str: string) => {
   const requirements = [
-    { regex: /.{8,}/, text: 'At least 8 characters' },
-    { regex: /\d/, text: 'At least 1 number' },
-    { regex: /[a-z]/, text: 'At least 1 lowercase letter' },
-    { regex: /[A-Z]/, text: 'At least 1 uppercase letter' }
+    { regex: /.{8,}/, text: 'Al menos 8 characters' },
+    { regex: /\d/, text: 'Al menos 1 numero' },
+    { regex: /[a-z]/, text: 'Al menos 1 letra minuscula' },
+    { regex: /[A-Z]/, text: 'Al menos 1 letra mayuscula' }
   ]
   return requirements.map(req => ({ met: req.regex.test(str), text: req.text }))
 }
@@ -159,10 +159,10 @@ const color = computed(() => {
   return 'success'
 })
 const text = computed(() => {
-  if (score.value === 0) return 'Enter a password'
-  if (score.value <= 2) return 'Weak password'
-  if (score.value === 3) return 'Medium password'
-  return 'Strong password'
+  if (score.value === 0) return 'Ingrese una contraseña'
+  if (score.value <= 2) return 'Contraseña debil'
+  if (score.value === 3) return 'Contraseña media'
+  return 'Contraseña fuerte'
 })
 
 defineExpose({

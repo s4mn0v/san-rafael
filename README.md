@@ -52,7 +52,7 @@ bunx supabase gen types typescript --project-id "yhydjqxtnqinaxnqnegn" --schema 
 
 ## Animal
 
-- [ ] Agregar la funcionalidad a la columna de checkbox, para eliminar varios o un solo registro.
+- [X] <s>Agregar la funcionalidad a la columna de checkbox, para eliminar varios o un solo registro.</s>
 
 - [ ] Agregar el modal para la creacion de un registro animal.
 

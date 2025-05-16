@@ -130,7 +130,8 @@ const columns: TableColumn<Animal>[] = [
     cell: ({ row }) => new Date(row.getValue('fecha_nacimiento')).toLocaleDateString()
   },
   { accessorKey: 'raza', header: 'Raza' },
-  { accessorKey: 'tipo_animal', header: ({ column }) => {
+  {
+    accessorKey: 'tipo_animal', header: ({ column }) => {
       const isSorted = column.getIsSorted()
 
       return h(UButton, {
@@ -145,15 +146,39 @@ const columns: TableColumn<Animal>[] = [
         class: '-mx-2.5',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc')
       })
-    }, }
+    },
+  }
 ]
 
 const expanded = ref({})
+
+const selectedIds = ref<string[]>([])
+
+// Watcher para selecciones
+watch(
+  () => table.value?.tableApi?.getSelectedRowModel().rows,
+  (rows) => {
+    selectedIds.value = rows?.map((row) => row.original.id_animal) || []
+  }
+)
+
+// Función para refrescar la tabla
+const refreshTable = () => {
+  table.value?.tableApi?.resetRowSelection()
+  fetchAnimals()
+}
+
+defineExpose({
+  fetchAnimals,
+  tableApi: computed(() => table.value?.tableApi)
+})
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
     <AnimalSearch />
+
+    <DeleteAnimals v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
 
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
