@@ -37,9 +37,10 @@
 │   │   ├── NavButtons.vue              # Botones de navegación
 │   │   └── Sidebar.vue                 # Barra lateral
 │   ├── profile/                        # Componentes de perfil de usuario
-│   │   └── ProfileEditor.vue           # Editor de perfil
-│   │   └── DeleteProfiles.vue          # Modal para eliminiar uno o varios usuarios
-│   │   └── ProfilesTable.vue          # Tabla apra enlisatar los usuarios dentro de la tabla profiles
+│   │   ├── ProfileEditor.vue           # Editor de perfil
+│   │   ├── DeleteProfiles.vue          # Modal para eliminiar uno o varios usuarios
+│   │   ├── ProfilesTable.vue           # Tabla apra enlisatar los usuarios dentro de la tabla profiles
+│   │   └── SearchProfile.vue           # Input para buscar perfiles especificos y mostrarlos en forma de card
 │   ├── stock/                          # Componentes de inventario
 │   │   └── StockTable.vue              # Tabla de stock
 │   ├── theming/                        # Componentes de temas
@@ -98,7 +99,8 @@
 │   │   │       └── [id].get.ts         # Stock por ID
 │   │   ├── profiles/                   # Endpoints del apartado de usuarios (Profiles en la tabla)
 │   │   │   ├── delete.delete.ts        # Eliminar usuarios (Authentication | Table Profiles)
-│   │   │   └── profiles.get.ts         # Obtener usuarios
+│   │   │   ├── profiles.get.ts         # Obtener usuarios
+│   │   │   └── search.get.ts           # Obtener una busqueda de usuarios para mostrar perfiles independientes
 │   │   └── test.get.ts                 # Endpoint de prueba
 │   └── tsconfig.json                   # Configuración TS para el servidor
 └── types/                              # Definiciones de tipos TypeScript

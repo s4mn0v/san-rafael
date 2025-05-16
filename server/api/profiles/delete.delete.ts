@@ -1,3 +1,4 @@
+// server/api/profiles/delete.delete.ts
 import { defineEventHandler, readBody, createError } from "h3";
 import {
   serverSupabaseUser,

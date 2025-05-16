@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
 
@@ -130,13 +130,18 @@ const refreshTable = () => {
   table.value?.tableApi?.resetRowSelection()
   fetchProfiles()
 }
+
+defineExpose({
+  fetchProfiles,
+  tableApi: computed(() => table.value?.tableApi)
+})
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
     <DeleteProfiles v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending"
-      :row-class="(row: { original: Profile }) => row.original.role === 'admin' ? 'bg-gray-100 dark:bg-gray-800' : ''"
+      :row-class="(row: { original: Profile }) => row.original.role === 'admin' ? 'bg-[var(--color-custom-50)] dark:bg-[var(--color-custom-500)]' : 'bg-[var(--color-custom-100)] dark:bg-[var(--color-custom-400)]'"
       class="flex-1">
       <template #expanded="{ row }">
         <p><strong>ID:</strong> {{ row.original.id }}</p>
