@@ -64,10 +64,10 @@ bunx supabase gen types typescript --project-id "yhydjqxtnqinaxnqnegn" --schema 
 
 - [ ] Agregar de manera visual los proveedores en forma de cartas con paginacion.
 
-## Usuarios
+## <s>Usuarios</s>
 
-- [X] Agregar la tabla de usuarios y funcionalidad de eliminar
-- [X] Agregar componentes de busqueda de usuarios
-- [ ] Modal para agregar usuarios
-- [ ] Modal para editar usuarios
-- [X] Agregar el apartado de usuarios de la version (prueba) a la version (stable).
+- [X] <s>Agregar la tabla de usuarios y funcionalidad de eliminar</s>
+- [X] <s>Agregar componentes de busqueda de usuarios</s>
+- [X] <s>Modal para agregar usuarios</s>
+- [X] <s>Modal para editar usuarios</s>
+- [X] <s>Agregar el apartado de usuarios de la version (prueba) a la version (stable).</s>
