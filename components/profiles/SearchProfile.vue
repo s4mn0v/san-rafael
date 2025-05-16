@@ -28,7 +28,7 @@ const handleSearch = async (term: string) => {
     toast.add({
       title: 'Error en búsqueda',
       description: error.data?.message || 'Error al realizar la búsqueda',
-      color: 'red',
+      color: 'error',
       icon: 'i-heroicons-x-circle'
     })
   } finally {
@@ -97,7 +97,7 @@ const deleteProfile = async () => {
   <div class="relative w-full max-w-md space-y-4">
     <!-- Buscador -->
     <UInput placeholder="Buscar por nombre o email..." icon="i-heroicons-magnifying-glass" :loading="isSearching"
-      @input="handleInput" />
+      @input="handleInput" class="w-full"/>
 
     <!-- Resultados de búsqueda -->
     <Transition name="fade">
@@ -117,7 +117,7 @@ const deleteProfile = async () => {
                   {{ profile.email }}
                 </p>
               </div>
-              <UBadge :label="profile.role" size="sm" :color="profile.role === 'admin' ? 'primary' : 'gray'" />
+              <UBadge :label="profile.role" size="sm" :color="profile.role === 'admin' ? 'primary' : 'neutral'" />
             </div>
           </div>
         </div>

@@ -1,7 +1,9 @@
 <template>
-  <h1 class="text-3xl font-bold tracking-widest uppercase text-center mb-6">Usuarios</h1>
+  <div class="flex flex-col items-center mb-6">
+    <h1 class="text-3xl font-bold tracking-widest uppercase mb-6 text-center">Usuarios</h1>
 
-  <SearchProfile @deleted="refreshTable" />
+    <SearchProfile @deleted="refreshTable" />
+  </div>
 
   <ProfilesTable ref="profilesTable" />
 </template>

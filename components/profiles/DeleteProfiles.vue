@@ -51,15 +51,15 @@ const confirmDelete = async () => {
   <UModal v-model:open="isOpen" title="Eliminar perfiles" description="¿Quieres borrar estos perfiles?"
     :dismissible="false">
     <template #body>
-      <p class="text-gray-600 dark:text-gray-300">
+      <p class="text-[var(--color-custom-500)] dark:text-[var(--color-custom-50)]">
         Deseas eliminar {{ props.selectedIds.length }} perfiles seleccionados?
       </p>
       <div class="mt-4 flex justify-end gap-3">
         <!-- Ahora funciona -->
-        <UButton color="gray" variant="ghost" :disabled="isDeleting" @click="isOpen = false">
+        <UButton color="neutral" variant="ghost" :disabled="isDeleting" @click="isOpen = false">
           Cancelar
         </UButton>
-        <UButton color="red" :loading="isDeleting" @click="confirmDelete">
+        <UButton color="error" :loading="isDeleting" @click="confirmDelete">
           {{ isDeleting ? 'Eliminando...' : 'Confirmar' }}
         </UButton>
       </div>
