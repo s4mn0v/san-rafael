@@ -3,6 +3,7 @@ import { ref, watch, computed } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
 import type { Row } from '@tanstack/table-core'
+import CUProfile from './CUProfile.vue'
 
 const table = useTemplateRef('table')
 
@@ -12,13 +13,18 @@ const UCheckbox = resolveComponent('UCheckbox')
 type Profile = {
   id: string
   email: string
-  name: string | null
+  name: string
   role: 'admin' | 'user'
 }
 
 const data = ref<Profile[]>([])
 const total = ref(0)
 const isPending = ref(false)
+
+const isSingleSelected = computed(() => selectedIds.value.length === 1)
+const selectedUser = computed(() =>
+  data.value.find(user => user.id === selectedIds.value[0])
+)
 
 const pagination = ref({
   pageIndex: 1,
@@ -140,11 +146,16 @@ defineExpose({
 
 <template>
   <div class="w-full space-y-4 pb-4">
+
+    <div class="flex justify-end gap-3">
+      <CUProfile @saved="refreshTable" />
+      <EditProfile v-if="isSingleSelected" :user="selectedUser" @saved="refreshTable" />
+    </div>
+    
     <DeleteProfiles v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending"
-      :row-class="(row: Row<Profile>) => row.original.role"
-      class="flex-1">
-      <template #expanded="{ row }">
+      :row-class="(row: Row<Profile>) => row.original.role" class="flex-1">
+      <template #expanded="{ row }" class="flex items-center">
         <p><strong>ID:</strong> {{ row.original.id }}</p>
       </template>
     </UTable>
