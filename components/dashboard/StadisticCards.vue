@@ -1,7 +1,7 @@
 <!-- components/dashboard/StadisticCards.vue -->
 <template>
   <div>
-    <!-- Fila 1: tres gráficos -->
+    <!-- Solo tres gráficos: Recursos, Inventario y Gastos -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <!-- Card 1: Recursos por Animal -->
       <UCard>
@@ -14,7 +14,7 @@
         <div class="h-64 p-4">
           <client-only>
             <Bar v-if="!pending" :data="animalBarData" :options="chartOptions" />
-            <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg"/>
+            <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg" />
           </client-only>
         </div>
       </UCard>
@@ -30,7 +30,7 @@
         <div class="h-64 p-4">
           <client-only>
             <Bar v-if="!pending" :data="inventoryBarData" :options="chartOptions" />
-            <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg"/>
+            <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg" />
           </client-only>
         </div>
       </UCard>
@@ -46,16 +46,13 @@
         <div class="h-64 p-4">
           <client-only>
             <Bar v-if="!pending" :data="costBarData" :options="chartOptions" />
-            <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg"/>
+            <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg" />
           </client-only>
         </div>
       </UCard>
     </div>
 
-    <!-- Fila 2: Ventas por Animal y Evolución -->
-
-   
-
+    <!-- Error -->
     <div v-if="error" class="mt-4 text-red-500">
       Error al cargar gráficos: {{ error.message }}
     </div>
@@ -70,13 +67,9 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
-  LineElement,
-  PointElement,
   Title,
   Tooltip,
-  Legend,
-  TimeScale,
-  TimeSeriesScale
+  Legend
 } from 'chart.js'
 import type { ChartOptions, ChartData } from 'chart.js'
 import { useFetch } from '#app'
@@ -85,57 +78,46 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  LineElement,
-  PointElement,
   Title,
   Tooltip,
-  Legend,
-  TimeScale,
-  TimeSeriesScale
+  Legend
 )
 
-type SalesPoint = { animal_id: string; monto: number; fecha_venta?: string }
-
-const { data: mr, pending, error } = await useFetch<{
+type StatsData = {
   totalAnimals: number
   weightIncreasePercent: number
   totalInsumos: number
   lowStock: number
   totalExpenses: number
-  totalSales: number
-  salesData: SalesPoint[]
-}>('/api/dashboard/metrics')
+}
 
-const metrics = computed(() => mr.value ?? {
+const { data: mr, pending, error } = await useFetch<StatsData>('/api/dashboard/metrics')
+
+const stats = computed(() => mr.value ?? {
   totalAnimals: 0,
   weightIncreasePercent: 0,
   totalInsumos: 0,
   lowStock: 0,
-  totalExpenses: 0,
-  totalSales: 0,
-  salesData: []
+  totalExpenses: 0
 })
 
-const chartOptions = computed<ChartOptions<'bar' | 'line'>>(() => ({
+const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   responsive: true,
   maintainAspectRatio: false,
-  plugins: { 
-    legend: { 
-      position: 'top',
-      labels: {
-        color: '#6B7280' // Color gris-500 para dark mode
-      }
-    },
+  plugins: {
+    legend: { position: 'top', labels: { color: '#6B7280' } },
     tooltip: {
       callbacks: {
-        label: (context) => {
-          let label = context.dataset.label || ''
+        label: (ctx) => {
+          let label = ctx.dataset.label || ''
           if (label) label += ': '
-          if (context.parsed.y !== null) {
+          const y = ctx.parsed.y
+          if (y != null) {
             label += new Intl.NumberFormat('es-CL', {
               style: 'currency',
-              currency: 'CLP'
-            }).format(context.parsed.y)
+              currency: 'CLP',
+              maximumFractionDigits: 0
+            }).format(y)
           }
           return label
         }
@@ -143,86 +125,35 @@ const chartOptions = computed<ChartOptions<'bar' | 'line'>>(() => ({
     }
   },
   scales: {
-    x: { 
-      ticks: {
-        color: '#6B7280' // Color gris-500 para dark mode
-      }
-    },
-    y: { 
-      ticks: {
-        color: '#6B7280', // Color gris-500 para dark mode
-        callback: (value: string | number) => {
-          const numValue = typeof value === 'string' ? parseFloat(value) : value
-          return new Intl.NumberFormat('es-CL', {
-            style: 'currency',
-            currency: 'CLP',
-            maximumFractionDigits: 0
-          }).format(numValue)
-        }
-      }
-    }
+    x: { ticks: { color: '#6B7280' } },
+    y: { ticks: { color: '#6B7280' } }
   }
 }))
 
-// Resto de las computed properties para los datos se mantienen igual
 const animalBarData = computed<ChartData<'bar'>>(() => ({
-  labels: ['Total Animales', 'Peso ↑ (%)'],
-  datasets: [{ 
-    label: 'Animales', 
-    data: [metrics.value.totalAnimals, metrics.value.weightIncreasePercent],
+  labels: ['Total Animales', 'Incremento de Peso (%)'],
+  datasets: [{
+    label: 'Animales',
+    data: [stats.value.totalAnimals, stats.value.weightIncreasePercent],
     backgroundColor: ['#c3791b', '#c3791b']
   }]
 }))
 
 const inventoryBarData = computed<ChartData<'bar'>>(() => ({
-  labels: ['Insumos Totales', 'Stock Bajo'],
-  datasets: [{ 
-    label: 'Inventario', 
-    data: [metrics.value.totalInsumos, metrics.value.lowStock],
+  labels: ['Total Insumos', 'Stock Bajo'],
+  datasets: [{
+    label: 'Inventario',
+    data: [stats.value.totalInsumos, stats.value.lowStock],
     backgroundColor: ['#c3791b', '#c3791b']
   }]
 }))
 
 const costBarData = computed<ChartData<'bar'>>(() => ({
   labels: ['Gastos Totales'],
-  datasets: [{ 
-    label: 'Gastos', 
-    data: [metrics.value.totalExpenses],
+  datasets: [{
+    label: 'Gastos',
+    data: [stats.value.totalExpenses],
     backgroundColor: '#c3791b'
   }]
 }))
-
-const salesBarData = computed<ChartData<'bar'>>(() => {
-  const byAnimal = metrics.value.salesData.reduce((acc, s) => {
-    acc[s.animal_id] = (acc[s.animal_id] || 0) + s.monto
-    return acc
-  }, {} as Record<string,number>)
-  return { 
-    labels: Object.keys(byAnimal), 
-    datasets: [{
-      label: 'Ventas por Animal',
-      data: Object.values(byAnimal),
-      backgroundColor: '#c3791b'
-    }]
-  }
-})
-
-const salesLineData = computed<ChartData<'line'>>(() => {
-  const byDate = metrics.value.salesData.reduce((acc, s) => {
-    const d = s.fecha_venta?.split('T')[0]!
-    acc[d] = (acc[d] || 0) + s.monto
-    return acc
-  }, {} as Record<string,number>)
-  const dates = Object.keys(byDate).sort()
-  return { 
-    labels: dates, 
-    datasets: [{
-      label: 'Ventas por Fecha',
-      data: dates.map(d => byDate[d]),
-      borderColor: '#c3791b',
-      tension: 0.1,
-      fill: false
-    }]
-  }
-})
 </script>
