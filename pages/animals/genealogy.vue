@@ -2,6 +2,8 @@
   <BreadNav :items="breadcrumbItems" />
   <h1>Genealogía</h1>
 
+  <GenealogyTable  />
+
 </template>
 
 <script setup lang="ts">

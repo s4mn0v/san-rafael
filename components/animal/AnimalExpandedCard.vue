@@ -105,13 +105,13 @@
       <p class="text-red-500 dark:text-red-400">
         Vas a eliminar el animal <strong>#{{ animal.id_animal }}</strong> de forma
         permanente. Esta acción eliminará permanentemente:
+      </p>
       <ul class="list-disc list-inside text-red-400 dark:text-red-300">
         <li>Registro principal del animal</li>
         <li>Historial de salud relacionado</li>
         <li>Información de venta asociada</li>
         <li>Registros genealógicos</li>
       </ul>
-      </p>
       <div class="mt-4 flex justify-end gap-3">
         <UButton color="primary" variant="ghost" :disabled="isDeleting" @click="isOpen = false">
           Cancelar
