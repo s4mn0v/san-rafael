@@ -170,6 +170,11 @@ const refreshTable = () => {
   table.value?.tableApi?.resetRowSelection()
   fetchAnimals()
 }
+const modalRef = ref()
+
+const openAddModal = () => {
+  modalRef.value?.openModal()
+}
 
 defineExpose({
   fetchAnimals,
@@ -179,7 +184,11 @@ defineExpose({
 
 <template>
   <div class="w-full space-y-4 pb-4">
-    <AnimalSearch />
+    <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
+      <AnimalSearch class="w-full"/>
+      <UButton icon="i-heroicons-plus-20-solid" @click="openAddModal" title="Agregar nuevo animal" />
+      <AnimalAddModal ref="modalRef" @created="refreshTable"/>
+    </div>
 
     <DeleteAnimals v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
 
