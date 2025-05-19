@@ -90,21 +90,24 @@
     </div>
 
     <!-- Modo Edición -->
-    <UForm v-else="userRole === 'admin'" :state="formData" @submit="handleSubmit" class="space-y-6">
+    <UForm v-else="userRole === 'admin'" :schema="schema" :state="formData" @submit="handleSubmit" class="space-y-6">
       <div class="grid md:grid-cols-2 gap-6">
         <!-- Columna Izquierda -->
         <div class="space-y-4">
           <UFormField label="Fecha de Nacimiento" name="fecha_nacimiento" required>
             <UInput type="date" v-model="formData.fecha_nacimiento" />
+            <UFormMessage />
           </UFormField>
 
           <UFormField label="Raza" name="raza" required>
             <UInput v-model="formData.raza" />
+            <UFormMessage />
           </UFormField>
 
           <UFormField label="Tipo de Animal" name="tipo_animal" required>
             <USelect v-model="formData.tipo_animal" :items="['NOVILLO', 'TERNERO', 'TERNERA', 'VACA', 'TORO']"
               class="w-3xs" />
+            <UFormMessage />
           </UFormField>
         </div>
 
@@ -112,12 +115,14 @@
         <div class="space-y-4">
           <UFormField label="Peso Actual (kg)" name="peso_actual" required>
             <UInput type="number" step="0.1" v-model="formData.peso_actual" />
+            <UFormMessage />
           </UFormField>
 
           <UFormField label="Estado de Salud" name="estado_salud" required>
             <USelect v-model="formData.estado_salud"
               :items="['EXCELENTE', 'BUENO', 'REGULAR', 'MALO', 'CRITICO', 'RECUPERACION', 'OBSERVACION']"
               class="w-3xs" />
+            <UFormMessage />
           </UFormField>
 
           <UFormField label="En Venta" name="venta">
@@ -143,14 +148,17 @@
       <div class="mt-8 border-t pt-6 block space-y-4 md:grid md:grid-cols-3 md:gap-4">
         <UFormField label="Peso Inicial (kg)" name="peso_inicial">
           <UInput type="number" step="0.1" v-model="formData.peso_inicial" />
+          <UFormMessage />
         </UFormField>
 
         <UFormField label="ID Reproducción" name="id_reproduccion">
           <UInput v-model="formData.id_reproduccion" />
+          <UFormMessage />
         </UFormField>
 
         <UFormField label="Fecha Fallecimiento" name="fecha_fallecimiento">
           <UInput type="date" v-model="formData.fecha_fallecimiento" />
+          <UFormMessage />
         </UFormField>
       </div>
 
@@ -170,6 +178,18 @@
 import { useUserRole } from '~/composables/arestricted';
 import type { Animal } from '~/types/animal'
 import type { Venta } from '~/types/animal'
+import { z } from 'zod'
+
+const schema = z.object({
+  fecha_nacimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha inválida'),
+  raza: z.string().min(2, 'Mínimo 2 caracteres').max(30, 'Máximo 50 caracteres'),
+  tipo_animal: z.enum(['NOVILLO', 'TERNERO', 'TERNERA', 'VACA', 'TORO']),
+  peso_actual: z.coerce.number().positive('Debe ser positivo').min(1, 'Mínimo 1 kg').max(2000, 'Máximo 2000 kg'),
+  estado_salud: z.enum(['EXCELENTE', 'BUENO', 'REGULAR', 'MALO', 'CRITICO', 'RECUPERACION', 'OBSERVACION']),
+  peso_inicial: z.coerce.number().min(0, 'Mínimo 0 kg').max(2000, 'Máximo 2000 kg').optional(),
+  id_reproduccion: z.coerce.number().max(10, 'Máximo 10').optional(),
+  fecha_fallecimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha inválida').optional()
+})
 
 const { userRole } = useUserRole();
 const toast = useToast()
@@ -179,7 +199,7 @@ const props = defineProps({
     type: Object as () => Animal,
     required: true
   },
-  venta: { // Nuevo prop para la información de venta
+  venta: {
     type: Object as () => Venta | null,
     default: null
   },
@@ -200,8 +220,7 @@ const handleSaleCreated = () => {
   emit('venta-created')
 }
 
-
-// Variables para edición principal
+// Reactive variables
 const isEditing = ref(false)
 const isSubmitting = ref(false)
 
@@ -268,7 +287,7 @@ const handleSubmit = async () => {
       id_animal: formData.id_animal,
       fecha_nacimiento: formData.fecha_nacimiento,
       raza: formData.raza,
-      tipo_animal: formData.tipo_animal!, // <- aseguramos que NO es null
+      tipo_animal: formData.tipo_animal!,
       peso_actual: formData.peso_actual,
       estado_salud: formData.estado_salud,
       venta: formData.venta ?? false,
