@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
 
@@ -37,7 +37,10 @@ const fetchAnimals = async () => {
       page: pagination.value.pageIndex,
       pageSize: pagination.value.pageSize
     }
-    const response = await $fetch('/api/animal/animals', { params }) as { animals: Animal[], total: number }
+    const response = await $fetch<{ animals: Animal[]; total: number }>(
+      '/api/animal/animals',
+      { params }
+    )
     data.value = response.animals
     total.value = response.total
   } catch (error) {
@@ -182,7 +185,7 @@ defineExpose({
 
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
-        <AnimalExpandedCard :animal="row.original" />
+        <AnimalExpandedCard :animal="row.original" @deleted="refreshTable" />
       </template>
     </UTable>
 
