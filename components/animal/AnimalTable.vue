@@ -182,16 +182,7 @@ defineExpose({
 
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
-        <p><strong>ID:</strong> {{ row.original.id_animal }}</p>
-        <p><strong>Fecha de nacimiento:</strong> {{ row.original.fecha_nacimiento }}</p>
-        <p><strong>Fexcha de fallecimiento:</strong> {{ row.original.fecha_fallecimiento || 'N/A' }}</p>
-        <p><strong>Raza:</strong> {{ row.original.raza }}</p>
-        <p><strong>Tipo:</strong> {{ row.original.tipo_animal }}</p>
-        <p><strong>Peso inicial:</strong> {{ row.original.peso_inicial }}</p>
-        <p><strong>Peso actual:</strong> {{ row.original.peso_actual }}</p>
-        <p><strong>Estado de salud:</strong> {{ row.original.estado_salud }}</p>
-        <p><strong>Venta:</strong> {{ row.original.venta }}</p>
-        <p><strong>ID reproducción:</strong> {{ row.original.id_reproduccion }}</p>
+        <AnimalExpandedCard :animal="row.original" />
       </template>
     </UTable>
 
