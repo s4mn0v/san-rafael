@@ -2,8 +2,13 @@
 import { ref, watch, computed } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
+import type { Table } from '@tanstack/table-core'
 
-const table = useTemplateRef('table')
+interface TableComponent {
+  tableApi: Table<Animal>
+}
+
+const table = ref<TableComponent | null>(null)
 
 const UButton = resolveComponent('UButton')
 const UCheckbox = resolveComponent('UCheckbox')
@@ -185,9 +190,9 @@ defineExpose({
 <template>
   <div class="w-full space-y-4 pb-4">
     <div class="flex justify-between items-center px-4 py-3.5 border-b border-accented">
-      <AnimalSearch class="w-full"/>
+      <AnimalSearch class="w-full" />
       <UButton icon="i-heroicons-plus-20-solid" @click="openAddModal" title="Agregar nuevo animal" />
-      <AnimalAddModal ref="modalRef" @created="refreshTable"/>
+      <AnimalAddModal ref="modalRef" @created="refreshTable" />
     </div>
 
     <DeleteAnimals v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
@@ -205,7 +210,7 @@ defineExpose({
 
     <div class="flex justify-center border-t border-default pt-4">
       <UPagination v-model:page="pagination.pageIndex" :items-per-page="pagination.pageSize" :total="total"
-        @update:page="(newPage) => pagination.pageIndex = newPage" />
+        @update:page="(newPage: number) => pagination.pageIndex = newPage" />
     </div>
   </div>
 </template>
