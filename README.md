@@ -44,8 +44,6 @@ bunx supabase gen types typescript --project-id "yhydjqxtnqinaxnqnegn" --schema 
 
 ## Genealogia (La tabla es la de reproduccion)
 
-- [ ] Tabla de genalogia con (Buscador pero en la misma tabla, Dropdown con el VueFlow Tree, Modal para agregar genealogias, checkbox con la funcionalidad de eliminar uno o varios y en seleccion unica opcion para editar).
-
 - [ ] Modal para agregar registros genealogicos (Condicional de que no puede agregar registros masculinos o bebes en campos femeninos y en campos femeninos no se puede agregar registros masculinos o bebes).
 
 - [ ] Genearar la posibilidad de asignar un registro genealogico a un registro animal mediante el checkbox en seleccion unica. Ademas de agregar la condicional de poder eliminar ese asignacion o mostrar alertas para cuando se intenta generar una doble asignacion a un mismo registro.
