@@ -79,29 +79,16 @@ const columns: TableColumn<Reproduction>[] = [
         'aria-label': 'Select row'
       })
   },
+  // Nueva columna ID
   {
-    id: 'expand',
-    cell: ({ row }) =>
-      h(UButton, {
-        color: 'neutral',
-        variant: 'ghost',
-        icon: 'i-lucide-chevron-down',
-        square: true,
-        'aria-label': 'Expand',
-        ui: {
-          leadingIcon: [
-            'transition-transform',
-            row.getIsExpanded() ? 'duration-200 rotate-180' : ''
-          ]
-        },
-        onClick: () => row.toggleExpanded()
-      })
+    accessorKey: 'id_reproduccion',
+    header: 'ID Reproducción',
+    cell: ({ row }) => row.original.id_reproduccion
   },
   {
     accessorKey: 'fecha_evento',
     header: ({ column }) => {
       const isSorted = column.getIsSorted()
-
       return h(UButton, {
         color: 'neutral',
         variant: 'ghost',
@@ -136,7 +123,7 @@ const columns: TableColumn<Reproduction>[] = [
   }
 ]
 
-const expanded = ref({})
+// Eliminamos la referencia a expanded
 const selectedIds = ref<number[]>([])
 
 watch(
@@ -167,19 +154,14 @@ defineExpose({
         <span class="hidden md:inline">Editar</span>
       </UButton>
 
-      <!-- Modal condicional -->
       <EditReproduction v-if="selectedReproduction" ref="editModal" :reproduction="selectedReproduction"
         @saved="refreshTable" />
     </div>
 
     <DeleteReproductions v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
 
-    <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
-      <template #expanded="{ row }">
-        <p><strong>ID Reproducción:</strong> {{ row.original.id_reproduccion }}</p>
-        <p><strong>Raza:</strong> {{ row.original.raza }}</p>
-      </template>
-    </UTable>
+    <!-- Eliminamos la funcionalidad de expanded -->
+    <UTable ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1" />
 
     <div class="px-4 py-3.5 border-t border-accented text-sm text-muted">
       {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }} de
