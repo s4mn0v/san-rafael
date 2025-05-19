@@ -1,12 +1,13 @@
 <template>
   <UModal v-model:open="isOpen" title="Agregar Usuario" description="Formulario para registrar un nuevo usuario.">
     <UButton icon="i-heroicons-plus-16-solid" @click="openModal"
-      class="bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] hover:text-[var(--color-custom-50)] hover:dark:text-[var(--color-custom-500)] rounded-full" title="Agregar usuario"/>
+      class="bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)] hover:text-[var(--color-custom-50)] hover:dark:text-[var(--color-custom-500)] rounded-full"
+      title="Agregar usuario" />
 
     <template #body>
-      <UForm :state="form" class="space-y-4" @submit="handleSubmit">
+      <UForm :schema="schema" :state="form" class="space-y-4" @submit="handleSubmit">
         <div class="flex space-x-4">
-          <UFormField name="nombre" required>
+          <UFormField name="name" required>
             <template #label>
               <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Nombre</span>
             </template>
@@ -21,7 +22,7 @@
           </UFormField>
         </div>
 
-        <UFormField name="rol" required>
+        <UFormField name="role" required>
           <template #label>
             <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Rol</span>
           </template>
@@ -29,13 +30,16 @@
         </UFormField>
 
         <div>
-          <UFormField label="Password">
-            <UInput v-model="password" placeholder="Contraseña" :color="color" :type="show ? 'text' : 'password'"
+          <UFormField name="password">
+            <template #label>
+              <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Password</span>
+            </template>
+            <UInput v-model="form.password" placeholder="Contraseña" :color="color" :type="show ? 'text' : 'password'"
               :ui="{ trailing: 'pe-1' }" :aria-invalid="score < 4" aria-describedby="password-strength" class="w-full">
               <template #trailing>
                 <UButton color="neutral" variant="link" size="sm" :icon="show ? 'i-lucide-eye-off' : 'i-lucide-eye'"
-                  :aria-label="show ? 'Ocultar contraseña' : 'Mostrar contraseña'" :aria-pressed="show" aria-controls="password"
-                  @click="show = !show" />
+                  :aria-label="show ? 'Ocultar contraseña' : 'Mostrar contraseña'" :aria-pressed="show"
+                  aria-controls="password" @click="show = !show" />
               </template>
             </UInput>
           </UFormField>
@@ -73,10 +77,18 @@
 </template>
 
 <script setup lang="ts">
+import { z } from 'zod'
+
+const schema = z.object({
+  name: z.string().min(1, 'El nombre es requerido'),
+  email: z.string().email('Email inválido'),
+  role: z.enum(['admin', 'user']),
+  password: z.string().optional()
+})
+
 const emit = defineEmits(['saved', 'close'])
 
 const show = ref(false)
-const password = ref('')
 const isSubmitting = ref(false)
 const roles = ref(['admin', 'user'])
 const isOpen = ref(false)
@@ -84,9 +96,11 @@ const isOpen = ref(false)
 const form = reactive({
   name: '',
   email: '',
-  role: 'user'
+  role: 'user' as 'admin' | 'user',
+  password: ''
 })
 
+// Resto del código se mantiene igual...
 const openModal = () => {
   isOpen.value = true
   resetForm()
@@ -102,9 +116,9 @@ const resetForm = () => {
   Object.assign(form, {
     name: '',
     email: '',
-    role: 'user'
+    role: 'user',
+    password: ''
   })
-  password.value = ''
 }
 
 const handleSubmit = async () => {
@@ -112,10 +126,7 @@ const handleSubmit = async () => {
   try {
     await $fetch('/api/profiles/profile', {
       method: 'POST',
-      body: {
-        ...form,
-        password: password.value
-      }
+      body: form
     })
 
     useToast().add({
@@ -138,7 +149,7 @@ const handleSubmit = async () => {
   }
 }
 
-// Password strength logic
+// Actualizar referencias de password a form.password
 const checkStrength = (str: string) => {
   const requirements = [
     { regex: /.{8,}/, text: 'Al menos 8 characters' },
@@ -149,7 +160,7 @@ const checkStrength = (str: string) => {
   return requirements.map(req => ({ met: req.regex.test(str), text: req.text }))
 }
 
-const strength = computed(() => checkStrength(password.value))
+const strength = computed(() => checkStrength(form.password))
 const score = computed(() => strength.value.filter(req => req.met).length)
 const color = computed(() => {
   if (score.value === 0) return 'neutral'
