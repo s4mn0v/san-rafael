@@ -1,70 +1,48 @@
-<!-- components/dashboard/StadisticCards.vue -->
-<template>
-  <div>
-    <!-- Fila 1: tres gráficos -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Card 1: Recursos por Animal -->
+<template> 
+<div>
+                 <!-- Fila 2: Ventas por Animal y Evolución -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <!-- Ventas por Animal -->
       <UCard>
         <template #header>
           <div class="flex items-center justify-between">
-            <span>Recursos por Animal</span>
+            <span>Ventas por Animal</span>
             <UIcon name="i-heroicons-chart-bar" class="w-6 h-6 ml-2" />
           </div>
         </template>
         <div class="h-64 p-4">
           <client-only>
-            <Bar v-if="!pending" :data="animalBarData" :options="chartOptions" />
+            <Bar v-if="!pending" :data="salesBarData" :options="chartOptions" />
             <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg"/>
           </client-only>
         </div>
       </UCard>
 
-      <!-- Card 2: Control de Inventario -->
+      <!-- Evolución de Ventas -->
       <UCard>
         <template #header>
           <div class="flex items-center justify-between">
-            <span>Control de Inventario</span>
-            <UIcon name="i-heroicons-chart-bar" class="w-6 h-6 ml-2" />
+            <span>Evolución de Ventas</span>
+            <UIcon name="i-heroicons-presentation-chart-line" class="w-6 h-6 ml-2" />
           </div>
         </template>
         <div class="h-64 p-4">
           <client-only>
-            <Bar v-if="!pending" :data="inventoryBarData" :options="chartOptions" />
+            <Line v-if="!pending" :data="salesLineData" :options="chartOptions" />
             <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg"/>
           </client-only>
         </div>
       </UCard>
-
-      <!-- Card 3: Gastos Totales -->
-      <UCard>
-        <template #header>
-          <div class="flex items-center justify-between">
-            <span>Gastos Totales</span>
-            <UIcon name="i-heroicons-currency-dollar-20-solid" class="w-6 h-6 ml-2" />
-          </div>
-        </template>
-        <div class="h-64 p-4">
-          <client-only>
-            <Bar v-if="!pending" :data="costBarData" :options="chartOptions" />
-            <div v-else class="h-full animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg"/>
-          </client-only>
-        </div>
-      </UCard>
-    </div>
-
-    <!-- Fila 2: Ventas por Animal y Evolución -->
-
-   
-
+    </div>  
     <div v-if="error" class="mt-4 text-red-500">
       Error al cargar gráficos: {{ error.message }}
     </div>
-  </div>
+</div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts">    
 import { computed } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { Bar, Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -225,4 +203,5 @@ const salesLineData = computed<ChartData<'line'>>(() => {
     }]
   }
 })
+
 </script>

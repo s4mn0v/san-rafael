@@ -1,4 +1,3 @@
-<!-- pages/index.vue -->
 <template>
   <BreadNav :items="breadcrumbItems" />
 
@@ -8,34 +7,34 @@
     >
       Dashboard
     </h1>
-
   </div>
 
-  <!-- Único Toggle Métricas / Gráficos -->
+  <!-- Único Toggle Métricas / Gráficos / Ventas -->
   <div class="flex gap-2 mb-8">
     <UButton
-      :color="!viewCharts ? 'primary' : 'neutral'"
-      @click="viewCharts = false"
+      :color="currentView === 'metrics' ? 'primary' : 'neutral'"
+      @click="currentView = 'metrics'"
     >
       Métricas
     </UButton>
     <UButton
-      :color="viewCharts ? 'primary' : 'neutral'"
-      @click="viewCharts = true"
+      :color="currentView === 'charts' ? 'primary' : 'neutral'"
+      @click="currentView = 'charts'"
     >
       Gráficos
     </UButton>
+    <UButton
+      :color="currentView === 'sales' ? 'primary' : 'neutral'"
+      @click="currentView = 'sales'"
+    >
+      Ventas
+    </UButton>
   </div>
 
-  <!-- Aquí van las tarjetas -->
-  <div v-if="!viewCharts">
-    <!-- MetricsCards ya envuelve cada métrica en un <UCard> -->
-    <MetricsCards />
-  </div>
-  <div v-else>
-    <!-- StadisticCards ya envuelve cada gráfico en un <UCard> -->
-    <StadisticCards />
-  </div>
+  <!-- Contenido según la vista seleccionada -->
+  <MetricsCards v-if="currentView === 'metrics'" />
+  <StadisticCards v-if="currentView === 'charts'" />
+  <SalesCharts v-if="currentView === 'sales'" />
 </template>
 
 <script setup lang="ts">
@@ -44,7 +43,7 @@ import type { BreadcrumbItem } from "@nuxt/ui";
 import BreadNav from "~/components/navigation/BreadNav.vue";
 import MetricsCards from "~/components/dashboard/MetricsCards.vue";
 import StadisticCards from "~/components/dashboard/StadisticCards.vue";
-
+import SalesCharts from "~/components/dashboard/SalesCharts.vue";
 
 definePageMeta({ layout: "logged" });
 
@@ -54,11 +53,8 @@ const breadcrumbItems = ref<BreadcrumbItem[]>([
     icon: "i-healthicons-i-exam-multiple-choice-outline",
     to: "/",
   },
-
-  
 ]);
 
-
-// Control único de vista
-const viewCharts = ref(false);
+// Control de vista con tres opciones
+const currentView = ref('metrics');
 </script>
