@@ -2,10 +2,14 @@
 import { ref, watch, computed } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
-import type { Row } from '@tanstack/table-core'
-import CUProfile from './CUProfile.vue'
+import type { Row, Table } from '@tanstack/table-core'
+import ProfileCreateModal from './ProfileCreateModal.vue'
 
-const table = useTemplateRef('table')
+interface TableComponent {
+  tableApi: Table<Profile>
+}
+
+const table = ref<TableComponent | null>(null)
 
 const UButton = resolveComponent('UButton')
 const UCheckbox = resolveComponent('UCheckbox')
@@ -148,10 +152,10 @@ defineExpose({
   <div class="w-full space-y-4 pb-4">
 
     <div class="flex justify-end gap-3">
-      <CUProfile @saved="refreshTable" />
+      <ProfileCreateModal @saved="refreshTable" />
       <EditProfile v-if="isSingleSelected" :user="selectedUser" @saved="refreshTable" />
     </div>
-    
+
     <DeleteProfiles v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending"
       :row-class="(row: Row<Profile>) => row.original.role" class="flex-1">
@@ -167,7 +171,7 @@ defineExpose({
 
     <div class="flex justify-center border-t border-default pt-4">
       <UPagination v-model:page="pagination.pageIndex" :items-per-page="pagination.pageSize" :total="total"
-        @update:page="(newPage) => pagination.pageIndex = newPage" />
+        @update:page="(newPage: number) => pagination.pageIndex = newPage" />
     </div>
   </div>
 </template>
