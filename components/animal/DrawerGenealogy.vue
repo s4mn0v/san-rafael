@@ -5,10 +5,12 @@
       color="neutral"
       variant="subtle"
       trailing-icon="i-lucide-chevron-up"
+      @click="drawerOpen = true"
     />
 
     <template #content>
       <div class="flex-1 w-full">
+        <!-- Filtro -->
         <div class="flex px-4 py-3.5 border-b border-accented">
           <UInput
             v-model="globalFilter"
@@ -28,16 +30,9 @@
         />
 
         <!-- Pie: contador y paginación -->
-        <div
-          class="px-4 py-3.5 border-t border-accented text-sm text-muted flex justify-between items-center"
-        >
+        <div class="px-4 py-3.5 border-t border-accented text-sm text-muted flex justify-between items-center">
           <div>
-            {{
-              table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0
-            }}
-            de
-            {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}
-            fila(s) seleccionada(s)
+            {{ selectedRows.length }} de {{ total }} reproducción(es) seleccionada(s)
           </div>
           <UPagination
             :page="page"
@@ -50,10 +45,10 @@
 
         <!-- Botón de acción -->
         <UButton
-          v-if="selectedIds.length > 0"
+          v-if="selectedRows.length === 1"
           label="Seleccionar reproducción"
           color="primary"
-          @click="onSelectReproducciones"
+          @click="onSelectReproduccion"
         />
       </div>
     </template>
@@ -61,97 +56,95 @@
 </template>
 
 <script setup lang="ts">
-import { h, resolveComponent, computed, ref } from "vue";
-import { useFetch } from "#app";
-import type { TableColumn } from "@nuxt/ui";
-import type { Database } from "~/types/supabase";
+import { h, resolveComponent, computed, ref } from 'vue'
+import { useFetch } from '#app'
+import type { TableColumn } from '@nuxt/ui'
+import type { Database } from '~/types/supabase'
 
-// ——— Emit para comunicar con el componente padre ———
+// — props y emits para v-model y evento select — 
 const props = defineProps<{ modelValue: boolean }>()
 const emit  = defineEmits<{
   (e: 'update:modelValue', v: boolean): void
-  (e: 'select', id: number): void
+  (e: 'select', item: Database['public']['Tables']['reproduccion']['Row']): void
 }>()
 
 const drawerOpen = computed({
-  get:  () => props.modelValue,
-  set:  v  => emit('update:modelValue', v)
+  get: () => props.modelValue,
+  set: v   => emit('update:modelValue', v)
 })
 
-// ——— Tipos ———
-type Reproduccion = Database["public"]["Tables"]["reproduccion"]["Row"];
+// — tipo de fila — 
+type Reproduccion = Database['public']['Tables']['reproduccion']['Row']
 
-// ——— Componentes ———
-const UCheckbox = resolveComponent("UCheckbox");
-const UPagination = resolveComponent("UPagination");
+// — componentes U — 
+const UCheckbox   = resolveComponent('UCheckbox')
+const UPagination = resolveComponent('UPagination')
 
-// ——— Estado ———
-const page = ref(1);
-const pageSize = ref(10);
-const globalFilter = ref("");
-const rowSelection = ref<Record<string, boolean>>({});
+// — estado reactivo — 
+const page         = ref(1)
+const pageSize     = ref(10)
+const globalFilter = ref('')
+const rowSelection = ref<Record<string, boolean>>({})
 
-// ——— Fetch datos ———
+// — fetch datos — 
 const { data, pending } = useFetch<{
-  reproducciones: Reproduccion[];
-  total: number;
-}>(
-  () =>
-    `/api/reproduction/reproductions?page=${page.value}&pageSize=${pageSize.value}`
-);
+  reproducciones: Reproduccion[]
+  total: number
+}>(() => `/api/reproduction/reproductions?page=${page.value}&pageSize=${pageSize.value}`)
 
-const reproducciones = computed(() => data.value?.reproducciones || []);
-const total = computed(() => data.value?.total || 0);
+const reproducciones = computed(() => data.value?.reproducciones || [])
+const total          = computed(() => data.value?.total || 0)
 
-// ——— Tabla ———
+// — columnas, incluyendo la columna de id — 
 const columns: TableColumn<Reproduccion>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) =>
       h(UCheckbox, {
-        modelValue: table.getIsSomePageRowsSelected()
-          ? "indeterminate"
-          : table.getIsAllPageRowsSelected(),
-        "onUpdate:modelValue": (v: boolean | "indeterminate") =>
-          table.toggleAllPageRowsSelected(!!v),
-        "aria-label": "Select all",
+        modelValue: table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected(),
+        'onUpdate:modelValue': (v: boolean | 'indeterminate') => table.toggleAllPageRowsSelected(!!v),
+        'aria-label': 'Select all'
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
         modelValue: row.getIsSelected(),
-        "onUpdate:modelValue": (v: boolean | "indeterminate") =>
-          row.toggleSelected(!!v),
-        "aria-label": "Select row",
-      }),
+        'onUpdate:modelValue': (v: boolean | 'indeterminate') => row.toggleSelected(!!v),
+        'aria-label': 'Select row'
+      })
   },
-  { accessorKey: "madre_id", header: "Madre" },
-  { accessorKey: "padre_id", header: "Padre" },
-  { accessorKey: "tipo_concepcion", header: "Tipo de Concepción" },
-];
+  { accessorKey: 'id', header: 'ID' },
+  { accessorKey: 'madre_id', header: 'Madre' },
+  { accessorKey: 'padre_id', header: 'Padre' },
+  { accessorKey: 'tipo_concepcion', header: 'Tipo de Concepción' }
+]
 
-const table = useTemplateRef("table");
+// — ref a la tabla para API interno — 
+const table = ref<any>(null)
 
-// ——— IDs seleccionados ———
-const selectedIds = computed(() =>
-  Object.keys(rowSelection.value).filter((id) => rowSelection.value[id])
-);
+// — filas seleccionadas completas — 
+const selectedRows = computed<Reproduccion[]>(() => {
+  // toma las filas filtradas y seleccionadas
+  return table.value?.tableApi
+    .getFilteredSelectedRowModel()
+    .rows
+    .map((r: any) => r.original) || []
+})
 
-// ——— Cambio de página ———
+// — paginación — 
 function onPageChange(newPage: number) {
-  page.value = newPage;
+  page.value = newPage
 }
-
 function onPageSizeChange(newSize: number) {
-  pageSize.value = newSize;
-  page.value = 1;
+  pageSize.value = newSize
+  page.value = 1
 }
 
-// ——— Seleccionar reproducción y emitir al padre ———
-function onSelectReproducciones() {
-  const idStr = selectedIds.value[0]
-  if (idStr) {
-    emit('select', parseInt(idStr))
-    drawerOpen.value = false      // <— aquí cierras el Drawer
+// — al pulsar: emite el objeto completo y cierra — 
+function onSelectReproduccion() {
+  const item = selectedRows.value[0]
+  if (item) {
+    emit('select', item)
+    drawerOpen.value = false
   }
 }
 </script>

@@ -38,8 +38,14 @@ export default defineEventHandler(async (event) => {
 
     if (error) throw error;
 
+    // Mapeamos cada fila para añadir `id` = `id_reproduccion`
+    const reproduccionesConId = (data || []).map((row) => ({
+      ...row,
+      id: row.id_reproduccion,
+    }));
+
     return {
-      reproducciones: data || [],
+      reproducciones: reproduccionesConId,
       total: count || 0,
       page,
       pageSize,
