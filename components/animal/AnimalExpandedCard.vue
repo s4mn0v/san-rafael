@@ -126,7 +126,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { resolveComponent, defineProps, defineEmits } from 'vue'
+import { resolveComponent } from 'vue'
 
 // Componentes de UI
 const UCard = resolveComponent('UCard')
