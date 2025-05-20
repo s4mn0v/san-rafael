@@ -84,6 +84,7 @@
         <span class="text-xs text-[var(--color-custom-300)]">Reproducción</span>
         <span class="text-sm font-medium text-[var(--color-custom-50)]">
           {{ animal.id_reproduccion || '—' }}
+          
         </span>
       </div>
     </div>
