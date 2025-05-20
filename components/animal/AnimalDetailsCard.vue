@@ -187,7 +187,7 @@ const schema = z.object({
   peso_actual: z.coerce.number().positive('Debe ser positivo').min(1, 'Mínimo 1 kg').max(2000, 'Máximo 2000 kg'),
   estado_salud: z.enum(['EXCELENTE', 'BUENO', 'REGULAR', 'MALO', 'CRITICO', 'RECUPERACION', 'OBSERVACION']),
   peso_inicial: z.coerce.number().min(0, 'Mínimo 0 kg').max(2000, 'Máximo 2000 kg').optional(),
-  id_reproduccion: z.coerce.number().max(10, 'Máximo 10').optional(),
+  id_reproduccion: z.coerce.number().max(500, 'Máximo 500').optional(),
   fecha_fallecimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha inválida').optional()
 })
 

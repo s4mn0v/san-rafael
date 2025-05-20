@@ -91,6 +91,7 @@
               ID Reproducción
             </span>
           </template>
+          <DrawerGenealogy />
           <UInput v-model.number="formState.id_reproduccion" type="number" />
         </UFormField>
 

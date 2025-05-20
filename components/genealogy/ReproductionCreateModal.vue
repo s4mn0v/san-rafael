@@ -45,7 +45,7 @@
           </template>
           <USelect 
             v-model="form.tipo_concepcion" 
-            :options="tiposConcepcion" 
+            :items="tiposConcepcion" 
             placeholder="Selecciona un tipo"
           />
         </UFormField>
