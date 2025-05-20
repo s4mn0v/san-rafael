@@ -2,7 +2,9 @@
 ```
 ├── app.config.ts                       # Configuración global del UI en Nuxt
 ├── app.vue                             # Componente raíz de la app Vue
+├── bun.lock                            # Lockfile del gestor Bun
 ├── error.vue                           # Vista de manejo de errores
+├── EXPLAINED.md                        # Documentación detallada de la arquitectura del proyecto
 ├── nuxt.config.ts                      # Configuración principal de Nuxt
 ├── package.json                        # Dependencias y scripts del proyecto
 ├── tsconfig.json                       # Opciones de compilación TypeScript
@@ -21,32 +23,43 @@
 │           └── logo-white.webp         # Logotipo versión blanca
 ├── components/                         # Componentes Vue reutilizables
 │   ├── animal/                         # Componentes de gestión animal
+│   │   ├── AnimalAddModal.vue          # Modal para registrar nuevo animal
 │   │   ├── AnimalDetailsCard.vue       # Tarjeta de detalles de animal
+│   │   ├── AnimalExpandedCard.vue      # Tarjeta expandida con detalles completos
 │   │   ├── AnimalSearch.vue            # Buscador de animales
 │   │   ├── AnimalTable.vue             # Tabla de animales
-│   │   ├── DeleteAnimalCard.vue        # Confirmación de eliminación
+│   │   ├── DeleteAnimalCard.vue        # Confirmación de eliminación individual
+│   │   ├── DeleteAnimals.vue           # Modal para eliminar múltiples animales
 │   │   ├── GenealogyTree.vue           # Árbol genealógico
 │   │   ├── HealthHistoryCard.vue       # Historial de salud
-│   │   ├── SaleInfoCard.vue            # Info de venta de animal
+│   │   ├── SaleInfoCard.vue            # Información de venta del animal
 │   │   └── SaleModal.vue               # Modal de gestión de venta
-|   |__ dashboard/                      # Componentes para la pagina principal         
-|   |   |__ StadisticCards.vue          # Componente para la estadistica
-|   |   |__ MetricsCards.vue            # Componente para la informacion de el inicio metricas          
+│   ├── dashboard/                      # Componentes para el dashboard principal
+│   │   ├── MetricsCards.vue            # Métricas clave de la app
+│   │   ├── SalesCharts.vue             # Gráficos de ventas
+│   │   └── StadisticCards.vue          # Tarjetas estadísticas del sistema
+│   ├── genealogy/                      # Componentes relacionados con reproducción/genealogía
+│   │   ├── DeleteReproductions.vue     # Modal para eliminar reproducciones
+│   │   ├── EditReproduction.vue        # Modal para editar una reproducción
+│   │   ├── GenealogyTable.vue          # Tabla de genealogías
+│   │   └── ReproductionCreateModal.vue # Modal para crear reproducción
 │   ├── navigation/                     # Componentes de navegación
 │   │   ├── BreadNav.vue                # Migas de pan
 │   │   ├── NavButtons.vue              # Botones de navegación
 │   │   └── Sidebar.vue                 # Barra lateral
-│   ├── profile/                        # Componentes de perfil de usuario
+│   ├── profiles/                       # Componentes de perfil de usuario
+│   │   ├── DeleteProfiles.vue          # Modal para eliminar perfiles
+│   │   ├── EditProfile.vue             # Modal para editar perfil
+│   │   ├── ProfileCreateModal.vue      # Modal para crear nuevo perfil
 │   │   ├── ProfileEditor.vue           # Editor de perfil
-│   │   ├── DeleteProfiles.vue          # Modal para eliminiar uno o varios usuarios
-│   │   ├── ProfilesTable.vue           # Tabla apra enlisatar los usuarios dentro de la tabla profiles
-│   │   └── SearchProfile.vue           # Input para buscar perfiles especificos y mostrarlos en forma de card
+│   │   ├── ProfilesTable.vue           # Tabla de perfiles
+│   │   └── SearchProfile.vue           # Buscador de perfiles
 │   ├── stock/                          # Componentes de inventario
 │   │   └── StockTable.vue              # Tabla de stock
-│   ├── theming/                        # Componentes de temas
+│   ├── theming/                        # Componentes de personalización de temas
 │   │   ├── Theming.vue                 # Selector de tema
-│   │   └── ThemingText.vue             # Textos de personalización
-│   └── Logout.vue                      # Botón/componente de logout
+│   │   └── ThemingText.vue             # Textos para personalización
+│   └── Logout.vue                      # Componente de logout
 ├── composables/                        # Funciones reutilizables (composables)
 │   └── arestricted.ts                  # Lógica de restricciones de acceso
 ├── layouts/                            # Plantillas de diseño de páginas
@@ -58,54 +71,65 @@
 ├── pages/                              # Vistas y rutas de la aplicación
 │   ├── index.vue                       # Página de inicio ("/")
 │   ├── login.vue                       # Página de inicio de sesión
+│   ├── about.vue                       # Página "Acerca de"
 │   ├── reproduction.vue                # Página de reproducción general
 │   ├── sales.vue                       # Página de ventas
 │   ├── settings.vue                    # Página de configuración
-│   ├── profiles.vue                    # Gestión de usuarios
+│   ├── profiles.vue                    # Gestión de perfiles
 │   ├── animals/                        # Rutas de animales
-│   │   ├── genealogy.vue               # Vista de genealogía
+│   │   ├── genealogy.vue               # Página de genealogía de animales
 │   │   ├── index.vue                   # Listado de animales
-│   │   ├── reproduction.vue            # Reproducción de animales
+│   │   ├── reproduction.vue            # Página de reproducción animal
 │   │   └── specific/
-│   │       └── [id].vue                # Detalles de un animal (dinámico)
+│   │       └── [id].vue                # Detalle de animal específico (ruta dinámica)
 │   └── stock/                          # Rutas de inventario
 │       ├── index.vue                   # Listado de stock
-│       └── providers.vue               # Proveedores de inventario
+│       └── providers.vue               # Gestión de proveedores
 ├── server/                             # Backend (API) del proyecto
-│   ├── api/                            # Rutas y controladores de la API
-│   │   ├── animal/                     # Endpoints de animales
-│   │   │   ├── animals.get.ts          # Obtener todos los animales
-│   │   │   └── specific/
-│   │   │       ├── [id].get.ts         # Obtener animal por ID
-│   │   │       ├── [id].put.ts         # Actualizar animal por ID
-│   │   │       └── [id].delete.ts      # Eliminar animal por ID
-│   │   ├── dashboard/                  # Endpoints de la pagina de inicio de las metricas y estadistica
-│   │   │   ├── metrics.get.ts          # Obtener animales, inventario, ventas
-│   │   ├── genealogy/                  # Endpoints de genealogía
-│   │   │   └── id/
-│   │   │       └── [id].get.ts         # Obtener genealogía por ID
-│   │   ├── health/                     # Endpoints de salud
-│   │   │   ├── health.post.ts          # Registrar nuevo registro de salud
-│   │   │   └── specific/
-│   │   │       ├── [id].put.ts         # Actualizar record de salud
-│   │   │       └── [id].delete.ts      # Eliminar record de salud
-│   │   ├── sales/                      # Endpoints de ventas
-│   │   │   └── specific/
-│   │   │       ├── [id].post.ts        # Registrar venta por ID
-│   │   │       └── [id].put.ts         # Actualizar venta por ID
-│   │   ├── stock/                      # Endpoints de stock
-│   │   │   ├── stock.get.ts            # Listar stock
-│   │   │   └── specific/
-│   │   │       └── [id].get.ts         # Stock por ID
-│   │   ├── profiles/                   # Endpoints del apartado de usuarios (Profiles en la tabla)
-│   │   │   ├── delete.delete.ts        # Eliminar usuarios (Authentication | Table Profiles)
-│   │   │   ├── profiles.get.ts         # Obtener usuarios
-│   │   │   └── search.get.ts           # Obtener una busqueda de usuarios para mostrar perfiles independientes
-│   │   └── test.get.ts                 # Endpoint de prueba
-│   └── tsconfig.json                   # Configuración TS para el servidor
+│   ├── tsconfig.json                   # Configuración TS del backend
+│   └── api/                            # Endpoints de la API
+│       ├── animal/
+│       │   ├── animals.get.ts          # Obtener todos los animales
+│       │   ├── animals.delete.ts       # Eliminar múltiples animales
+│       │   └── specific/
+│       │       ├── [id].get.ts         # Obtener animal por ID
+│       │       ├── [id].put.ts         # Actualizar animal por ID
+│       │       └── [id].delete.ts      # Eliminar animal por ID
+│       ├── dashboard/
+│       │   └── metrics.get.ts          # Métricas para el dashboard
+│       ├── genealogy/
+│       │   └── id/
+│       │       └── [id].get.ts         # Obtener genealogía por ID
+│       ├── health/
+│       │   ├── health.post.ts          # Crear registro de salud
+│       │   └── specific/
+│       │       ├── [id].put.ts         # Actualizar registro de salud
+│       │       └── [id].delete.ts      # Eliminar registro de salud
+│       ├── profiles/
+│       │   ├── delete.delete.ts        # Eliminar perfiles
+│       │   ├── profile.post.ts         # Crear nuevo perfil
+│       │   ├── profile.put.ts          # Actualizar perfil
+│       │   ├── profiles.get.ts         # Obtener lista de perfiles
+│       │   └── search.get.ts           # Buscar perfiles
+│       ├── reproduction/
+│       │   ├── reproductions.get.ts    # Listar reproducciones
+│       │   ├── reproductions.post.ts   # Crear reproducción
+│       │   ├── reproductions.delete.ts # Eliminar reproducciones
+│       │   └── specific/
+│       │       ├── [id].delete.ts      # Eliminar reproducción por ID
+│       │       └── [id].put.ts         # Actualizar reproducción por ID
+│       ├── sales/
+│       │   └── specific/
+│       │       ├── [id].post.ts        # Registrar venta por ID
+│       │       └── [id].put.ts         # Actualizar venta por ID
+│       ├── stock/
+│       │   ├── stock.get.ts            # Obtener stock
+│       │   └── specific/
+│       │       └── [id].get.ts         # Obtener stock por ID
+│       └── test.get.ts                 # Endpoint de prueba
 └── types/                              # Definiciones de tipos TypeScript
-    ├── animal.ts                       # Interfaces de animal
-    ├── supabase.ts                     # Tipos generados de Supabase
+    ├── animal.ts                       # Interfaces relacionadas con animales
+    ├── supabase.ts                     # Tipos generados desde Supabase
     └── types.d.ts                      # Tipos globales del proyecto
 ```
 
