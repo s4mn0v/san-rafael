@@ -224,16 +224,29 @@ const handleSaleCreated = () => {
 const isEditing = ref(false)
 const isSubmitting = ref(false)
 
-const formData = reactive({
+const formData = reactive<{
+  id_animal: string
+  fecha_nacimiento: string
+  raza: string
+  tipo_animal: 'NOVILLO' | 'TERNERO' | 'TERNERA' | 'VACA' | 'TORO'
+  peso_actual: number
+  estado_salud: 'EXCELENTE' | 'BUENO' | 'REGULAR' | 'MALO' | 'CRITICO' | 'RECUPERACION' | 'OBSERVACION'
+  venta: boolean
+  peso_inicial?: number
+  id_reproduccion?: number
+  fecha_fallecimiento?: string
+}>( {
   id_animal: props.animal.id_animal,
   fecha_nacimiento: props.animal.fecha_nacimiento.split('T')[0],
   raza: props.animal.raza,
-  tipo_animal: props.animal.tipo_animal,
+  tipo_animal: props.animal.tipo_animal as 'NOVILLO' | 'TERNERO' | 'TERNERA' | 'VACA' | 'TORO',
   peso_actual: props.animal.peso_actual,
-  estado_salud: props.animal.estado_salud,
+  estado_salud: props.animal.estado_salud as 'EXCELENTE' | 'BUENO' | 'REGULAR' | 'MALO' | 'CRITICO' | 'RECUPERACION' | 'OBSERVACION',
   venta: props.animal.venta,
   peso_inicial: props.animal.peso_inicial,
-  id_reproduccion: props.animal.id_reproduccion,
+  id_reproduccion: props.animal.id_reproduccion !== undefined && props.animal.id_reproduccion !== null
+    ? Number(props.animal.id_reproduccion)
+    : undefined,
   fecha_fallecimiento: props.animal.fecha_fallecimiento?.split('T')[0] || ''
 })
 
@@ -252,7 +265,9 @@ const cancelEditing = () => {
     estado_salud: props.animal.estado_salud,
     venta: props.animal.venta,
     peso_inicial: props.animal.peso_inicial,
-    id_reproduccion: props.animal.id_reproduccion,
+    id_reproduccion: props.animal.id_reproduccion !== undefined && props.animal.id_reproduccion !== null
+      ? Number(props.animal.id_reproduccion)
+      : undefined,
     fecha_fallecimiento: props.animal.fecha_fallecimiento?.split('T')[0] || ''
   })
 }
@@ -263,9 +278,14 @@ const handleSubmit = async () => {
     const response = await $fetch(`/api/animal/specific/${props.animal.id_animal}`, {
       method: 'PUT',
       body: {
-        ...formData,
-        fecha_fallecimiento: formData.fecha_fallecimiento || null,
-        id_reproduccion: formData.id_reproduccion || null
+        fecha_nacimiento: formData.fecha_nacimiento,
+        raza: formData.raza,
+        tipo_animal: formData.tipo_animal,
+        peso_actual: formData.peso_actual,
+        estado_salud: formData.estado_salud,
+        peso_inicial: formData.peso_inicial,
+        id_reproduccion: formData.id_reproduccion,
+        fecha_fallecimiento: formData.fecha_fallecimiento || null
       }
     })
 
@@ -290,10 +310,12 @@ const handleSubmit = async () => {
       tipo_animal: formData.tipo_animal!,
       peso_actual: formData.peso_actual,
       estado_salud: formData.estado_salud,
-      venta: formData.venta ?? false,
-      peso_inicial: formData.peso_inicial,
-      id_reproduccion: formData.id_reproduccion ?? null,
-      fecha_fallecimiento: formData.fecha_fallecimiento || null
+      id_reproduccion: formData.id_reproduccion !== undefined
+        ? String(formData.id_reproduccion)
+        : null,
+      fecha_fallecimiento: formData.fecha_fallecimiento || null,
+      venta: false,
+      peso_inicial: 0
     })
 
   } catch (error: unknown) {

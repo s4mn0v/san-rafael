@@ -1,3 +1,4 @@
+// server/api/animal/specific/[id].put.ts
 import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
 import type { Database } from "~/types/supabase";
 import { readBody } from "h3";
@@ -19,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<Partial<AnimalUpdate>>(event);
 
   // Extrae el id_animal del body
-  const { id_animal } = body;
+  const id_animal = event.context.params?.id;
 
   if (!id_animal) {
     throw createError({
