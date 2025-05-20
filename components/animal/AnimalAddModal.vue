@@ -91,7 +91,8 @@
               ID Reproducción
             </span>
           </template>
-          <DrawerGenealogy />
+          <DrawerGenealogy  v-model:modelValue="isDrawerOpen"
+            @select="formState.id_reproduccion = $event" />
           <UInput v-model.number="formState.id_reproduccion" type="number" />
         </UFormField>
 
@@ -114,7 +115,7 @@ import { z } from 'zod'
 import type { Database } from '~/types/supabase'
 import type { TablesInsert } from '~/types/supabase'
 import { Constants } from '~/types/supabase'
-
+const isDrawerOpen = ref(false)
 const supabase = useSupabaseClient<Database>()
 const isOpen = ref(false)
 const emit = defineEmits(['close', 'created'])

@@ -1,119 +1,157 @@
 <template>
-          <UDrawer direction="right">
-    <UButton label="Open" color="neutral" variant="subtle" trailing-icon="i-lucide-chevron-up" />
+  <UDrawer v-model:open="drawerOpen" direction="right">
+    <UButton
+      label="Open"
+      color="neutral"
+      variant="subtle"
+      trailing-icon="i-lucide-chevron-up"
+    />
 
     <template #content>
       <div class="flex-1 w-full">
         <div class="flex px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filter..." />
-    </div>
-
-        <UTable ref="table" v-model:row-selection="rowSelection" v-model:global-filter="globalFilter" :data="data" :columns="columns" />
-        
-        <div class="px-4 py-3.5 border-t border-accented text-sm text-muted">
-          {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }} of
-          {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }} row(s) selected.
+          <UInput
+            v-model="globalFilter"
+            class="max-w-sm"
+            placeholder="Filtrar..."
+          />
         </div>
-        <UButton v-if="selectedIds.length > 0" label="Seleccionar reproduccion" color="neutral" variant="subtle" />
+
+        <!-- Tabla de reproducciones -->
+        <UTable
+          ref="table"
+          v-model:row-selection="rowSelection"
+          v-model:global-filter="globalFilter"
+          :data="reproducciones"
+          :columns="columns"
+          :loading="pending"
+        />
+
+        <!-- Pie: contador y paginación -->
+        <div
+          class="px-4 py-3.5 border-t border-accented text-sm text-muted flex justify-between items-center"
+        >
+          <div>
+            {{
+              table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0
+            }}
+            de
+            {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }}
+            fila(s) seleccionada(s)
+          </div>
+          <UPagination
+            :page="page"
+            :page-size="pageSize"
+            :total="total"
+            @update:page="onPageChange"
+            @update:page-size="onPageSizeChange"
+          />
+        </div>
+
+        <!-- Botón de acción -->
+        <UButton
+          v-if="selectedIds.length > 0"
+          label="Seleccionar reproducción"
+          color="primary"
+          @click="onSelectReproducciones"
+        />
       </div>
     </template>
   </UDrawer>
 </template>
 
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
-import type { TableColumn, TableRow } from '@nuxt/ui'
+import { h, resolveComponent, computed, ref } from "vue";
+import { useFetch } from "#app";
+import type { TableColumn } from "@nuxt/ui";
+import type { Database } from "~/types/supabase";
 
-const UCheckbox = resolveComponent('UCheckbox')
-const UBadge = resolveComponent('UBadge')
+// ——— Emit para comunicar con el componente padre ———
+const props = defineProps<{ modelValue: boolean }>()
+const emit  = defineEmits<{
+  (e: 'update:modelValue', v: boolean): void
+  (e: 'select', id: number): void
+}>()
 
-type Genealogy = {
-  id: string
-  madre_id: string
-  padre_id: string
-  tipo_concepcion: string
-}
+const drawerOpen = computed({
+  get:  () => props.modelValue,
+  set:  v  => emit('update:modelValue', v)
+})
 
-const data = ref<Genealogy[]>([
-  {
-    id: '4600',
-    madre_id: 'M100',
-    padre_id: 'P200',
-    tipo_concepcion: 'natural'
-  },
-  {
-    id: '4599',
-    madre_id: 'M101',
-    padre_id: 'P201',
-    tipo_concepcion: 'inseminación'
-  },
-  {
-    id: '4598',
-    madre_id: 'M102',
-    padre_id: 'P202',
-    tipo_concepcion: 'transferencia embrionaria'
-  },
-  {
-    id: '4597',
-    madre_id: 'M103',
-    padre_id: 'P203',
-    tipo_concepcion: 'natural'
-  },
-  {
-    id: '4596',
-    madre_id: 'M104',
-    padre_id: 'P204',
-    tipo_concepcion: 'inseminación'
-  }
-])
+// ——— Tipos ———
+type Reproduccion = Database["public"]["Tables"]["reproduccion"]["Row"];
 
-const columns: TableColumn<Genealogy>[] = [
+// ——— Componentes ———
+const UCheckbox = resolveComponent("UCheckbox");
+const UPagination = resolveComponent("UPagination");
+
+// ——— Estado ———
+const page = ref(1);
+const pageSize = ref(10);
+const globalFilter = ref("");
+const rowSelection = ref<Record<string, boolean>>({});
+
+// ——— Fetch datos ———
+const { data, pending } = useFetch<{
+  reproducciones: Reproduccion[];
+  total: number;
+}>(
+  () =>
+    `/api/reproduction/reproductions?page=${page.value}&pageSize=${pageSize.value}`
+);
+
+const reproducciones = computed(() => data.value?.reproducciones || []);
+const total = computed(() => data.value?.total || 0);
+
+// ——— Tabla ———
+const columns: TableColumn<Reproduccion>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) =>
       h(UCheckbox, {
         modelValue: table.getIsSomePageRowsSelected()
-          ? 'indeterminate'
+          ? "indeterminate"
           : table.getIsAllPageRowsSelected(),
-        'onUpdate:modelValue': (value: boolean | 'indeterminate') =>
-          table.toggleAllPageRowsSelected(!!value),
-        'aria-label': 'Select all'
+        "onUpdate:modelValue": (v: boolean | "indeterminate") =>
+          table.toggleAllPageRowsSelected(!!v),
+        "aria-label": "Select all",
       }),
     cell: ({ row }) =>
       h(UCheckbox, {
         modelValue: row.getIsSelected(),
-        'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
-        'aria-label': 'Select row'
-      })
+        "onUpdate:modelValue": (v: boolean | "indeterminate") =>
+          row.toggleSelected(!!v),
+        "aria-label": "Select row",
+      }),
   },
-  {
-    accessorKey: 'madre_id',
-    header: 'Madre'
-  },
-  {
-    accessorKey: 'padre_id',
-    header: 'Padre'
-  },
-  {
-    accessorKey: 'tipo_concepcion',
-    header: 'Tipo de Concepción',
-  }
-]
+  { accessorKey: "madre_id", header: "Madre" },
+  { accessorKey: "padre_id", header: "Padre" },
+  { accessorKey: "tipo_concepcion", header: "Tipo de Concepción" },
+];
 
-const table = useTemplateRef('table')
+const table = useTemplateRef("table");
 
-const rowSelection = ref<Record<string, boolean>>({})
+// ——— IDs seleccionados ———
+const selectedIds = computed(() =>
+  Object.keys(rowSelection.value).filter((id) => rowSelection.value[id])
+);
 
-const selectedIds = computed(() => {
-  return Object.keys(rowSelection.value).filter(id => rowSelection.value[id])
-})
-
-function onSelect(row: TableRow<Genealogy>, e?: Event) {
-  /* If you decide to also select the column you can do this  */
-  row.toggleSelected(!row.getIsSelected())
-
-  console.log(e)
+// ——— Cambio de página ———
+function onPageChange(newPage: number) {
+  page.value = newPage;
 }
 
-const globalFilter = ref('')
+function onPageSizeChange(newSize: number) {
+  pageSize.value = newSize;
+  page.value = 1;
+}
+
+// ——— Seleccionar reproducción y emitir al padre ———
+function onSelectReproducciones() {
+  const idStr = selectedIds.value[0]
+  if (idStr) {
+    emit('select', parseInt(idStr))
+    drawerOpen.value = false      // <— aquí cierras el Drawer
+  }
+}
 </script>
