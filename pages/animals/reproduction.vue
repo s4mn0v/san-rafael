@@ -1,6 +1,8 @@
 <template>
   <BreadNav :items="breadcrumbItems" />
-  <h1>Reproducción</h1>
+  <h1>Genealogía</h1>
+
+  <GenealogyTable  />
 
 </template>
 
@@ -21,9 +23,9 @@ const breadcrumbItems: BreadcrumbItem[] = [
     to: '/animals'
   },
   {
-    label: 'Reproducción',
-    icon: 'i-healthicons-syringe-outline',
-    to: '/animals/reproduction'
+    label: 'Genealogía',
+    icon: 'i-healthicons-biomarker-outline',
+    to: '/animals/genealogy'
   }
 ]
 
