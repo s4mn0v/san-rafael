@@ -24,7 +24,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
   },
   {
     label: 'Reproduccion',
-    icon: 'i-healthicons-biomarker-outline',
+    icon: 'i-healthicons-sperm-outline',
     to: '/animals/reproduction'
   }
 ]

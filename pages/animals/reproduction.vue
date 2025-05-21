@@ -23,8 +23,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
     to: '/animals'
   },
   {
-    label: 'Genealogía',
-    icon: 'i-healthicons-biomarker-outline',
+    label: 'reproducción',
+    icon: 'i-healthicons-sperm-outline',
     to: '/animals/genealogy'
   }
 ]
