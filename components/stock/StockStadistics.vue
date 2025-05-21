@@ -1,7 +1,6 @@
 <template>
   <UDrawer title="Estadísticas" description="Estadísticas de stock" direction="right" :inset="true">
-    <UButton label="Estadísticas" variant="subtle" trailing-icon="i-lucide-chevron-left"
-      class="bg-[var(--color-custom-50)]" />
+    <UButton title="Abrir estadísticas" color="neutral" trailing-icon="i-heroicons-chart-bar-16-solid" />
 
     <template #body>
       <div class="p-6 flex flex-col min-h-screen rounded-xl space-y-4">
