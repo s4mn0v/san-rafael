@@ -34,7 +34,7 @@
 
     <!-- Main content -->
     <div
-      class="flex-1 overflow-auto p-4 md:p-6 bg-[var(--color-custom-50)] dark:bg-[var(--color-custom-500)] rounded-xl m-4">
+      class="flex-1 overflow-auto p-4 md:p-6 bg-[var(--color-custom-50)] dark:bg-[var(--color-custom-500)] rounded-xl m-4 md:ml-0">
       <div>
         <div v-if="!isAppLoaded">Cargando...</div>
         <div v-else>
