@@ -142,6 +142,9 @@ const expanded = ref({})
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
         <div class="grid grid-cols-2 gap-4 p-4">
+          <UCard>
+            
+          </UCard>
           <div>
             <p><strong>ID Inventario:</strong> {{ row.original.id_inventario }}</p>
             <p><strong>Tipo:</strong> {{ row.original.tipo }}</p>
