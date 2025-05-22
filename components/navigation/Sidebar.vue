@@ -20,7 +20,6 @@
         <NavButtons icon="i-heroicons-home-solid" text="Inicio" to="/" />
         <NavButtons icon="i-healthicons-animal-cow" text="Animales" to="/animals" />
         <NavButtons icon="i-healthicons-i-exam-multiple-choice" text="Inventario" to="/stock" />
-        <NavButtons icon="i-healthicons-money-bag" text="Ventas" to="/sales" />
         <NavButtons icon="i-heroicons-cog" text="Ajustes" to="/settings" />
         <NavButtons v-if="userRole === 'admin'" icon="i-heroicons-users-solid" text="Usuarios" to="/profiles" />
       </div>
