@@ -8,7 +8,7 @@
         @click="drawerOpen = true"
       />
   
-      <template #content>
+      <template #body>
         <div class="flex-1 w-full">
           <!-- Filtro -->
           <div class="flex px-4 py-3.5 border-b border-accented">

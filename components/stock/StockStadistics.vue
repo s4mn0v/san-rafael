@@ -36,7 +36,7 @@ interface Metrics {
 
 const { data: mr, pending } = await useFetch<Metrics>(
   '/api/dashboard/metrics',
-  { server: false }
+  { lazy: false }
 );
 
 const metrics = computed(

@@ -1,7 +1,8 @@
 <template>
   <BreadNav :items="breadcrumbItems" />
   <h1 class="text-3xl font-bold tracking-widest uppercase text-center">Inventario</h1>
-  <div class="justify-end flex my-4">
+  <div class="justify-end flex my-4 space-x-4">
+    <StockAddModal />
     <StockStadistics />
   </div>
   <StockTable />
