@@ -1,5 +1,15 @@
 // ~/types/types.d.ts
 declare global {
+
+  interface InventoryItem {
+    id_inventario: number
+    tipo: string
+    descripcion: string
+    cantidad: number
+    precio: number
+    proveedor_id: string
+  }
+  
   interface CustomError extends Error {
     data?: {
       message: string;
@@ -12,7 +22,7 @@ declare global {
     email: string;
     role: string;
   }
-  
+
   interface UserProfile {
     role: string;
   }
@@ -33,4 +43,4 @@ declare global {
   };
 }
 
-export {};
+export { };

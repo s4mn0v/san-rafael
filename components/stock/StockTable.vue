@@ -41,7 +41,7 @@ const fetchInventory = async () => {
       page: pagination.value.pageIndex,
       pageSize: pagination.value.pageSize
     }
-    const response = await $fetch('/api/stock/stock', { params }) as { items: InventoryItem[], total: number }
+    const response = await $fetch<{ items: InventoryItem[], total: number }>('/api/stock/stock', { params })
     data.value = response.items
     total.value = response.total
     emit('refreshed')
@@ -167,28 +167,7 @@ const refreshTable = () => {
     <DeleteStock v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
-        <div class="grid grid-cols-2 gap-4 p-4">
-          <UCard>
-
-          </UCard>
-          <div>
-            <p><strong>ID Inventario:</strong> {{ row.original.id_inventario }}</p>
-            <p><strong>Tipo:</strong> {{ row.original.tipo }}</p>
-            <p><strong>Descripción:</strong> {{ row.original.descripcion }}</p>
-          </div>
-          <div>
-            <p><strong>Cantidad:</strong> {{ row.original.cantidad.toLocaleString() }}</p>
-            <p><strong>Precio:</strong> {{
-              new Intl.NumberFormat('es-CO', {
-                style: 'currency',
-                currency: 'COP',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-              }).format(row.original.precio)
-            }}</p>
-            <p><strong>Proveedor ID:</strong> {{ row.original.proveedor_id }}</p>
-          </div>
-        </div>
+        <StockExpandedCard :item="row.original" @updated="refreshTable" />
       </template>
     </UTable>
 

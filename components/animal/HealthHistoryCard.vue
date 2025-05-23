@@ -153,7 +153,7 @@ const handleSubmit = async () => {
       fecha_evento: new Date(form.fecha_evento).toISOString()
     }
 
-    const response = await $fetch(url, {
+    const response = await $fetch<any>(url, {
       method,
       body
     }) as { historial: HistorialSalud[] }
