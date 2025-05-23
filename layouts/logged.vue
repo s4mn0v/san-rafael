@@ -35,12 +35,6 @@ const items = ref<ContextMenuItem[]>([
     href: '/stock',
   },
   {
-    label: 'Ventas',
-    icon: 'i-healthicons-money-bag',
-    type: 'link',
-    href: '/sales',
-  },
-  {
     label: 'Ajustes',
     icon: 'i-heroicons-cog',
     type: 'link',

@@ -1,23 +1,13 @@
 <template>
-  <UModal
-    v-model:open="isOpen"
-    title="Agregar Animal"
-    description="Completa los datos del animal"
-    class="max-w-4xl w-full"
-  >
+  <UModal v-model:open="isOpen" title="Agregar Animal" description="Completa los datos del animal"
+    class="max-w-4xl w-full">
     <template #body>
-      <UForm
-        :schema="schema"
-        :state="formState"
-        @submit="handleSubmit"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-      >
+      <UForm :schema="schema" :state="formState" @submit="handleSubmit"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- ID Animal -->
         <UFormField name="id_animal" required class="col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               ID Animal
             </span>
           </template>
@@ -27,29 +17,17 @@
         <!-- Tipo de Animal -->
         <UFormField name="tipo_animal" class="col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               Tipo de Animal
             </span>
           </template>
-          <USelect
-            v-model="formState.tipo_animal"
-            :items="tipoAnimalOptions"
-            placeholder="Selecciona un tipo"
-          />
+          <USelect v-model="formState.tipo_animal" :items="tipoAnimalOptions" placeholder="Selecciona un tipo" variant="ghost" class="cursor-pointer"/>
         </UFormField>
 
         <!-- Raza -->
-        <UFormField
-          name="raza"
-          required
-          class="col-span-1 sm:col-span-2 lg:col-span-1"
-        >
+        <UFormField name="raza" required class="col-span-1 sm:col-span-2 lg:col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               Raza
             </span>
           </template>
@@ -57,15 +35,9 @@
         </UFormField>
 
         <!-- Fecha de Nacimiento -->
-        <UFormField
-          name="fecha_nacimiento"
-          required
-          class="col-span-1 sm:col-span-2 lg:col-span-1"
-        >
+        <UFormField name="fecha_nacimiento" required class="col-span-1 sm:col-span-2 lg:col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               Fecha de Nacimiento
             </span>
           </template>
@@ -75,57 +47,37 @@
         <!-- Peso Inicial -->
         <UFormField name="peso_inicial" required class="col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               Peso Inicial (kg)
             </span>
           </template>
-          <UInput
-            v-model.number="formState.peso_inicial"
-            type="number"
-            step="0.1"
-          />
+          <UInput v-model.number="formState.peso_inicial" type="number" step="0.1" />
         </UFormField>
 
         <!-- Peso Actual -->
         <UFormField name="peso_actual" required class="col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               Peso Actual (kg)
             </span>
           </template>
-          <UInput
-            v-model.number="formState.peso_actual"
-            type="number"
-            step="0.1"
-          />
+          <UInput v-model.number="formState.peso_actual" type="number" step="0.1" />
         </UFormField>
 
         <!-- Estado de Salud -->
         <UFormField name="estado_salud" class="col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               Estado de Salud
             </span>
           </template>
-          <USelect
-            v-model="formState.estado_salud"
-            :items="estadoSaludOptions"
-            placeholder="Selecciona un estado"
-          />
+          <USelect v-model="formState.estado_salud" :items="estadoSaludOptions" placeholder="Selecciona un estado" variant="ghost" class="cursor-pointer"/>
         </UFormField>
 
         <!-- Fecha de Fallecimiento -->
         <UFormField name="fecha_fallecimiento" class="col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               Fecha de Fallecimiento
             </span>
           </template>
@@ -135,23 +87,22 @@
         <!-- ID Reproducción -->
         <UFormField name="id_reproduccion" class="col-span-1">
           <template #label>
-            <span
-              class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]"
-            >
+            <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">
               ID Reproducción
             </span>
           </template>
-          <DrawerGenealogy
-            v-model:modelValue="isDrawerOpen"
-            @select="formState.id_reproduccion = $event.id_reproduccion"
-          />
-          <UInput v-model.number="formState.id_reproduccion" type="number" />
+          <div class="flex items-center gap-2">
+            <p>{{ formState.id_reproduccion }}</p>
+            <p v-if="!formState.id_reproduccion">
+              Sin registro seleccionado
+            </p>
+            <DrawerGenealogy v-model:modelValue="isDrawerOpen"
+              @select="formState.id_reproduccion = $event.id_reproduccion" />
+          </div>
         </UFormField>
 
         <!-- Botones de acción ocupan toda la fila -->
-        <div
-          class="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-end gap-4 mt-2"
-        >
+        <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-end gap-4 mt-2">
           <UButton type="button" variant="ghost" @click="closeModal">
             Cancelar
           </UButton>

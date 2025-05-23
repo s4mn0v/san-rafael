@@ -2,16 +2,22 @@
   <BreadNav :items="breadcrumbItems" />
   <h1 class="text-3xl font-bold tracking-widest uppercase text-center">Inventario</h1>
   <div class="justify-end flex my-4 space-x-4">
-    <StockAddModal />
-    <StockStadistics />
+    <StockAddModal @saved="handleSaved"/>
+    <StockStadistics/>
   </div>
-  <StockTable />
+  <StockTable ref="stockTable"/>
 </template>
 
 <script setup lang="ts">
 import BreadNav from '~/components/navigation/BreadNav.vue';
 
 import type { BreadcrumbItem } from '@nuxt/ui'
+const stockTable = ref();
+
+const handleSaved = () => {
+  console.log('Metodos expuestos: ', stockTable.value);
+  stockTable.value?.fetchInventory();
+};
 
 const breadcrumbItems: BreadcrumbItem[] = [
   {

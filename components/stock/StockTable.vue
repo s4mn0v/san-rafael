@@ -135,6 +135,10 @@ const columns: TableColumn<InventoryItem>[] = [
 ]
 
 const expanded = ref({})
+
+defineExpose({
+  fetchInventory
+})
 </script>
 
 <template>

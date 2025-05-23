@@ -1,10 +1,9 @@
 <template>
   <UDrawer v-model:open="drawerOpen" direction="right">
     <UButton
-      label="Open"
       color="neutral"
-      variant="subtle"
-      trailing-icon="i-lucide-chevron-up"
+      variant="ghost"
+      trailing-icon="i-heroicons-magnifying-glass"
       @click="drawerOpen = true"
     />
 

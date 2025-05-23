@@ -14,7 +14,7 @@
           <USelect v-model="form.tipo" :items="tiposArticulos.map(t => ({
             label: t === 'SALUD' ? 'Salud' : t === 'ALIMENTOS' ? 'Alimentos' : 'Elementos',
             value: t,
-          }))" placeholder="Selecciona un tipo" />
+          }))" placeholder="Selecciona un tipo" variant="ghost" class="border border-[var(--color-custom-300)] cursor-pointer" />
         </UFormField>
 
         <UFormField name="descripcion" required>
@@ -29,14 +29,16 @@
             <template #label>
               <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Cantidad</span>
             </template>
-            <UInput v-model="form.cantidad" type="number" step="1" min="0" />
+            <UInputNumber v-model="form.cantidad" type="number" :step="1" :min="1" variant="ghost" class="border border-[var(--color-custom-300)]" />
           </UFormField>
 
           <UFormField name="precio" required>
             <template #label>
               <span class="text-[var(--color-custom-400)] dark:text-[var(--color-custom-100)]">Precio Unitario</span>
             </template>
-            <UInput v-model="form.precio" type="number" step="0.01" min="0" />
+            <UInputNumber v-model="form.precio" :min="1000" :step="100"
+                :format-options="{ useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 2 }"
+                placeholder="Ingrese el monto" variant="ghost" class="border border-[var(--color-custom-300)]" />
           </UFormField>
         </div>
 
@@ -90,8 +92,18 @@ const schema = z.object({
     },
   }),
   descripcion: z.string().min(1, "La descripción es requerida"),
-  cantidad: z.number().min(1, "La cantidad debe ser al menos 1"),
-  precio: z.number().min(0.01, "El precio debe ser mayor a 0"),
+  cantidad: z
+    .number({
+      invalid_type_error: "La cantidad debe ser un número",
+      required_error: "La cantidad es obligatoria",
+    })
+    .min(1, { message: "La cantidad debe ser al menos 1" }),
+  precio: z
+    .number({
+      invalid_type_error: "El precio debe ser un número",
+      required_error: "El precio es obligatorio",
+    })
+    .min(0.01, { message: "El precio debe ser mayor a 0" }),
   proveedor_id: z.string().min(1, "Debe seleccionar un proveedor"),
 });
 
@@ -130,7 +142,7 @@ const handleSubmit = async () => {
         precio: Number(form.precio),
       },
     });
-    useToast().add({ title: "Artículo agregado!", color: "success" });
+    useToast().add({ title: "Artículo agregado!", color: "success", icon: "i-heroicons-check-circle-20-solid" });
     emit("saved");
     closeModal();
   } catch (error: any) {
@@ -138,6 +150,7 @@ const handleSubmit = async () => {
       title: "Error",
       description: error.data?.message || "Error al crear el registro",
       color: "error",
+      icon: "i-heroicons-x-circle-20-solid",
     });
     console.error(error);
   } finally {
