@@ -92,8 +92,6 @@
     <!-- FOOTER: ACCIONES -->
     <template #footer>
       <div class="flex justify-end space-x-2">
-        <UButton size="sm" variant="ghost" color="success" icon="i-heroicons-pencil"
-          @click="$emit('edit', animal.id_animal)" />
         <UButton size="sm" variant="ghost" color="error" icon="i-heroicons-trash" @click="isOpen = true" />
       </div>
     </template>

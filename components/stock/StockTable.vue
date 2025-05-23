@@ -3,11 +3,7 @@
 import { ref, watch } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
-
-const table = ref()
-
-const UButton = resolveComponent('UButton')
-const UCheckbox = resolveComponent('UCheckbox')
+import type { Table } from '@tanstack/table-core'
 
 type InventoryItem = {
   id_inventario: number
@@ -18,9 +14,19 @@ type InventoryItem = {
   proveedor_id: string
 }
 
+interface TableComponent {
+  tableApi: Table<InventoryItem>
+}
+
+const table = ref<TableComponent | null>(null)
+const UButton = resolveComponent('UButton')
+const UCheckbox = resolveComponent('UCheckbox')
+
 const data = ref<InventoryItem[]>([])
 const total = ref(0)
 const isPending = ref(false)
+
+const selectedIds = ref<number[]>([])
 
 const pagination = ref({
   pageIndex: 1,
@@ -139,15 +145,29 @@ const expanded = ref({})
 defineExpose({
   fetchInventory
 })
+
+watch(
+  () => table.value?.tableApi?.getSelectedRowModel().rows,
+  (rows) => {
+    selectedIds.value = rows?.map((row) => row.original.id_inventario) || []
+  }
+)
+
+// Función para refrescar la tabla
+const refreshTable = () => {
+  table.value?.tableApi?.resetRowSelection()
+  fetchInventory()
+}
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
+    <DeleteStock v-if="selectedIds.length > 0" :selected-ids="selectedIds" @deleted="refreshTable" />
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
         <div class="grid grid-cols-2 gap-4 p-4">
           <UCard>
-            
+
           </UCard>
           <div>
             <p><strong>ID Inventario:</strong> {{ row.original.id_inventario }}</p>

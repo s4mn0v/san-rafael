@@ -15,7 +15,6 @@ import type { BreadcrumbItem } from '@nuxt/ui'
 const stockTable = ref();
 
 const handleSaved = () => {
-  console.log('Metodos expuestos: ', stockTable.value);
   stockTable.value?.fetchInventory();
 };
 
