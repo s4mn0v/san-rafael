@@ -3,7 +3,7 @@
   <div>
 
     <UDrawer v-model:open="isDrawerOpen" title="Seleccionar proveedor"
-      description="Busca y selecciona un proveedor de la lista">
+      description="Busca y selecciona un proveedor de la lista" :inset="true">
       <UButton icon="i-heroicons-magnifying-glass" @click="isDrawerOpen = true" title="Seleccionar proveedor"
         variant="ghost" />
 

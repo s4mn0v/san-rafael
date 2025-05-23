@@ -2,8 +2,20 @@
   <UDrawer title="Estadísticas" description="Estadísticas de stock" direction="right" :inset="true">
     <UButton title="Abrir estadísticas" color="neutral" trailing-icon="i-heroicons-chart-bar-16-solid" />
 
+    <template #header>
+      <div class="flex items-center justify-between w-full">
+        <div>
+          <h3 class="text-lg font-semibold">Estadísticas de stock</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Datos actualizados en tiempo real</p>
+        </div>
+      </div>
+    </template>
+    
     <template #body>
+      <UButton icon="i-heroicons-arrow-path-20-solid" color="neutral" variant="ghost" :loading="pending"
+        @click="() => refreshMetrics()" title="Actualizar estadísticas" />
       <div class="p-6 flex flex-col min-h-screen rounded-xl space-y-4">
+        <!-- Mantener las tarjetas existentes -->
         <UCard v-for="(item, i) in inventoryList" :key="i"
           class="rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)] border border-gray-200 dark:border-gray-700">
           <template #header>
@@ -34,7 +46,7 @@ interface Metrics {
   totalExpenses: number;
 }
 
-const { data: mr, pending } = await useFetch<Metrics>(
+const { data: mr, pending, refresh: refreshMetrics } = await useFetch<Metrics>(
   '/api/dashboard/metrics',
   { lazy: false }
 );
@@ -77,4 +89,6 @@ const inventoryList = [
     format: (m: Metrics) => fmtMoney(m.totalExpenses),
   },
 ];
+
+defineExpose({ refreshMetrics });
 </script>

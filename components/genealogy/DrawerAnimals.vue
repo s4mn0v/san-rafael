@@ -1,5 +1,5 @@
 <template>
-    <UDrawer v-model:open="drawerOpen" direction="right">
+    <UDrawer title="Animales" description="Busca y selecciona un animal de la lista" v-model:open="drawerOpen" direction="right" :inset="true">
       <UButton
         label="Open"
         color="neutral"

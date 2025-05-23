@@ -1,5 +1,5 @@
 <template>
-  <UDrawer v-model:open="drawerOpen" direction="right">
+  <UDrawer title="Reproducciones" description="Busca y selecciona una reproducción de la lista" v-model:open="drawerOpen" direction="right" :inset="true">
     <UButton
       color="neutral"
       variant="ghost"

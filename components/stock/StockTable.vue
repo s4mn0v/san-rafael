@@ -27,6 +27,7 @@ const total = ref(0)
 const isPending = ref(false)
 
 const selectedIds = ref<number[]>([])
+const emit = defineEmits(['refreshed'])
 
 const pagination = ref({
   pageIndex: 1,
@@ -43,6 +44,7 @@ const fetchInventory = async () => {
     const response = await $fetch('/api/stock/stock', { params }) as { items: InventoryItem[], total: number }
     data.value = response.items
     total.value = response.total
+    emit('refreshed')
   } catch (error) {
     console.error('Error fetching inventory:', error)
   } finally {
