@@ -1,14 +1,17 @@
 <template>
   <BreadNav :items="breadcrumbItems" />
-  <h1>Proveedores</h1>
-
+  <h1 class="text-3xl font-bold tracking-widest uppercase text-center">Provedores</h1>
+  <div class="justify-end flex my-4 space-x-4">
+    <ProviderAddModal />
+  </div>
+<ProviderTable ref="providerTable"/>
 </template>
 
 <script setup lang="ts">
 import BreadNav from '~/components/navigation/BreadNav.vue';
 
 import type { BreadcrumbItem } from '@nuxt/ui'
-
+const providerTable = ref();
 const breadcrumbItems: BreadcrumbItem[] = [
   {
     label: 'Inicio',
