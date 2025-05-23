@@ -1,15 +1,16 @@
 import { serverSupabaseClient } from "#supabase/server";
 import { Database } from "~/types/supabase";
-import { createError } from "h3";
+import { createError, readBody } from "h3";
 
 export default defineEventHandler(async (event) => {
   const client = await serverSupabaseClient<Database>(event);
-  const id = event.context.params?.id;
+  const body = await readBody(event);
+  const ids = body.ids as number[];
 
-  if (!id) {
+  if (!ids || !Array.isArray(ids)) {
     throw createError({
       statusCode: 400,
-      statusMessage: "ID del proveedor es requerido",
+      statusMessage: "IDs de proveedores no proporcionados",
     });
   }
 
@@ -17,11 +18,11 @@ export default defineEventHandler(async (event) => {
     const { error } = await client
       .from("proveedores")
       .delete()
-      .eq("id_proveedor", id);
+      .in("id_proveedor", ids.map(id => id.toString()));
 
     if (error) throw error;
 
-    return { message: "Proveedor eliminado exitosamente" };
+    return { success: true, message: `${ids.length} proveedores eliminados` };
   } catch (err: any) {
     throw createError({
       statusCode: 500,

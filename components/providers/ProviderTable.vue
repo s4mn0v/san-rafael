@@ -4,12 +4,13 @@ import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
 
 const table = ref()
+const selectedIds = ref<number[]>([])
 
 const UButton = resolveComponent('UButton')
 const UCheckbox = resolveComponent('UCheckbox')
 
 type Provider = {
-  id_proveedor: string
+  id_proveedor: number
   nombre: string
   nombre_empresa: string
   telefono: string
@@ -43,6 +44,11 @@ const fetchProviders = async () => {
   }
 }
 
+const handleDeleted = () => {
+  fetchProviders()
+  selectedIds.value = []
+}
+
 watch([() => pagination.value.pageIndex, () => pagination.value.pageSize], fetchProviders)
 
 // Carga inicial
@@ -63,7 +69,15 @@ const columns: TableColumn<Provider>[] = [
     cell: ({ row }) =>
       h(UCheckbox, {
         modelValue: row.getIsSelected(),
-        'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
+        'onUpdate:modelValue': (value: boolean | 'indeterminate') => {
+          row.toggleSelected(!!value)
+          const rowData = row.original as Provider
+          if (value) {
+            selectedIds.value.push(rowData.id_proveedor)
+          } else {
+            selectedIds.value = selectedIds.value.filter(id => id !== rowData.id_proveedor)
+          }
+        },
         'aria-label': 'Select row'
       })
   },
@@ -104,7 +118,6 @@ const columns: TableColumn<Provider>[] = [
       })
     }
   },
-  
   {
     accessorKey: 'nombre_empresa',
     header: 'Empresa',
@@ -128,6 +141,16 @@ const expanded = ref({})
 
 <template>
   <div class="w-full space-y-4 pb-4">
+    <div class="flex justify-between items-center px-4">
+      <div class="space-x-2">
+        <DeleteProvider
+          v-if="selectedIds.length > 0"
+          :selected-ids="selectedIds"
+          @deleted="handleDeleted"
+        />
+      </div>
+    </div>
+
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
         <div class="grid grid-cols-2 gap-4 p-4">
