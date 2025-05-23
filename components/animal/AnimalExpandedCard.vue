@@ -1,15 +1,16 @@
 <!-- components/AnimalDetailCard.vue -->
 <template>
-  <UCard variant="subtle" class="w-full bg-[var(--color-custom-500)] dark:bg-transparent">
+  <UCard variant="subtle" class="w-full bg-[var(--color-custom-500)] dark:bg-[var(--color-custom-50)]">
     <!-- HEADER -->
     <template #header>
       <div class="flex justify-between items-center">
-        <h3 class="text-base font-semibold text-[var(--color-custom-50)]">
+        <h3 class="text-base font-semibold text-[var(--color-custom-50)] dark:text-[var(--color-custom-300)]">
           Detalle Animal
         </h3>
-        <span class="text-xs text-[var(--color-custom-100)]">
+        <span class="text-xs text-[var(--color-custom-50)] dark:text-[var(--color-custom-300)]">
           #{{ animal.id_animal }}
         </span>
+        <UButton size="sm" color="error" icon="i-heroicons-trash" @click="isOpen = true" />
       </div>
     </template>
 
@@ -18,7 +19,7 @@
       <!-- Columna 1: Nacimiento -->
       <div class="flex flex-col">
         <span class="text-xs text-[var(--color-custom-300)]">Nacimiento</span>
-        <span class="text-sm font-medium text-[var(--color-custom-50)]">
+        <span class="text-sm font-medium text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
           {{ animal.fecha_nacimiento }}
         </span>
       </div>
@@ -26,7 +27,7 @@
       <!-- Columna 2: Fallecimiento -->
       <div class="flex flex-col">
         <span class="text-xs text-[var(--color-custom-300)]">Fallecimiento</span>
-        <span class="text-sm font-medium text-[var(--color-custom-50)]">
+        <span class="text-sm font-medium text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
           {{ animal.fecha_fallecimiento || 'N/A' }}
         </span>
       </div>
@@ -34,7 +35,7 @@
       <!-- Columna 3: Raza -->
       <div class="flex flex-col">
         <span class="text-xs text-[var(--color-custom-300)]">Raza</span>
-        <span class="text-sm font-medium text-[var(--color-custom-50)]">
+        <span class="text-sm font-medium text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
           {{ animal.raza }}
         </span>
       </div>
@@ -42,7 +43,7 @@
       <!-- Columna 4: Tipo -->
       <div class="flex flex-col">
         <span class="text-xs text-[var(--color-custom-300)]">Tipo</span>
-        <span class="text-sm font-medium text-[var(--color-custom-50)]">
+        <span class="text-sm font-medium text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
           {{ animal.tipo_animal }}
         </span>
       </div>
@@ -50,23 +51,23 @@
       <!-- Columna 5: Peso Inicial -->
       <div class="flex flex-col">
         <span class="text-xs text-[var(--color-custom-300)]">Peso Inicial</span>
-        <span class="text-sm font-medium text-[var(--color-custom-50)]">
-          {{ animal.peso_inicial }} kg
+        <span class="text-sm font-medium text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
+          {{ animal.peso_inicial }} kg
         </span>
       </div>
 
       <!-- Columna 6: Peso Actual -->
       <div class="flex flex-col">
         <span class="text-xs text-[var(--color-custom-300)]">Peso Actual</span>
-        <span class="text-sm font-medium text-[var(--color-custom-50)]">
-          {{ animal.peso_actual }} kg
+        <span class="text-sm font-medium text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
+          {{ animal.peso_actual }} kg
         </span>
       </div>
 
       <!-- Columna 7: Estado de Salud -->
       <div class="flex flex-col">
         <span class="text-xs text-[var(--color-custom-300)]">Salud</span>
-        <span class="text-sm font-medium text-[var(--color-custom-50)]">
+        <span class="text-sm font-medium text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
           {{ animal.estado_salud }}
         </span>
       </div>
@@ -82,19 +83,11 @@
       <!-- Columna 9 (span 4 cols on lg): Reproducción -->
       <div class="flex flex-col lg:col-span-4">
         <span class="text-xs text-[var(--color-custom-300)]">Reproducción</span>
-        <span class="text-sm font-medium text-[var(--color-custom-50)]">
+        <span class="text-sm font-medium text-[var(--color-custom-50)] dark:text-[var(--color-custom-500)]">
           {{ animal.id_reproduccion || '—' }}
-          
         </span>
       </div>
     </div>
-
-    <!-- FOOTER: ACCIONES -->
-    <template #footer>
-      <div class="flex justify-end space-x-2">
-        <UButton size="sm" variant="ghost" color="error" icon="i-heroicons-trash" @click="isOpen = true" />
-      </div>
-    </template>
   </UCard>
 
   <!-- MODAL DE CONFIRMACIÓN -->
