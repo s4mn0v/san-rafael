@@ -1,7 +1,10 @@
 <template>
   <BreadNav :items="breadcrumbItems" />
-  <h1>Proveedores</h1>
-
+  
+  <div class="justify-end flex my-4 space-x-4">
+    <ProviderAddModal />
+  </div>
+<ProviderTable ref="providerTable"/>
 </template>
 
 <script setup lang="ts">
