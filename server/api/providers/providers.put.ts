@@ -15,21 +15,46 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const { data, error } = await client.from("proveedores").insert({
-      id_proveedor: body.id_proveedor,
-      nombre_empresa: body.nombre_empresa,
-      telefono: body.telefono,
-      correo_empresa: body.correo_empresa || "",
-      direccion: body.direccion || ""
-    }).select().single();
+    // Verificar si el nuevo ID ya existe (excluyendo el registro actual)
+    const { data: existingProvider } = await client
+      .from("proveedores")
+      .select("id_proveedor")
+      .eq("id_proveedor", body.id_proveedor)
+      .neq("id_proveedor", body.original_id)
+      .single();
 
-    if (error) throw error;
+    if (existingProvider) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Este ID de proveedor ya existe",
+      });
+    }
+
+    const { data, error } = await client
+      .from("proveedores")
+      .update({
+        id_proveedor: body.id_proveedor,
+        nombre_empresa: body.nombre_empresa,
+        telefono: body.telefono,
+        correo_empresa: body.correo_empresa || "",
+        direccion: body.direccion || ""
+      })
+      .eq('id_proveedor', body.original_id)
+      .select()
+      .single();
+
+    if (error) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: error.message
+      });
+    }
 
     return data;
   } catch (err: any) {
     throw createError({
-      statusCode: 500,
-      statusMessage: err.message
+      statusCode: err.statusCode || 500,
+      statusMessage: err.statusMessage || err.message
     });
   }
 });

@@ -2,25 +2,30 @@
 import { ref, watch } from 'vue'
 import type { TableColumn } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
-
-const table = ref()
-const selectedIds = ref<number[]>([])
-
-const UButton = resolveComponent('UButton')
-const UCheckbox = resolveComponent('UCheckbox')
+import type { Table } from '@tanstack/table-core'
 
 type Provider = {
   id_proveedor: number
-  nombre: string
   nombre_empresa: string
   telefono: string
   correo_empresa: string | null
   direccion: string | null
 }
 
+interface TableComponent {
+  tableApi: Table<Provider>
+}
+
+const table = ref<TableComponent | null>(null)
+const UButton = resolveComponent('UButton')
+const UCheckbox = resolveComponent('UCheckbox')
+
 const data = ref<Provider[]>([])
 const total = ref(0)
 const isPending = ref(false)
+
+const selectedIds = ref<number[]>([])
+const emit = defineEmits(['refreshed'])
 
 const pagination = ref({
   pageIndex: 1,
@@ -34,19 +39,15 @@ const fetchProviders = async () => {
       page: pagination.value.pageIndex,
       pageSize: pagination.value.pageSize
     }
-    const response = await $fetch('/api/providers/providers', { params }) as { proveedores: Provider[], total: number }
+    const response = await $fetch<{ proveedores: Provider[], total: number }>('/api/providers/providers', { params })
     data.value = response.proveedores
     total.value = response.total
+    emit('refreshed')
   } catch (error) {
     console.error('Error fetching providers:', error)
   } finally {
     isPending.value = false
   }
-}
-
-const handleDeleted = () => {
-  fetchProviders()
-  selectedIds.value = []
 }
 
 watch([() => pagination.value.pageIndex, () => pagination.value.pageSize], fetchProviders)
@@ -69,15 +70,7 @@ const columns: TableColumn<Provider>[] = [
     cell: ({ row }) =>
       h(UCheckbox, {
         modelValue: row.getIsSelected(),
-        'onUpdate:modelValue': (value: boolean | 'indeterminate') => {
-          row.toggleSelected(!!value)
-          const rowData = row.original as Provider
-          if (value) {
-            selectedIds.value.push(rowData.id_proveedor)
-          } else {
-            selectedIds.value = selectedIds.value.filter(id => id !== rowData.id_proveedor)
-          }
-        },
+        'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
         'aria-label': 'Select row'
       })
   },
@@ -137,6 +130,23 @@ const columns: TableColumn<Provider>[] = [
 ]
 
 const expanded = ref({})
+
+defineExpose({
+  fetchProviders
+})
+
+watch(
+  () => table.value?.tableApi?.getSelectedRowModel().rows,
+  (rows) => {
+    selectedIds.value = rows?.map((row) => row.original.id_proveedor) || []
+  }
+)
+
+// Función para refrescar la tabla
+const refreshTable = () => {
+  table.value?.tableApi?.resetRowSelection()
+  fetchProviders()
+}
 </script>
 
 <template>
@@ -146,28 +156,14 @@ const expanded = ref({})
         <DeleteProvider
           v-if="selectedIds.length > 0"
           :selected-ids="selectedIds"
-          @deleted="handleDeleted"
+          @deleted="refreshTable"
         />
       </div>
     </div>
 
     <UTable v-model:expanded="expanded" ref="table" :data="data" :columns="columns" :loading="isPending" class="flex-1">
       <template #expanded="{ row }">
-        <div class="grid grid-cols-2 gap-4 p-4">
-          <UCard>
-            
-          </UCard>
-          <div>
-            <p><strong>ID Proveedor:</strong> {{ row.original.id_proveedor }}</p>
-            <p><strong>Nombre:</strong> {{ row.original.nombre }}</p>
-            <p><strong>Empresa:</strong> {{ row.original.nombre_empresa }}</p>
-          </div>
-          <div>
-            <p><strong>Teléfono:</strong> {{ row.original.telefono }}</p>
-            <p><strong>Email:</strong> {{ row.original.correo_empresa || 'No especificado' }}</p>
-            <p><strong>Dirección:</strong> {{ row.original.direccion || 'No especificada' }}</p>
-          </div>
-        </div>
+        <ProviderExpanded :item="row.original" @updated="refreshTable" />
       </template>
     </UTable>
 
