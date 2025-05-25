@@ -30,6 +30,7 @@
 │   │   ├── AnimalTable.vue             # Tabla de animales
 │   │   ├── DeleteAnimalCard.vue        # Confirmación de eliminación individual
 │   │   ├── DeleteAnimals.vue           # Modal para eliminar múltiples animales
+│   │   ├── DrawerGenealogy.vue         # Drawer para visualzar id de reproducciones
 │   │   ├── GenealogyTree.vue           # Árbol genealógico
 │   │   ├── HealthHistoryCard.vue       # Historial de salud
 │   │   ├── SaleInfoCard.vue            # Información de venta del animal
@@ -40,6 +41,7 @@
 │   │   └── StadisticCards.vue          # Tarjetas estadísticas del sistema
 │   ├── genealogy/                      # Componentes relacionados con reproducción/genealogía
 │   │   ├── DeleteReproductions.vue     # Modal para eliminar reproducciones
+│   │   ├── DrawerGenealogy.vue         # Drawer para visualizar id de madre y padre 
 │   │   ├── EditReproduction.vue        # Modal para editar una reproducción
 │   │   ├── GenealogyTable.vue          # Tabla de genealogías
 │   │   └── ReproductionCreateModal.vue # Modal para crear reproducción
@@ -54,6 +56,11 @@
 │   │   ├── ProfileEditor.vue           # Editor de perfil
 │   │   ├── ProfilesTable.vue           # Tabla de perfiles
 │   │   └── SearchProfile.vue           # Buscador de perfiles
+│   ├── providers/                      # Componentes de proveedores
+│   │   ├── DeleteProvider.vue          # Modal para eliminar provedores
+│   │   ├── ProviderAddModal.vue        # Modal para crear nuevo proveedor
+│   │   ├── providerExpanded.vue        # Expanded para editar un proveedor
+│   │   ├── ProviderTable.vue           # Tabla de proveedores
 │   ├── stock/                          # Componentes de inventario
 │   │   └── StockTable.vue              # Tabla de stock
 │   ├── theming/                        # Componentes de personalización de temas
@@ -111,6 +118,11 @@
 │       │   ├── profile.put.ts          # Actualizar perfil
 │       │   ├── profiles.get.ts         # Obtener lista de perfiles
 │       │   └── search.get.ts           # Buscar perfiles
+│       ├── providers/
+│       │   ├── providers.get.ts        # Obtener lista de proveedores
+│       │   ├── providers.post.ts       # Crear nuevo proveedor
+│       │   ├── providers.delete.ts     # Elimina  proveedor
+│       │   ├── providers.put.ts        # Edita  proveedor
 │       ├── reproduction/
 │       │   ├── reproductions.get.ts    # Listar reproducciones
 │       │   ├── reproductions.post.ts   # Crear reproducción
