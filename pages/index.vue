@@ -1,33 +1,60 @@
 <template>
-  <h1 class="text-2xl font-semibold uppercase tracking-widest">Dashboard</h1>
+  <BreadNav :items="breadcrumbItems" />
 
-  <UDivider class="my-6" />
-
-  <div class="grid grid-cols-2 gap-4">
-    <DashboardCard title="Total de Animales" icon="i-healthicons-animal-cow">
-      <div class="px-6">00</div>
-    </DashboardCard>
-
-    <DashboardCard title="Incremento de Peso (Mensual)" icon="i-healthicons-cardiogram-outline-24px">
-      <div class="px-6">00</div>
-    </DashboardCard>
+  <div class="flex justify-between items-center mb-6">
+    <h1
+      class="text-2xl font-semibold uppercase tracking-widest text-gray-800 dark:text-white"
+    >
+      Dashboard
+    </h1>
   </div>
 
-  <UDivider class="my-6" />
+  <!-- Único Toggle Métricas / Gráficos / Ventas -->
+  <div class="flex gap-2 mb-8">
+    <UButton
+      :color="currentView === 'metrics' ? 'primary' : 'neutral'"
+      @click="currentView = 'metrics'"
+    >
+      Métricas
+    </UButton>
+    <UButton
+      :color="currentView === 'charts' ? 'primary' : 'neutral'"
+      @click="currentView = 'charts'"
+    >
+      Gráficos
+    </UButton>
+    <UButton
+      :color="currentView === 'sales' ? 'primary' : 'neutral'"
+      @click="currentView = 'sales'"
+    >
+      Ventas
+    </UButton>
+  </div>
 
-  <DashboardCard title="Control de Inventario">
-    <div class="grid grid-cols-3 gap-6 content-container">
-      <DashboardContainer title="Total de Insumos" icon="i-healthicons-ui-menu-grid-outline">
-        <div class="text-2xl font-semibold">00</div>
-      </DashboardContainer>
-
-      <DashboardContainer title="Stock Bajo" icon="i-heroicons-arrow-trending-down-16-solid">
-        <div class="text-2xl font-semibold">00</div>
-      </DashboardContainer>
-
-      <DashboardContainer title="Gastos (30 D)" icon="i-heroicons-currency-dollar-20-solid">
-        <div class="text-2xl font-semibold">$00</div>
-      </DashboardContainer>
-    </div>
-  </DashboardCard>
+  <!-- Contenido según la vista seleccionada -->
+  <MetricsCards v-if="currentView === 'metrics'" />
+  <StadisticCards v-if="currentView === 'charts'" />
+  <SalesCharts v-if="currentView === 'sales'" />
 </template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+import type { BreadcrumbItem } from "@nuxt/ui";
+import BreadNav from "~/components/navigation/BreadNav.vue";
+import MetricsCards from "~/components/dashboard/MetricsCards.vue";
+import StadisticCards from "~/components/dashboard/StadisticCards.vue";
+import SalesCharts from "~/components/dashboard/SalesCharts.vue";
+
+definePageMeta({ layout: "logged" });
+
+const breadcrumbItems = ref<BreadcrumbItem[]>([
+  {
+    label: "Dashboard",
+    icon: "i-healthicons-i-exam-multiple-choice-outline",
+    to: "/",
+  },
+]);
+
+// Control de vista con tres opciones
+const currentView = ref('metrics');
+</script>
